@@ -1,64 +1,79 @@
 package Gestores;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.ArrayList;
 
 import entidades.Farmaceuta;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.List;
+import java.util.ArrayList;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlElement;
-import entidades.Farmaceuta;
-@XmlRootElement (name = "lista-farmaceuta")
+
+@XmlRootElement(name = "lista-farmaceuta")
 public class GestorFarmaceuta {
+
     public GestorFarmaceuta() {
+        // Lista en memoria para los farmaceutas
         farmaceutas = new ArrayList<>();
     }
+
+    // Cantidad total de farmaceutas
     public int cantidadFarmaceutas() {
         return farmaceutas.size();
     }
+
+    // Indica si existe un farmaceuta con el ID indicado
     public boolean existeFarmaceuta(int id) {
-        for (Farmaceuta farmaceuta : farmaceutas) {
-            if (farmaceuta.getId() == id) {
-                return true;
-            }
+        for (Farmaceuta f : farmaceutas) {
+            if (f.getId() == id) return true;
         }
         return false;
     }
+
+    // Busca y retorna un farmaceuta por ID exacto (o null si no existe)
     public Farmaceuta buscarFarmaceutaID(int id) {
-        for (Farmaceuta farmaceuta : farmaceutas) {
-            if (farmaceuta.getId() == id) {
-                return farmaceuta;
-            }
+        for (Farmaceuta f : farmaceutas) {
+            if (f.getId() == id) return f;
         }
         return null;
     }
+
+    // Busca por nombre con coincidencia aproximada (ignorando mayúsculas/minúsculas)
     public Farmaceuta buscarFarmaceutaNombre(String nombre) {
-        for (Farmaceuta farmaceuta : farmaceutas) {
-            if (farmaceuta.getNombre().equals(nombre)) {
-                return farmaceuta;
-            }
+        if (nombre == null) return null;
+        String needle = nombre.toLowerCase();
+        for (Farmaceuta f : farmaceutas) {
+            String n = f.getNombre();
+            if (n != null && n.toLowerCase().contains(needle)) return f;
         }
         return null;
     }
-    public boolean aregarFarmaceuta(Farmaceuta farmaceuta) {
+
+    // Agrega un farmaceuta si el ID no está repetido
+    public boolean agregarFarmaceuta(Farmaceuta farmaceuta) { // (antes: aregarFarmaceuta)
+        if (farmaceuta == null) return false;
         if (!existeFarmaceuta(farmaceuta.getId())) {
             farmaceutas.add(farmaceuta);
             return true;
         }
         return false;
     }
-    public boolean modificarFarmaceuta(Farmaceuta pacienteporactualizar) {
+
+    // Reemplaza los datos del farmaceuta que tenga el mismo ID
+    public boolean modificarFarmaceuta(Farmaceuta farmaceutaPorActualizar) { // (antes: pacienteporactualizar)
+        if (farmaceutaPorActualizar == null) return false;
         for (int i = 0; i < farmaceutas.size(); i++) {
-            if (farmaceutas.get(i).getId() == pacienteporactualizar.getId()) {
-                farmaceutas.set(i, pacienteporactualizar);
+            if (farmaceutas.get(i).getId() == farmaceutaPorActualizar.getId()) {
+                farmaceutas.set(i, farmaceutaPorActualizar);
                 return true;
             }
         }
         return false;
     }
+
+    // Elimina un farmaceuta por ID
     public boolean eliminarFarmaceuta(int id) {
         for (int i = 0; i < farmaceutas.size(); i++) {
             if (farmaceutas.get(i).getId() == id) {
@@ -68,28 +83,35 @@ public class GestorFarmaceuta {
         }
         return false;
     }
-    public void guardarXML(OutputStream flujo) throws Exception {
+
+    // Guarda toda la lista en datos/farmaceutas.xml
+    public void guardarXML() throws Exception {
+        FileOutputStream flujo = new FileOutputStream("datos/farmaceutas.xml");
         JAXBContext context = JAXBContext.newInstance(GestorFarmaceuta.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(this, flujo);
     }
 
-    public void cargarXML(InputStream flujo) throws Exception {
+    // Carga la lista completa desde datos/farmaceutas.xml
+    public void cargarXML() throws Exception {
+        FileInputStream flujo = new FileInputStream("datos/farmaceutas.xml");
         JAXBContext context = JAXBContext.newInstance(GestorFarmaceuta.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         GestorFarmaceuta temp = (GestorFarmaceuta) unmarshaller.unmarshal(flujo);
         this.farmaceutas = temp.farmaceutas;
     }
+
+    // Muestra la lista en texto legible (debug/impresión)
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Farmaceuta farmaceuta : farmaceutas) {
-            sb.append(String.format("%n\t%s,", farmaceuta));
+        for (Farmaceuta f : farmaceutas) {
+            sb.append(String.format("%n\t%s,", f));
         }
-        sb.append("\n");
-        return sb.toString();
+        return sb.append("\n").toString();
     }
+
     @XmlElement(name = "farmaceuta")
     private List<Farmaceuta> farmaceutas;
 }
