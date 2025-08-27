@@ -1,18 +1,26 @@
 package entidades;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor
 @Data
 public class Medico {
     @Getter
     @Setter
     private String nombre;
+    @Getter
+    @Setter
+    private int clave;
+    @Getter
+    @Setter
     private int id;
     @Getter
     @Setter
-    private String clave;
     private String especialidad;
+    public Medico(String nombre, int id, String especialidad){
+        this.nombre = nombre;
+        this.id = id;
+        this.especialidad = especialidad;
+        clave=this.id;
+    }
 }
