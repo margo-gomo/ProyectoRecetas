@@ -10,9 +10,4 @@
         <nombre>Kenny</nombre>
         <teléfono>89996666</teléfono>
     </paciente>
-    <paciente fecha_nacimiento="12/12/2004">
-        <id>3</id>
-        <nombre>María</nombre>
-        <teléfono>87775555</teléfono>
-    </paciente>
 </lista_paciente>
