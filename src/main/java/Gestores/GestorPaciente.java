@@ -1,8 +1,8 @@
 package Gestores;
 import entidades.Paciente;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 import jakarta.xml.bind.JAXBContext;
@@ -68,14 +68,16 @@ public class GestorPaciente {
         }
         return false;
     }
-    public void guardarXML(OutputStream flujo) throws Exception {
+    public void guardarXML() throws Exception {
+        FileOutputStream flujo = new FileOutputStream("datos/pacientes.xml");
         JAXBContext context = JAXBContext.newInstance(GestorPaciente.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(this, flujo);
     }
 
-    public void cargarXML(InputStream flujo) throws Exception {
+    public void cargarXML() throws Exception {
+        FileInputStream flujo = new FileInputStream("datos/pacientes.xml");
         JAXBContext context = JAXBContext.newInstance(GestorPaciente.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         GestorPaciente temp = (GestorPaciente) unmarshaller.unmarshal(flujo);

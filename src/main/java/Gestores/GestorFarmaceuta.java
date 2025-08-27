@@ -1,9 +1,8 @@
 package Gestores;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.ArrayList;
-
 import entidades.Farmaceuta;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
@@ -68,14 +67,16 @@ public class GestorFarmaceuta {
         }
         return false;
     }
-    public void guardarXML(OutputStream flujo) throws Exception {
+    public void guardarXML() throws Exception {
+        FileOutputStream flujo = new FileOutputStream("datos/farmaceuta.xml");
         JAXBContext context = JAXBContext.newInstance(GestorFarmaceuta.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.marshal(this, flujo);
     }
 
-    public void cargarXML(InputStream flujo) throws Exception {
+    public void cargarXML() throws Exception {
+        FileInputStream flujo = new FileInputStream("datos/farmaceuta.xml");
         JAXBContext context = JAXBContext.newInstance(GestorFarmaceuta.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         GestorFarmaceuta temp = (GestorFarmaceuta) unmarshaller.unmarshal(flujo);
