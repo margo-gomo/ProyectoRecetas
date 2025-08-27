@@ -5,6 +5,12 @@ import lombok.Setter;
 
 @Data
 public class Medico {
+    public Medico(String nombre, int id, String especialidad){
+        this.nombre = nombre;
+        this.id = id;
+        this.especialidad = especialidad;
+        clave=this.id;
+    }
     @Getter
     @Setter
     private String nombre;
@@ -17,10 +23,5 @@ public class Medico {
     @Getter
     @Setter
     private String especialidad;
-    public Medico(String nombre, int id, String especialidad){
-        this.nombre = nombre;
-        this.id = id;
-        this.especialidad = especialidad;
-        clave=this.id;
-    }
+
 }
