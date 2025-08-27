@@ -1,8 +1,15 @@
 package entidades;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
+@XmlRootElement(name = "medico")
+@XmlAccessorType(XmlAccessType.FIELD)
+@NoArgsConstructor
 @Data
 public class Medico {
     public Medico(String nombre, int id, String especialidad){
@@ -22,6 +29,6 @@ public class Medico {
     private int id;
     @Getter
     @Setter
+    @XmlAttribute(name = "especialidad")
     private String especialidad;
-
 }
