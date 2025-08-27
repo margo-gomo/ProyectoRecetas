@@ -1,10 +1,12 @@
 package entidades;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDate;
 
 @AllArgsConstructor
 @Data
-@NoArgsConstructor
 public class Paciente {
     @Getter
     @Setter
