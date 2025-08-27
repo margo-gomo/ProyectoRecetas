@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lista-farmaceuta>
+    <farmaceuta>
+        <id>1</id>
+        <nombre>Rafael</nombre>
+        <clave>1</clave>
+    </farmaceuta>
+    <farmaceuta>
+        <id>2</id>
+        <nombre>Pedro</nombre>
+        <clave>2</clave>
+    </farmaceuta>
+</lista-farmaceuta>
