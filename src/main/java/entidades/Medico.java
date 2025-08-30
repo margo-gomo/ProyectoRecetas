@@ -12,23 +12,26 @@ import lombok.Setter;
 @NoArgsConstructor
 @Data
 public class Medico {
-    public Medico(String nombre, int id, String especialidad){
+    public Medico(String nombre, String id, String especialidad){
         this.nombre = nombre;
         this.id = id;
         this.especialidad = especialidad;
         clave=this.id;
+        token=1; //Token para identificar medico
     }
     @Getter
     @Setter
     private String nombre;
     @Getter
     @Setter
-    private int clave;
+    private String clave;
     @Getter
     @Setter
-    private int id;
+    private String id;
     @Getter
     @Setter
     @XmlAttribute(name = "especialidad")
     private String especialidad;
+    @Getter
+    private int token;
 }

@@ -11,18 +11,21 @@ import lombok.Setter;
 @NoArgsConstructor
 @Data
 public class Farmaceuta {
-    public  Farmaceuta(int id, String nombre) {
+    public  Farmaceuta(String id, String nombre) {
         this.nombre = nombre;
         this.id = id;
         clave=this.id;
+        token=2; //Token para identificar farmaceuta;
     }
     @Getter
     @Setter
-    private int id;
+    private String id;
     @Getter
     @Setter
     private String nombre;
     @Getter
     @Setter
-    private int clave;
+    private String clave;
+    @Getter
+    int token;
 }

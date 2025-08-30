@@ -25,17 +25,17 @@ public class GestorMedico {
     }
 
     // Verifica si existe un médico con el ID indicado
-    public boolean existeMedico(int id) {
+    public boolean existeMedico(String id) {
         for (Medico medico : medicos) {
-            if (medico.getId() == id) return true;
+            if (medico.getId().equals(id)) return true;
         }
         return false;
     }
 
     // Busca un médico por ID exacto (o null si no existe)
-    public Medico buscarMedicoID(int id) {
+    public Medico buscarMedicoID(String id) {
         for (Medico medico : medicos) {
-            if (medico.getId() == id) return medico;
+            if (medico.getId().equals(id)) return medico;
         }
         return null;
     }
@@ -65,7 +65,7 @@ public class GestorMedico {
     public boolean modificarMedico(Medico medicoPorActualizar) { // (antes: pacienteporactualizar)
         if (medicoPorActualizar == null) return false;
         for (int i = 0; i < medicos.size(); i++) {
-            if (medicos.get(i).getId() == medicoPorActualizar.getId()) {
+            if (medicos.get(i).getId().equals(medicoPorActualizar.getId())) {
                 medicos.set(i, medicoPorActualizar);
                 return true;
             }
@@ -73,10 +73,21 @@ public class GestorMedico {
         return false;
     }
 
+    // Cambia la clave de un medico existente (match por ID)
+    public boolean cambiarclave(String id, String clave){
+        for (Medico medico : medicos) {
+            if (medico.getId().equals(id)) {
+                medico.setClave(clave);
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Elimina un médico por ID
-    public boolean eliminarMedico(int id) {
+    public boolean eliminarMedico(String id) {
         for (int i = 0; i < medicos.size(); i++) {
-            if (medicos.get(i).getId() == id) {
+            if (medicos.get(i).getId().equals(id)) {
                 medicos.remove(i);
                 return true;
             }

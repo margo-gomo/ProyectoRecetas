@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.List;
 import java.util.ArrayList;
+
+import entidades.Medico;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
@@ -25,17 +27,17 @@ public class GestorFarmaceuta {
     }
 
     // Indica si existe un farmaceuta con el ID indicado
-    public boolean existeFarmaceuta(int id) {
+    public boolean existeFarmaceuta(String id) {
         for (Farmaceuta f : farmaceutas) {
-            if (f.getId() == id) return true;
+            if (f.getId().equals(id)) return true;
         }
         return false;
     }
 
     // Busca y retorna un farmaceuta por ID exacto (o null si no existe)
-    public Farmaceuta buscarFarmaceutaID(int id) {
+    public Farmaceuta buscarFarmaceutaID(String id) {
         for (Farmaceuta f : farmaceutas) {
-            if (f.getId() == id) return f;
+            if (f.getId().equals(id)) return f;
         }
         return null;
     }
@@ -73,10 +75,21 @@ public class GestorFarmaceuta {
         return false;
     }
 
+    // Cambia la clave de un farmaceuta existente (match por ID)
+    public boolean cambiarclave(String id, String clave){
+        for (Farmaceuta farmaceuta : farmaceutas) {
+            if (farmaceuta.getId().equals(id)) {
+                farmaceuta.setClave(clave);
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Elimina un farmaceuta por ID
-    public boolean eliminarFarmaceuta(int id) {
+    public boolean eliminarFarmaceuta(String id) {
         for (int i = 0; i < farmaceutas.size(); i++) {
-            if (farmaceutas.get(i).getId() == id) {
+            if (farmaceutas.get(i).getId().equals(id)) {
                 farmaceutas.remove(i);
                 return true;
             }

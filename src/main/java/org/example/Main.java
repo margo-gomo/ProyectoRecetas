@@ -41,8 +41,8 @@ public class Main {
             GestorMedico gestorMedicos = new GestorMedico();
 
             // Agregar médicos de prueba
-            Medico m1 = new Medico("Ana", 1, "Cardiología");
-            Medico m2 = new Medico("Juan", 2, "Pediatría");
+            Medico m1 = new Medico("Ana", "1", "Cardiología");
+            Medico m2 = new Medico("Juan", "2", "Pediatría");
             gestorMedicos.agregarMedico(m1);
             gestorMedicos.agregarMedico(m2);
 
@@ -62,8 +62,8 @@ public class Main {
             GestorFarmaceuta gestorFarmas = new GestorFarmaceuta();
 
             // Agregar farmaceutas de prueba
-            Farmaceuta f1 = new Farmaceuta(1, "Rafael");
-            Farmaceuta f2 = new Farmaceuta(2, "Pedro");
+            Farmaceuta f1 = new Farmaceuta("1", "Rafael");
+            Farmaceuta f2 = new Farmaceuta("2", "Pedro");
             gestorFarmas.agregarFarmaceuta(f1);
             gestorFarmas.agregarFarmaceuta(f2);
 
