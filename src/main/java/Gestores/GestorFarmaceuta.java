@@ -76,7 +76,7 @@ public class GestorFarmaceuta {
     }
 
     // Cambia la clave de un farmaceuta existente (match por ID)
-    public boolean cambiarclave(String id, String clave){
+    public boolean cambiarClave(String id, String clave){
         for (Farmaceuta farmaceuta : farmaceutas) {
             if (farmaceuta.getId().equals(id)) {
                 farmaceuta.setClave(clave);

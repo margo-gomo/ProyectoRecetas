@@ -74,7 +74,7 @@ public class GestorMedico {
     }
 
     // Cambia la clave de un medico existente (match por ID)
-    public boolean cambiarclave(String id, String clave){
+    public boolean cambiarClave(String id, String clave){
         for (Medico medico : medicos) {
             if (medico.getId().equals(id)) {
                 medico.setClave(clave);
