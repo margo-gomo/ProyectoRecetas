@@ -10,6 +10,8 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 @Getter
 @Setter
 @XmlRootElement (name = "prescripcion-recetas")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PrescripcionReceta {
     public PrescripcionReceta() {
         indicaciones = new ArrayList<>();
@@ -117,7 +120,6 @@ public class PrescripcionReceta {
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fecha_retiro;
 
-    @Getter
     @XmlElement(name = "estado")
     String estado;
 }

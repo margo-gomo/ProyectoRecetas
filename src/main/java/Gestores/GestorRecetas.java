@@ -113,10 +113,23 @@ public class GestorRecetas {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (PrescripcionReceta r : recetas) {
-            sb.append(String.format("%n\t%s,", r));
+            String pacNom = (r.getPaciente() != null ? r.getPaciente().getNombre() : "—");
+            String pacId  = (r.getPaciente() != null ? String.valueOf(r.getPaciente().getId()) : "—");
+            int cantInd   = (r.getIndicaciones() != null ? r.getIndicaciones().size() : 0);
+
+            sb.append(String.format(
+                    "%n\tPaciente=%s (id=%s), confección=%s, retiro=%s, estado=%s, indicaciones=%d,",
+                    pacNom,
+                    pacId,
+                    r.getFecha_confeccion(),
+                    r.getFecha_retiro(),
+                    r.getEstado(),
+                    cantInd
+            ));
         }
         return sb.append("\n").toString();
     }
+
 
     private boolean fechasIguales(LocalDate a, LocalDate b) {
         return (a == null && b == null) || (a != null && a.equals(b));
