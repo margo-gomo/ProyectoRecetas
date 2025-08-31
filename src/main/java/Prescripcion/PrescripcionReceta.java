@@ -1,4 +1,5 @@
 package Prescripcion;
+
 import Adaptador.LocalDateAdapter;
 import Gestores.GestorPaciente;
 import entidades.Paciente;
@@ -20,59 +21,68 @@ import java.util.ArrayList;
 @XmlRootElement (name = "prescripcion-recetas")
 public class PrescripcionReceta {
     public PrescripcionReceta() {
-        indicacciones = new ArrayList<>();
-        paciente= new Paciente();
-        fecha_confeccion= LocalDate.now();
+        indicaciones = new ArrayList<>();
+        paciente = new Paciente();
+        fecha_confeccion = LocalDate.now();
         fecha_retiro = null;
-        estado="no finalizada";
+        estado = "NO finalizada";
     }
-    public int cantidad(){return indicacciones.size();}
-    //Se le asigna un paciente a la receta buscándolo por id
+
+    public int cantidad(){ return indicaciones.size(); }
+
+    // Se le asigna un paciente a la receta buscándolo por id
     public boolean agregarPaciente(GestorPaciente gestorPaciente, int id) {
         if (gestorPaciente == null) return false;
-        paciente=gestorPaciente.buscarPacienteID(id);
+        paciente = gestorPaciente.buscarPacienteID(id);
         return paciente != null;
     }
-    //Se le asigna un paciente a la receta buscándolo por nombre
+
+    // Se le asigna un paciente a la receta buscándolo por nombre
     public boolean agregarPaciente(GestorPaciente gestorPaciente, String nombre) {
         if (gestorPaciente == null) return false;
-        paciente=gestorPaciente.buscarPacienteNombre(nombre);
+        paciente = gestorPaciente.buscarPacienteNombre(nombre);
         return paciente != null;
     }
-    //Agrega una indicacion a la receta
-    public boolean agregarIndicaccion(Indicaciones indicacion) {
-        return indicacciones.add(indicacion);
+
+    // Agrega una indicación a la receta
+    public boolean agregarIndicacion(Indicaciones indicacion) {
+        return indicaciones.add(indicacion);
     }
-    //Modifica toda una indicacion de la receta
-    public boolean modificarIndicaccion(Indicaciones indicacionPorModificar, int codigo) {
+
+    // Modifica toda una indicación por código de medicamento  (antes: modificarIndicaccion)
+    public boolean modificarIndicacion(Indicaciones indicacionPorModificar, int codigo) {
         if (indicacionPorModificar == null) return false;
-        for(int i=0;i<indicacciones.size();i++) {
-            if(indicacciones.get(i).medicamento.getCodigo()==codigo){
-                indicacciones.set(i,indicacionPorModificar);
+        for (int i = 0; i < indicaciones.size(); i++) {
+            if (indicaciones.get(i).getMedicamento().getCodigo() == codigo) {
+                indicaciones.set(i, indicacionPorModificar);
                 return true;
             }
         }
         return false;
     }
-    //Elimina un medicamento junto a toda su indicacion según el codigo del medicamento
-    public boolean eliminarIndicaccion(int codigo) {
-        for (int i=0;i<indicacciones.size();i++) {
-            if (indicacciones.get(i).medicamento.getCodigo() == codigo) {
-                indicacciones.remove(i);
+
+    // Elimina una indicación por código del medicamento
+    public boolean eliminarIndicacion(int codigo) {
+        for (int i = 0; i < indicaciones.size(); i++) {
+            if (indicaciones.get(i).getMedicamento().getCodigo() == codigo) {
+                indicaciones.remove(i);
                 return true;
             }
         }
         return false;
     }
-    //Cambia el estado de la receta a "NO finalizada"
+
+    // Cambia el estado de la receta a "NO finalizada"
     public void estadoNoFinalizado() {
-        estado="NO finalizada";
+        estado = "NO finalizada";
     }
-    //Cambia el estado de la receta a "confeccionada"
+
+    // Cambia el estado de la receta a "confeccionada"
     public void estadoConfeccionado() {
-        estado="confeccionada";
+        estado = "confeccionada";
     }
-    //Guarda la receta en datos/receta.xml
+
+    // Guarda la receta en datos/receta.xml
     public void guardarXML() throws Exception {
         FileOutputStream flujo = new FileOutputStream("datos/receta.xml");
         JAXBContext context = JAXBContext.newInstance(PrescripcionReceta.class);
@@ -81,25 +91,29 @@ public class PrescripcionReceta {
         marshaller.marshal(this, flujo);
     }
 
-    // Carga el catálogo desde datos/medicamentos.xml
+    // Carga la receta desde datos/receta.xml
     public void cargarXML() throws Exception {
         FileInputStream flujo = new FileInputStream("datos/receta.xml");
         JAXBContext context = JAXBContext.newInstance(PrescripcionReceta.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
         PrescripcionReceta temp = (PrescripcionReceta) unmarshaller.unmarshal(flujo);
-        this.indicacciones = temp.indicacciones;
+        this.indicaciones = temp.indicaciones;
     }
 
-    @XmlElement (name = "indicacciones")
-    private List<Indicaciones> indicacciones;
+    @XmlElement (name = "indicaciones")
+    private List<Indicaciones> indicaciones;
+
     @XmlElement(name = "paciente")
     private Paciente paciente;
+
     @XmlAttribute(name = "fecha_confeccion")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fecha_confeccion;
+
     @XmlAttribute(name = "fecha_retiro")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fecha_retiro;
+
     @Getter
     @XmlElement(name = "estado")
     String estado;
