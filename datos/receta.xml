@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<prescripcion-recetas fecha_confeccion="30/08/2025" fecha_retiro="30/08/2025">
+    <indicaciones>
+        <medicamento codigo="1001">
+            <nombre>Acetaminofén</nombre>
+            <presentacion>Tableta 500 mg</presentacion>
+            <descripcion>Analgésico y antipirético</descripcion>
+        </medicamento>
+        <cantidad>20</cantidad>
+        <descripcion>Tomar 1 tableta cada 8 horas</descripcion>
+        <duracion-dias>5</duracion-dias>
+    </indicaciones>
+    <indicaciones>
+        <medicamento codigo="2001">
+            <nombre>Ibuprofeno</nombre>
+            <presentacion>Tableta 400 mg</presentacion>
+            <descripcion>AINE antiinflamatorio</descripcion>
+        </medicamento>
+        <cantidad>10</cantidad>
+        <descripcion>Tomar 1 tableta cada 12 horas con comida</descripcion>
+        <duracion-dias>5</duracion-dias>
+    </indicaciones>
+    <paciente fecha_nacimiento="20/05/1995">
+        <id>1</id>
+        <nombre>Josué</nombre>
+        <teléfono>88887777</teléfono>
+    </paciente>
+    <estado>confeccionada</estado>
+</prescripcion-recetas>

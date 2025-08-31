@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lista_medicamentos>
+    <medicamento codigo="1001">
+        <nombre>Acetaminofén</nombre>
+        <presentacion>Tableta 500 mg</presentacion>
+        <descripcion>Analgésico y antipirético</descripcion>
+    </medicamento>
+    <medicamento codigo="1002">
+        <nombre>Acetaminofén</nombre>
+        <presentacion>Jarabe 100 mg/5 ml</presentacion>
+        <descripcion>Uso pediátrico</descripcion>
+    </medicamento>
+    <medicamento codigo="2001">
+        <nombre>Ibuprofeno</nombre>
+        <presentacion>Tableta 400 mg</presentacion>
+        <descripcion>AINE antiinflamatorio</descripcion>
+    </medicamento>
+</lista_medicamentos>
