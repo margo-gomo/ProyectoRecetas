@@ -11,6 +11,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,6 +19,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 
+@Getter
+@Setter
 @XmlRootElement (name = "prescripcion-recetas")
 public class PrescripcionReceta {
     public PrescripcionReceta() {
@@ -49,7 +52,7 @@ public class PrescripcionReceta {
         return indicaciones.add(indicacion);
     }
 
-    // Modifica toda una indicación por código de medicamento  (antes: modificarIndicaccion)
+    // Modifica toda una indicación por código de medicamento
     public boolean modificarIndicacion(Indicaciones indicacionPorModificar, int codigo) {
         if (indicacionPorModificar == null) return false;
         for (int i = 0; i < indicaciones.size(); i++) {
