@@ -40,11 +40,11 @@ public class PrescripcionReceta {
         return paciente != null;
     }
     //Agrega una indicacion a la receta
-    public boolean agregarIndicaccion(Indicacciones indicacion) {
+    public boolean agregarIndicaccion(Indicaciones indicacion) {
         return indicacciones.add(indicacion);
     }
     //Modifica toda una indicacion de la receta
-    public boolean modificarIndicaccion(Indicacciones indicacionPorModificar, int codigo) {
+    public boolean modificarIndicaccion(Indicaciones indicacionPorModificar, int codigo) {
         if (indicacionPorModificar == null) return false;
         for(int i=0;i<indicacciones.size();i++) {
             if(indicacciones.get(i).medicamento.getCodigo()==codigo){
@@ -91,7 +91,7 @@ public class PrescripcionReceta {
     }
 
     @XmlElement (name = "indicacciones")
-    private List<Indicacciones> indicacciones;
+    private List<Indicaciones> indicacciones;
     @XmlElement(name = "paciente")
     private Paciente paciente;
     @XmlAttribute(name = "fecha_confeccion")

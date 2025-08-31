@@ -12,9 +12,9 @@ import lombok.Data;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@XmlRootElement (name = "Indicacciones")
+@XmlRootElement (name = "Indicaciones")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Indicacciones {
+public class Indicaciones {
     Medicamento medicamento;
     @Getter
     @Setter
