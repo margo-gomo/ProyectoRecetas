@@ -62,7 +62,7 @@ public class GestorMedico {
     }
 
     // Reemplaza los datos de un médico existente (match por ID)
-    public boolean modificarMedico(Medico medicoPorActualizar) { // (antes: pacienteporactualizar)
+    public boolean modificarMedico(Medico medicoPorActualizar) {
         if (medicoPorActualizar == null) return false;
         for (int i = 0; i < medicos.size(); i++) {
             if (medicos.get(i).getId().equals(medicoPorActualizar.getId())) {
