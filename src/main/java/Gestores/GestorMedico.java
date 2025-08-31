@@ -52,7 +52,7 @@ public class GestorMedico {
     }
 
     // Agrega un médico si el ID no está repetido
-    public boolean agregarMedico(Medico medico) { // (antes: aregarMedico)
+    public boolean agregarMedico(Medico medico) {
         if (medico == null) return false;
         if (!existeMedico(medico.getId())) {
             medicos.add(medico);
@@ -113,7 +113,6 @@ public class GestorMedico {
         this.medicos = temp.medicos;
     }
 
-    // String legible de la lista (debug/impresión)
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
