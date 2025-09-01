@@ -12,6 +12,7 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlElement;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
@@ -136,5 +137,6 @@ public class GestorRecetas {
     }
 
     @XmlElement(name = "receta")
+    @Getter
     private List<PrescripcionReceta> recetas;
 }

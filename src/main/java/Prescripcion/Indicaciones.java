@@ -15,6 +15,7 @@ import lombok.Data;
 @XmlRootElement (name = "Indicaciones")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Indicaciones {
+    @Getter
     Medicamento medicamento;
     @Getter
     @Setter

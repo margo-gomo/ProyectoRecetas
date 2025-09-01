@@ -83,20 +83,21 @@ public class PrescripcionReceta {
         estado = "confeccionada";
     }
 
-    @XmlElement (name = "indicaciones")
+    @Getter
     private List<Indicaciones> indicaciones;
 
-    @XmlElement(name = "paciente")
     private Paciente paciente;
 
+    @Getter
     @XmlAttribute(name = "fecha_confeccion")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fecha_confeccion;
 
+    @Getter
     @XmlAttribute(name = "fecha_retiro")
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fecha_retiro;
 
-    @XmlElement(name = "estado")
+    @Getter
     String estado;
 }
