@@ -4,39 +4,40 @@ import java.awt.*;
 
 public class MenuPrincipalVista extends JFrame {
 
+
+    public JButton btnMedicos, btnFarmaceutas, btnPacientes, btnMedicamentos, btnDashboard, btnHistorico, btnAcerca;
     public JPanel panelContenido;
-    public JButton btnMedicos, btnPacientes, btnMedicamentos, btnDashboard, btnHistorico;
 
     public MenuPrincipalVista() {
-        setTitle("Sistema de Recetas - Hospital");
+        setTitle("Menú Principal");
         setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Menú lateral
-        JPanel panelMenu = new JPanel();
-        panelMenu.setLayout(new GridLayout(6, 1));
-        panelMenu.setPreferredSize(new Dimension(200, 0));
-
+        // Inicializar botones
         btnMedicos = new JButton("Médicos");
+        btnFarmaceutas = new JButton("Farmaceutas");
         btnPacientes = new JButton("Pacientes");
         btnMedicamentos = new JButton("Medicamentos");
         btnDashboard = new JButton("Dashboard");
         btnHistorico = new JButton("Histórico");
+        btnAcerca = new JButton("Acerca de");
 
-        panelMenu.add(btnMedicos);
-        panelMenu.add(btnPacientes);
-        panelMenu.add(btnMedicamentos);
-        panelMenu.add(btnDashboard);
-        panelMenu.add(btnHistorico);
+        JPanel panelBotones = new JPanel(new GridLayout(1, 7));
+        panelBotones.add(btnMedicos);
+        panelBotones.add(btnFarmaceutas);
+        panelBotones.add(btnPacientes);
+        panelBotones.add(btnMedicamentos);
+        panelBotones.add(btnDashboard);
+        panelBotones.add(btnHistorico);
+        panelBotones.add(btnAcerca);
 
-        add(panelMenu, BorderLayout.WEST);
+        add(panelBotones, BorderLayout.NORTH);
 
-        // Panel de contenido
-        panelContenido = new JPanel();
-        panelContenido.setLayout(new BorderLayout());
+        panelContenido = new JPanel(new BorderLayout());
         add(panelContenido, BorderLayout.CENTER);
     }
+
 }
 

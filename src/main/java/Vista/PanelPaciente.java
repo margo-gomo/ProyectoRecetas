@@ -2,17 +2,15 @@ package Vista;
 import javax.swing.*;
 import java.awt.*;
 
-public class PanelPaciente extends JFrame {
+public class PanelPaciente extends JPanel {
+
 
     public JTable tablaPacientes;
     public JTextField txtId, txtNombre, txtFechaNacimiento, txtTelefono;
     public JButton btnGuardar, btnEliminar, btnBuscar;
 
     public PanelPaciente() {
-        setTitle("Gestión de Pacientes");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
         JPanel panel = new JPanel(new GridLayout(5, 2, 5, 5));
         panel.setBorder(BorderFactory.createTitledBorder("Datos del Paciente"));
@@ -46,9 +44,10 @@ public class PanelPaciente extends JFrame {
         tablaPacientes = new JTable();
         JScrollPane scroll = new JScrollPane(tablaPacientes);
 
-        getContentPane().add(panel, BorderLayout.NORTH);
-        getContentPane().add(scroll, BorderLayout.CENTER);
-        getContentPane().add(botones, BorderLayout.SOUTH);
+        add(panel, BorderLayout.NORTH);
+        add(scroll, BorderLayout.CENTER);
+        add(botones, BorderLayout.SOUTH);
     }
+
 }
 

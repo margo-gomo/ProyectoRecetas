@@ -2,16 +2,14 @@ package Vista;
 import javax.swing.*;
 import java.awt.*;
 
-public class PanelMedicamentos extends JFrame {
+public class PanelMedicamentos extends JPanel {
+
     public JTable tablaMedicamentos;
     public JTextField txtCodigo, txtNombre, txtPresentacion;
     public JButton btnGuardar, btnEliminar, btnBuscar;
 
     public PanelMedicamentos() {
-        setTitle("Catálogo de Medicamentos");
-        setSize(600, 400);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
 
         JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
         panel.setBorder(BorderFactory.createTitledBorder("Datos del Medicamento"));
@@ -41,9 +39,9 @@ public class PanelMedicamentos extends JFrame {
         tablaMedicamentos = new JTable();
         JScrollPane scroll = new JScrollPane(tablaMedicamentos);
 
-        getContentPane().add(panel, BorderLayout.NORTH);
-        getContentPane().add(scroll, BorderLayout.CENTER);
-        getContentPane().add(botones, BorderLayout.SOUTH);
+        add(panel, BorderLayout.NORTH);
+        add(scroll, BorderLayout.CENTER);
+        add(botones, BorderLayout.SOUTH);
     }
 }
 
