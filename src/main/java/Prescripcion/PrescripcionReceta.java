@@ -88,24 +88,6 @@ public class PrescripcionReceta {
         estado = "confeccionada";
     }
 
-    // Guarda la receta en datos/receta.xml
-    public void guardarXML() throws Exception {
-        FileOutputStream flujo = new FileOutputStream("datos/receta.xml");
-        JAXBContext context = JAXBContext.newInstance(PrescripcionReceta.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(this, flujo);
-    }
-
-    // Carga la receta desde datos/receta.xml
-    public void cargarXML() throws Exception {
-        FileInputStream flujo = new FileInputStream("datos/receta.xml");
-        JAXBContext context = JAXBContext.newInstance(PrescripcionReceta.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        PrescripcionReceta temp = (PrescripcionReceta) unmarshaller.unmarshal(flujo);
-        this.indicaciones = temp.indicaciones;
-    }
-
     @XmlElement (name = "indicaciones")
     private List<Indicaciones> indicaciones;
 
