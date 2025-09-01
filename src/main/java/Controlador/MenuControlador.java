@@ -8,6 +8,7 @@ import java.awt.*;
 
 public class MenuControlador {
 
+
     private MenuPrincipalVista vista;
 
     public MenuControlador(MenuPrincipalVista vista) {
@@ -16,13 +17,11 @@ public class MenuControlador {
     }
 
     private void iniciarEventos() {
-        vista.btnMedicos.addActionListener(e -> {
-            PanelMedicos panel = new PanelMedicos();
-            new ControladorMedicos(panel); // Conecta lógica
-            mostrarVista(panel);
-        });
-
-        // Repetir para pacientes, medicamentos, etc.
+        vista.btnMedicos.addActionListener(e -> mostrarVista(new PanelMedicos()));
+        vista.btnFarmaceutas.addActionListener(e -> mostrarVista(new PanelFarmaceuta()));
+        vista.btnPacientes.addActionListener(e -> mostrarVista(new PanelPaciente()));
+        vista.btnMedicamentos.addActionListener(e -> mostrarVista(new PanelMedicamentos()));
+        // Agrega los demás paneles cuando estén listos
     }
 
     private void mostrarVista(JPanel nuevaVista) {
@@ -31,5 +30,6 @@ public class MenuControlador {
         vista.panelContenido.revalidate();
         vista.panelContenido.repaint();
     }
+
 
 }

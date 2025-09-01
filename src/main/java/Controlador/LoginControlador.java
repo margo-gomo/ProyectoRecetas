@@ -2,6 +2,7 @@ package Controlador;
 import Gestores.GestorFarmaceuta;
 import Gestores.GestorMedico;
 import Vista.LoginVista;
+import Vista.MenuPrincipalVista;
 import entidades.Farmaceuta;
 import entidades.Medico;
 import Gestores.GestorMedico;
@@ -15,23 +16,30 @@ public class LoginControlador {
 
 
     private void abrirMenuPrincipal(String rol) {
-        vista.dispose(); // Cierra la ventana de login
+//        vista.dispose(); // Cierra la ventana de login
+//
+//        switch (rol) {
+//            case "medico":
+//                PanelMedicos vistaMedico = new PanelMedicos();
+//                new ControladorMedicos(vistaMedico);
+//                vistaMedico.setVisible(true);
+//                break;
+//            case "farmaceuta":
+//                PanelFarmaceuta vistaFarmaceuta = new PanelFarmaceuta();
+//                new ControladorFarmaceuta(vistaFarmaceuta);
+//                vistaFarmaceuta.setVisible(true);
+//                break;
+//            // Puedes agregar más roles si lo necesitas
+//            default:
+//                JOptionPane.showMessageDialog(null, "Rol desconocido.");
+//        }
 
-        switch (rol) {
-            case "medico":
-                PanelMedicos vistaMedico = new PanelMedicos();
-                new ControladorMedicos(vistaMedico);
-                vistaMedico.setVisible(true);
-                break;
-            case "farmaceuta":
-                PanelFarmaceuta vistaFarmaceuta = new PanelFarmaceuta();
-                new ControladorFarmaceuta(vistaFarmaceuta);
-                vistaFarmaceuta.setVisible(true);
-                break;
-            // Puedes agregar más roles si lo necesitas
-            default:
-                JOptionPane.showMessageDialog(null, "Rol desconocido.");
-        }
+        vista.dispose(); // Cierra la ventana de login
+        MenuPrincipalVista menuVista = new MenuPrincipalVista();
+        new MenuControlador(menuVista);
+        menuVista.setVisible(true);
+
+
     }
 
 
