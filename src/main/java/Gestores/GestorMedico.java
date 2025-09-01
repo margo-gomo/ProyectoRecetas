@@ -52,7 +52,7 @@ public class GestorMedico {
     }
 
     // Agrega un médico si el ID no está repetido
-    public boolean agregarMedico(Medico medico) {
+    public boolean agregarMedico(Medico medico) { // (antes: aregarMedico)
         if (medico == null) return false;
         if (!existeMedico(medico.getId())) {
             medicos.add(medico);
@@ -62,7 +62,7 @@ public class GestorMedico {
     }
 
     // Reemplaza los datos de un médico existente (match por ID)
-    public boolean modificarMedico(Medico medicoPorActualizar) {
+    public boolean modificarMedico(Medico medicoPorActualizar) { // (antes: pacienteporactualizar)
         if (medicoPorActualizar == null) return false;
         for (int i = 0; i < medicos.size(); i++) {
             if (medicos.get(i).getId().equals(medicoPorActualizar.getId())) {
@@ -113,6 +113,7 @@ public class GestorMedico {
         this.medicos = temp.medicos;
     }
 
+    // String legible de la lista (debug/impresión)
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -121,6 +122,11 @@ public class GestorMedico {
         }
         return sb.append("\n").toString();
     }
+
+    public List<Medico> getMedicos() {
+        return medicos;
+    }
+
 
     @XmlElement(name = "medico")
     private List<Medico> medicos;

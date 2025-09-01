@@ -1,5 +1,6 @@
 package Gestores;
 
+import entidades.Medico;
 import entidades.Paciente;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -110,6 +111,10 @@ public class GestorPaciente {
             sb.append(String.format("%n\t%s,", paciente));
         }
         return sb.append("\n").toString();
+    }
+
+    public List<Paciente> getPacientes() {
+        return pacientes;
     }
 
     @XmlElement(name = "paciente")

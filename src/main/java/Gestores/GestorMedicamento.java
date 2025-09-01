@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 
+import entidades.Medico;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
@@ -119,6 +120,10 @@ public class GestorMedicamento {
             sb.append(String.format("%n\t%s,", m));
         }
         return sb.append("\n").toString();
+    }
+
+    public List<Medicamento> getMedicamentos() {
+        return medicamentos;
     }
 
     @XmlElement(name = "medicamento")

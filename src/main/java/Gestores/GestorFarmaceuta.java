@@ -125,6 +125,9 @@ public class GestorFarmaceuta {
         return sb.append("\n").toString();
     }
 
+    public List<Farmaceuta> getFarmaceutas() {
+        return farmaceutas;
+    }
     @XmlElement(name = "farmaceuta")
     private List<Farmaceuta> farmaceutas;
 }
