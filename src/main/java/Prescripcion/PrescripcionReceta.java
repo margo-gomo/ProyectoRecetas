@@ -3,9 +3,6 @@ package Prescripcion;
 import Adaptador.LocalDateAdapter;
 import Gestores.GestorPaciente;
 import entidades.Paciente;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -15,8 +12,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
