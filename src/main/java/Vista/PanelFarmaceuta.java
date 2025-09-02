@@ -34,7 +34,7 @@ public class PanelFarmaceuta extends JPanel {
 
         // Búsqueda
         JPanel panelBusqueda = new JPanel();
-        panelBusqueda.add(new JLabel("Buscar por nombre:"));
+        panelBusqueda.add(new JLabel("Buscar por ID:"));
         JTextField txtBuscar = new JTextField(15);
         panelBusqueda.add(txtBuscar);
         btnBuscar = new JButton("Buscar");
