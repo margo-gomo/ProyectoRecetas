@@ -17,10 +17,30 @@ public class MenuControlador {
     }
 
     private void iniciarEventos() {
-        vista.btnMedicos.addActionListener(e -> mostrarVista(new PanelMedicos()));
-        vista.btnFarmaceutas.addActionListener(e -> mostrarVista(new PanelFarmaceuta()));
-        vista.btnPacientes.addActionListener(e -> mostrarVista(new PanelPaciente()));
-        vista.btnMedicamentos.addActionListener(e -> mostrarVista(new PanelMedicamentos()));
+        vista.btnMedicos.addActionListener(e -> {
+            PanelMedicos panel = new PanelMedicos();
+            new ControladorMedicos(panel); // Aquí se configuran los eventos
+            mostrarVista(panel);
+        });
+        //================
+        vista.btnFarmaceutas.addActionListener(e -> {
+            PanelFarmaceuta panel = new PanelFarmaceuta();
+            new ControladorFarmaceuta(panel); // Aquí se configuran los eventos
+            mostrarVista(panel);
+        });
+        //=====================
+        vista.btnPacientes.addActionListener(e -> {
+            PanelPaciente panel = new PanelPaciente();
+            new ControladorPacientes(panel); // Aquí se configuran los eventos
+            mostrarVista(panel);
+        });
+        //=====================
+
+        vista.btnMedicamentos.addActionListener(e -> {
+            PanelMedicamentos panel = new PanelMedicamentos();
+            new ControladorMedicamentos(panel); // Aquí se configuran los eventos
+            mostrarVista(panel);
+        });
         // Agrega los demás paneles cuando estén listos
     }
 
