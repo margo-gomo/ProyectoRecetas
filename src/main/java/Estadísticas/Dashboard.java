@@ -3,7 +3,6 @@ import Prescripcion.PrescripcionReceta;
 import Prescripcion.Indicaciones;
 import Gestores.GestorRecetas;
 import entidades.Medicamento;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.time.Month;
@@ -21,7 +20,7 @@ public class Dashboard {
                 if(mes.getValue()>=mesInicio&&mes.getValue()<=mesFin){
                     int total=0;
                     for (Indicaciones indicacion : receta.getIndicaciones()){
-                        if(indicacion.getMedicamento()==medicamento){
+                        if(indicacion.getMedicamento().getCodigo()==medicamento.getCodigo()){
                             total+= indicacion.getCantidad();
                         }
                     }
