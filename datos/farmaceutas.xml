@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista-farmaceuta>
     <farmaceuta>
-        <id>1</id>
+        <id>4</id>
         <nombre>Rafael</nombre>
-        <clave>1</clave>
+        <clave>4</clave>
         <token>2</token>
     </farmaceuta>
     <farmaceuta>

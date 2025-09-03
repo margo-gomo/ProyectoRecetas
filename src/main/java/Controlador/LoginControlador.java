@@ -59,7 +59,7 @@ public class LoginControlador {
                 gestorMedico.cargarXML();
                 Medico medico = gestorMedico.buscarMedicoID(id);
                 if (medico != null && medico.getClave().equals(clave)) {
-                    JOptionPane.showMessageDialog(vista, "Bienvenido Médico");
+                    //JOptionPane.showMessageDialog(vista, "Bienvenido Médico");
                     abrirMenuPrincipal("medico");
                     return;
                 }
@@ -69,7 +69,7 @@ public class LoginControlador {
                 gestorFarmaceuta.cargarXML();
                 Farmaceuta farmaceuta = gestorFarmaceuta.buscarFarmaceutaID(id);
                 if (farmaceuta != null && farmaceuta.getClave().equals(clave)) {
-                    JOptionPane.showMessageDialog(vista, "Bienvenido Farmaceuta");
+                    //JOptionPane.showMessageDialog(vista, "Bienvenido Farmaceuta");
                     abrirMenuPrincipal("farmaceuta");
                     return;
                 }

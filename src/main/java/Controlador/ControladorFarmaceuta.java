@@ -3,8 +3,9 @@ import Vista.PanelFarmaceuta;
 import entidades.Farmaceuta;
 import Gestores.GestorFarmaceuta;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 
 public class ControladorFarmaceuta {
 
