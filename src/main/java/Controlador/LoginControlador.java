@@ -3,11 +3,13 @@ import Gestores.GestorFarmaceuta;
 import Gestores.GestorMedico;
 import Vista.LoginVista;
 import Vista.MenuPrincipalVista;
+import entidades.Administrador;
 import entidades.Farmaceuta;
 import entidades.Medico;
 import Gestores.GestorMedico;
 import Vista.PanelFarmaceuta;
 import Vista.PanelMedicos;
+import Gestores.GestorAdministrador;
 
 import javax.swing.*;
 
@@ -55,24 +57,33 @@ public class LoginControlador {
 
             try {
                 // Validación con médicos
-                GestorMedico gestorMedico = new GestorMedico();
-                gestorMedico.cargarXML();
-                Medico medico = gestorMedico.buscarMedicoID(id);
-                if (medico != null && medico.getClave().equals(clave)) {
+//                GestorMedico gestorMedico = new GestorMedico();
+//                gestorMedico.cargarXML();
+//                Medico medico = gestorMedico.buscarMedicoID(id);
+//                if (medico != null && medico.getClave().equals(clave)) {
+//                    //JOptionPane.showMessageDialog(vista, "Bienvenido Médico");
+//                    abrirMenuPrincipal("medico");
+//                    return;
+//                }
+                //===========================================
+                GestorAdministrador gestorAdmin = new GestorAdministrador();
+                gestorAdmin.cargarXML();
+                Administrador admin = gestorAdmin.buscarAdministradorID(id);
+                if (admin != null && admin.getClave().equals(clave)) {
                     //JOptionPane.showMessageDialog(vista, "Bienvenido Médico");
-                    abrirMenuPrincipal("medico");
+                    abrirMenuPrincipal("Administrador");
                     return;
                 }
 
                 // Validación con farmaceutas
-                GestorFarmaceuta gestorFarmaceuta = new GestorFarmaceuta();
-                gestorFarmaceuta.cargarXML();
-                Farmaceuta farmaceuta = gestorFarmaceuta.buscarFarmaceutaID(id);
-                if (farmaceuta != null && farmaceuta.getClave().equals(clave)) {
-                    //JOptionPane.showMessageDialog(vista, "Bienvenido Farmaceuta");
-                    abrirMenuPrincipal("farmaceuta");
-                    return;
-                }
+//                GestorFarmaceuta gestorFarmaceuta = new GestorFarmaceuta();
+//                gestorFarmaceuta.cargarXML();
+//                Farmaceuta farmaceuta = gestorFarmaceuta.buscarFarmaceutaID(id);
+//                if (farmaceuta != null && farmaceuta.getClave().equals(clave)) {
+//                    //JOptionPane.showMessageDialog(vista, "Bienvenido Farmaceuta");
+//                    abrirMenuPrincipal("farmaceuta");
+//                    return;
+//                }
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(vista, "Error al cargar datos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
