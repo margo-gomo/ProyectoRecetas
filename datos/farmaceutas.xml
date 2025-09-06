@@ -12,4 +12,10 @@
         <clave>2</clave>
         <token>2</token>
     </farmaceuta>
+    <farmaceuta>
+        <id>Paco</id>
+        <nombre>9</nombre>
+        <clave>Paco</clave>
+        <token>2</token>
+    </farmaceuta>
 </lista-farmaceuta>
