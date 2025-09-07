@@ -41,25 +41,5 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- Ikonli: base -->
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-core</artifactId>
-            <version>${ikonli.version}</version>
-        </dependency>
-
-        <!-- Ikonli: integración con Swing -->
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-swing</artifactId>
-            <version>${ikonli.version}</version>
-        </dependency>
-
-        <!-- Ikonli: paquete de Material Icons -->
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-material2-pack</artifactId>
-            <version>${ikonli.version}</version>
-        </dependency>
     </dependencies>
 </project>
