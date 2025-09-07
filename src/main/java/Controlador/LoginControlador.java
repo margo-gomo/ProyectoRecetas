@@ -72,6 +72,7 @@ public class LoginControlador {
                 if (admin != null && admin.getClave().equals(clave)) {
                     //JOptionPane.showMessageDialog(vista, "Bienvenido Médico");
                     abrirMenuPrincipal("Administrador");
+
                     return;
                 }
 

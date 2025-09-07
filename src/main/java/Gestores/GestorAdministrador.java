@@ -9,7 +9,7 @@ import jakarta.xml.bind.Marshaller;
 import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlElement;
-
+//admin
 @XmlRootElement(name = "lista-administradores")
 public class GestorAdministrador {
 

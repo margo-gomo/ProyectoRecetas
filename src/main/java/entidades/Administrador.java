@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
+//admin
 @XmlRootElement(name = "administrador")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
