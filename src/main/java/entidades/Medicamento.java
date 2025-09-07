@@ -39,7 +39,7 @@ public class Medicamento {
     }
     @Getter @Setter
     @XmlAttribute(name = "codigo")
-    private String codigo;
+    private int codigo;
 
     @Getter @Setter
     private String nombre;
