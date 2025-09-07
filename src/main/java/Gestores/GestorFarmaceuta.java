@@ -50,8 +50,8 @@ public class GestorFarmaceuta {
         return  farmaceutas.eliminar(id);
     }
     // Cambia la clave de un farmaceuta existente (match por ID)
-    public Farmaceuta cambiarClave(String id, String clave){
-        return  farmaceutas.cambiarClave(id,clave);
+    public Farmaceuta cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar){
+        return  farmaceutas.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
     }
 
     // String legible de la lista (debug/impresión)

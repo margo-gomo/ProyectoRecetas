@@ -78,16 +78,24 @@ public class MedicoDAOImpl implements MedicoDAO {
     }
 
     @Override
-    public Medico cambiarClave(String id, String clave) throws IllegalArgumentException {
+    public Medico cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar) throws IllegalArgumentException {
         Medico medico=medicos.get(id);
         if(medico!=null){
-            medico.setClave(clave);
-            if(medico.getClave()!=null) {
-                actualizar(medico);
-                System.out.printf("Clave cambiada correctamente: '%s'%n", clave);
+            if(medico.getClave().equals(claveActual)){
+                if(claveNueva.equals(claveConfirmar)){
+                    medico.setClave(claveConfirmar);
+                    if(medico.getClave()!=null) {
+                        actualizar(medico);
+                        System.out.printf("Clave cambiada correctamente: '%s'%n", claveConfirmar);
+                    }
+                    else
+                        throw new IllegalArgumentException(claveNueva);
+                }
+                else
+                    throw new IllegalArgumentException(claveConfirmar);
             }
             else
-                throw new IllegalArgumentException(clave);
+                throw new IllegalArgumentException(claveActual);
         }
         else
             throw new IllegalArgumentException(id);

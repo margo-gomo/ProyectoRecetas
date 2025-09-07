@@ -76,16 +76,24 @@ public class AdministradorDAOImpl implements AdministradorDAO {
     }
 
     @Override
-    public Administrador cambiarClave(String id, String clave) throws IllegalArgumentException {
+    public Administrador cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar) throws IllegalArgumentException {
         Administrador administrador=administradores.get(id);
         if(administrador!=null){
-            administrador.setClave(clave);
-            if(administrador.getClave()!=null) {
-                actualizar(administrador);
-                System.out.printf("Clave cambiada correctamente: '%s'%n", clave);
+            if(administrador.getClave().equals(claveActual)){
+                if(claveNueva.equals(claveConfirmar)){
+                    administrador.setClave(claveConfirmar);
+                    if(administrador.getClave()!=null) {
+                        actualizar(administrador);
+                        System.out.printf("Clave cambiada correctamente: '%s'%n", claveConfirmar);
+                    }
+                    else
+                        throw new IllegalArgumentException(claveNueva);
+                }
+                else
+                    throw new IllegalArgumentException(claveConfirmar);
             }
             else
-                throw new IllegalArgumentException(clave);
+                throw new IllegalArgumentException(claveActual);
         }
         else
             throw new IllegalArgumentException(id);

@@ -50,8 +50,8 @@ public class GestorAdministrador {
         return  administradores.eliminar(id);
     }
     // Cambia la clave de un administrador existente (match por ID)
-    public Administrador cambiarClave(String id, String clave){
-        return  administradores.cambiarClave(id,clave);
+    public Administrador cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar){
+        return  administradores.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
     }
 
     // String legible de la lista (debug/impresión)
