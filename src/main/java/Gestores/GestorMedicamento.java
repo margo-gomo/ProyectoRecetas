@@ -12,45 +12,38 @@ public class GestorMedicamento {
         this.medicamentos=medicamentos;
     }
 
-    // Cantidad total de médicos
-    public int cantidadMedicamentos() {
+    public int cantidad() {
         return medicamentos.cantidad();
     }
 
-    public List<Medicamento> ObtenerListaMedicamentos(){
+    public List<Medicamento> obtenerListaMedicamentos(){
         return medicamentos.obtenerListaMedicamentos();
     }
 
-    // Verifica si existe un médico con el ID indicado
     public boolean existeMedicamento(int codigo) {
         return medicamentos.buscarPorCodigo(codigo) != null;
     }
 
-    // Busca un médico por ID exacto (o null si no existe)
-    public Medicamento buscarPorID(int codigo) {
+    public Medicamento buscarPorCodigo(int codigo) {
             return medicamentos.buscarPorCodigo(codigo);
     }
 
-    // Busca por nombre con coincidencia aproximada (ignorando mayúsculas/minúsculas)
     public Medicamento buscarPorDescripcion(String descripcion) {
         return  medicamentos.buscarPorDescripcion(descripcion);
     }
 
-    // Agrega un médico si el ID no está repetido
-    public Medicamento agregar(Medicamento medicamento) throws IllegalArgumentException { // (antes: aregarMedicamento)
+    public Medicamento agregar(Medicamento medicamento) throws IllegalArgumentException {
         return medicamentos.agregar(medicamento);
     }
 
-    // Reemplaza los datos de un médico existente (match por ID)
-    public Medicamento actualizar(Medicamento medicamento) throws IllegalArgumentException { // (antes: pacienteporactualizar)
+    public Medicamento actualizar(Medicamento medicamento) throws IllegalArgumentException {
         return medicamentos.actualizar(medicamento);
     }
-    // Elimina un médico por ID
+
     public Medicamento eliminar(int codigo) throws IllegalArgumentException {
         return  medicamentos.eliminar(codigo);
     }
 
-    // String legible de la lista (debug/impresión)
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[");

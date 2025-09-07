@@ -12,44 +12,37 @@ public class GestorFarmaceuta {
         this.farmaceutas=farmaceutas;
     }
 
-    // Cantidad total de médicos
-    public int cantidadFarmaceutas() {
+    public int cantidad() {
         return farmaceutas.cantidad();
     }
 
-    public List<Farmaceuta> ObtenerListaFarmaceutas(){
+    public List<Farmaceuta> obtenerListaFarmaceutas(){
         return farmaceutas.obtenerListaFarmaceutas();
     }
 
-    // Verifica si existe un médico con el ID indicado
     public boolean existeFarmaceuta(String id) {
         return farmaceutas.buscarPorId(id) != null;
     }
 
-    // Busca un médico por ID exacto (o null si no existe)
     public Farmaceuta buscarPorID(String id) {
         return farmaceutas.buscarPorId(id);
     }
 
-    // Busca por nombre con coincidencia aproximada (ignorando mayúsculas/minúsculas)
     public Farmaceuta buscarPorNombre(String nombre) {
         return  farmaceutas.buscarPorNombre(nombre);
     }
 
-    // Agrega un médico si el ID no está repetido
-    public Farmaceuta agregar(Farmaceuta farmaceuta) throws IllegalArgumentException { // (antes: aregarFarmaceuta)
+    public Farmaceuta agregar(Farmaceuta farmaceuta) throws IllegalArgumentException {
         return farmaceutas.agregar(farmaceuta);
     }
 
-    // Reemplaza los datos de un médico existente (match por ID)
-    public Farmaceuta actualizar(Farmaceuta farmaceuta) throws IllegalArgumentException { // (antes: pacienteporactualizar)
+    public Farmaceuta actualizar(Farmaceuta farmaceuta) throws IllegalArgumentException {
         return farmaceutas.actualizar(farmaceuta);
     }
-    // Elimina un médico por ID
+
     public Farmaceuta eliminar(String id) throws IllegalArgumentException {
         return  farmaceutas.eliminar(id);
     }
-    // Cambia la clave de un farmaceuta existente (match por ID)
     public Farmaceuta cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar){
         return  farmaceutas.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
     }

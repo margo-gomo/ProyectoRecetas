@@ -11,7 +11,7 @@ public class GestorRecetas {
         this.recetas = recetas;
     }
 
-    public int cantidadRecetas() {
+    public int cantidad() {
         return recetas.cantidad();
     }
     public List<PrescripcionReceta> obtenerListaRecetas() {

@@ -13,11 +13,11 @@ public class GestorMedico {
     }
 
     // Cantidad total de médicos
-    public int cantidadMedicos() {
+    public int cantidad() {
         return medicos.cantidad();
     }
 
-    public List<Medico> ObtenerListaMedicos(){
+    public List<Medico> obtenerListaMedicos(){
         return medicos.obtenerListaMedicos();
     }
 

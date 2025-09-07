@@ -12,44 +12,36 @@ public class GestorAdministrador {
         this.administradores=administradores;
     }
 
-    // Cantidad total de médicos
-    public int cantidadAdministradors() {
+    public int cantidad() {
         return administradores.cantidad();
     }
 
-    public List<Administrador> ObtenerListaAdministradores(){
+    public List<Administrador> obtenerListaAdministradores(){
         return administradores.obtenerListaAdministradores();
     }
 
-    // Verifica si existe un médico con el ID indicado
     public boolean existeAdministrador(String id) {
         return administradores.buscarPorId(id) != null;
     }
 
-    // Busca un médico por ID exacto (o null si no existe)
-    public Administrador buscarPorID(String id) {
+    public Administrador buscarPorId(String id) {
         return administradores.buscarPorId(id);
     }
 
-    // Busca por nombre con coincidencia aproximada (ignorando mayúsculas/minúsculas)
     public Administrador buscarPorNombre(String nombre) {
         return  administradores.buscarPorNombre(nombre);
     }
 
-    // Agrega un médico si el ID no está repetido
-    public Administrador agregar(Administrador administrador) throws IllegalArgumentException { // (antes: aregarAdministrador)
+    public Administrador agregar(Administrador administrador) throws IllegalArgumentException {
         return administradores.agregar(administrador);
     }
 
-    // Reemplaza los datos de un médico existente (match por ID)
-    public Administrador actualizar(Administrador administrador) throws IllegalArgumentException { // (antes: pacienteporactualizar)
+    public Administrador actualizar(Administrador administrador) throws IllegalArgumentException {
         return administradores.actualizar(administrador);
     }
-    // Elimina un médico por ID
     public Administrador eliminar(String id) throws IllegalArgumentException {
         return  administradores.eliminar(id);
     }
-    // Cambia la clave de un administrador existente (match por ID)
     public Administrador cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar){
         return  administradores.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
     }
