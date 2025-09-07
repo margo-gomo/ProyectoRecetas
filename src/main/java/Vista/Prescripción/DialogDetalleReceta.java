@@ -3,15 +3,20 @@ package Vista.Prescripción;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class DialogDetalleIndicacion extends JDialog {
+public class DialogDetalleReceta extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JSpinner spinner1;
-    private JSpinner spinner2;
-    private JTextField textField1;
+    private JTextPane textPane1;
+    private JTextPane textPane2;
+    private JTextPane textPane3;
+    private JTextPane textPane4;
+    private JTextPane textPane5;
+    private JTable table1;
+    private JButton cerrarButton;
+    private JButton exportarButton;
 
-    public DialogDetalleIndicacion() {
+    public DialogDetalleReceta() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -55,7 +60,7 @@ public class DialogDetalleIndicacion extends JDialog {
     }
 
     public static void main(String[] args) {
-        DialogDetalleIndicacion dialog = new DialogDetalleIndicacion();
+        DialogDetalleReceta dialog = new DialogDetalleReceta();
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);

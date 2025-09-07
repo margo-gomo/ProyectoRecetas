@@ -11,4 +11,5 @@ public class LoginVista {
     private JLabel idField;
     private JLabel claveField;
     private JButton limpiarButton;
+    private JButton soyPacienteButton;
 }
