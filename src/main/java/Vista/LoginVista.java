@@ -1,7 +1,6 @@
 package Vista;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class LoginVista {
     private JTextField idText;
@@ -11,4 +10,5 @@ public class LoginVista {
     private JButton cambiarContraseñaButton;
     private JLabel idField;
     private JLabel claveField;
+    private JButton limpiarButton;
 }
