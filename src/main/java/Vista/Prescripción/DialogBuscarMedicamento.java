@@ -3,15 +3,16 @@ package Vista.Prescripción;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class DialogBuscarPaciente extends JDialog {
+public class DialogBuscarMedicamento extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JComboBox comboBox1;
     private JTextField textField1;
     private JTable table1;
+    private JTable table2;
 
-    public DialogBuscarPaciente() {
+    public DialogBuscarMedicamento() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -55,7 +56,7 @@ public class DialogBuscarPaciente extends JDialog {
     }
 
     public static void main(String[] args) {
-        DialogBuscarPaciente dialog = new DialogBuscarPaciente();
+        DialogBuscarMedicamento dialog = new DialogBuscarMedicamento();
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
