@@ -95,13 +95,13 @@ public class FarmaceutaDAOImpl implements FarmaceutaDAO {
         return farmaceuta;
     }
     public void cargar (InputStream in) throws JAXBException {
-        FarmaceutaDAOImpl.FarmaceutaDAOX far=(FarmaceutaDAOImpl.FarmaceutaDAOX) XMLUtils.loadFromXML(in, FarmaceutaDAOImpl.FarmaceutaDAOX.class);
+        FarmaceutaDAOX far=(FarmaceutaDAOX) XMLUtils.loadFromXML(in, FarmaceutaDAOX.class);
         farmaceutas.clear();
         for(Farmaceuta f : far.farmaceuta)
             farmaceutas.putIfAbsent(f.getId(),f);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        FarmaceutaDAOImpl.FarmaceutaDAOX med=new FarmaceutaDAOImpl.FarmaceutaDAOX();
+        FarmaceutaDAOX med=new FarmaceutaDAOX();
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(med));
         }

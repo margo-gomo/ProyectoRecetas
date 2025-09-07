@@ -14,15 +14,14 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-@Getter
-@Setter
 @XmlRootElement (name = "prescripcion-recetas")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PrescripcionReceta {
     public PrescripcionReceta() {
-        indicaciones = new ArrayList<>();
+        indicaciones = new HashMap<>();
         paciente = new Paciente();
         fecha_confeccion = LocalDate.now();
         fecha_retiro = null;
@@ -30,47 +29,67 @@ public class PrescripcionReceta {
     }
 
     public int cantidad(){ return indicaciones.size(); }
-
-    // Se le asigna un paciente a la receta buscándolo por id
-    public boolean agregarPaciente(GestorPaciente gestorPaciente, int id) {
-        if (gestorPaciente == null) return false;
-        paciente = gestorPaciente.buscarPacienteID(id);
-        return paciente != null;
-    }
-
-    // Se le asigna un paciente a la receta buscándolo por nombre
-    public boolean agregarPaciente(GestorPaciente gestorPaciente, String nombre) {
-        if (gestorPaciente == null) return false;
-        paciente = gestorPaciente.buscarPacienteNombre(nombre);
-        return paciente != null;
+    public List<Indicaciones> obtenerListaIndicaciones(){
+        return List.copyOf(indicaciones.values());
     }
 
     // Agrega una indicación a la receta
-    public boolean agregarIndicacion(Indicaciones indicacion) {
-        return indicaciones.add(indicacion);
+    public Indicaciones agregarIndicacion(Indicaciones indicacion) throws IllegalArgumentException {
+        if(!indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
+            indicaciones.putIfAbsent(indicacion.getMedicamento().getCodigo(),indicacion);
+            System.out.printf("Indicacion agregado correctamente: '%s'%n", indicacion);
+        }
+        else
+            throw new IllegalArgumentException(String.valueOf(indicaciones.get(indicacion.getMedicamento().getCodigo())));
+        return indicacion;
     }
 
     // Modifica toda una indicación por código de medicamento
-    public boolean modificarIndicacion(Indicaciones indicacionPorModificar, int codigo) {
-        if (indicacionPorModificar == null) return false;
-        for (int i = 0; i < indicaciones.size(); i++) {
-            if (indicaciones.get(i).getMedicamento().getCodigo() == codigo) {
-                indicaciones.set(i, indicacionPorModificar);
-                return true;
-            }
+    public Indicaciones actualizarIndicacion(Indicaciones indicacion) throws IllegalArgumentException {
+        if(indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
+            indicaciones.put(indicacion.getMedicamento().getCodigo(),indicacion);
+            System.out.printf("Indicacion actualizada correctamente: '%s'%n", indicacion);
         }
-        return false;
+        else
+            throw new IllegalArgumentException(String.valueOf(indicaciones.get(indicacion.getMedicamento().getCodigo())));
+        return indicacion;
     }
 
     // Elimina una indicación por código del medicamento
-    public boolean eliminarIndicacion(int codigo) {
-        for (int i = 0; i < indicaciones.size(); i++) {
-            if (indicaciones.get(i).getMedicamento().getCodigo() == codigo) {
-                indicaciones.remove(i);
-                return true;
-            }
+    public Indicaciones eliminarIndicacion(int codigo) throws IllegalArgumentException {
+        Indicaciones indicacion = indicaciones.remove(codigo);
+        if(indicacion!=null)
+            System.out.printf("Indicacion eliminada correctamente: '%s'%n", indicacion);
+        else
+            throw new IllegalArgumentException(String.valueOf(codigo));
+        return indicacion;
+    }
+    // Se le asigna un paciente a la receta buscándolo por id
+    public Paciente agregarPaciente(GestorPaciente gestorPaciente, int id) throws IllegalArgumentException {
+        if (gestorPaciente != null){
+            paciente = gestorPaciente.buscarPorId(id);
+            if (paciente != null)
+                System.out.printf("Paciente agregado correctamente: '%s'%n", paciente);
+            else
+                throw new IllegalArgumentException(String.valueOf(id));
         }
-        return false;
+        else
+            throw new IllegalArgumentException(String.valueOf(gestorPaciente));
+        return paciente;
+    }
+
+    // Se le asigna un paciente a la receta buscándolo por nombre
+    public Paciente agregarPaciente(GestorPaciente gestorPaciente, String nombre) throws IllegalArgumentException {
+        if (gestorPaciente != null){
+            paciente = gestorPaciente.buscarPorNombre(nombre);
+            if (paciente != null)
+                System.out.printf("Paciente agregado correctamente: '%s'%n", paciente);
+            else
+                throw new IllegalArgumentException(nombre);
+        }
+        else
+            throw new IllegalArgumentException(gestorPaciente.toString());
+        return paciente;
     }
 
     // Cambia el estado de la receta a "NO finalizada"
@@ -84,20 +103,22 @@ public class PrescripcionReceta {
     }
 
     @Getter
-    private List<Indicaciones> indicaciones;
+    private final Map<Integer, Indicaciones> indicaciones;
 
+    @Getter
     private Paciente paciente;
 
     @Getter
-    @XmlAttribute(name = "fecha_confeccion")
+    @Setter
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fecha_confeccion;
 
     @Getter
-    @XmlAttribute(name = "fecha_retiro")
+    @Setter
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fecha_retiro;
 
     @Getter
-    String estado;
+    @Setter
+    private String estado;
 }

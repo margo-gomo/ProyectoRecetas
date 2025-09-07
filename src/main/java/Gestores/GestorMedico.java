@@ -1,133 +1,69 @@
 package Gestores;
 
+import DAO.MedicoDAO;
 import entidades.Medico;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.List;
-import java.util.ArrayList;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlElement;
 
-@XmlRootElement(name = "lista-medicos")
+import java.util.List;
+
 public class GestorMedico {
 
-    public GestorMedico() {
+    public GestorMedico(MedicoDAO medicos) {
         // Lista en memoria para los médicos
-        medicos = new ArrayList<>();
+        this.medicos=medicos;
     }
 
     // Cantidad total de médicos
     public int cantidadMedicos() {
-        return medicos.size();
+        return medicos.cantidad();
+    }
+
+    public List<Medico> ObtenerListaMedicos(){
+        return medicos.obtenerListaMedicos();
     }
 
     // Verifica si existe un médico con el ID indicado
     public boolean existeMedico(String id) {
-        for (Medico medico : medicos) {
-            if (medico.getId().equals(id)) return true;
-        }
-        return false;
+        return medicos.buscarPorId(id) != null;
     }
 
     // Busca un médico por ID exacto (o null si no existe)
-    public Medico buscarMedicoID(String id) {
-        for (Medico medico : medicos) {
-            if (medico.getId().equals(id)) return medico;
-        }
-        return null;
+    public Medico buscarPorID(String id) {
+        return medicos.buscarPorId(id);
     }
 
     // Busca por nombre con coincidencia aproximada (ignorando mayúsculas/minúsculas)
-    public Medico buscarMedicoNombre(String nombre) {
-        if (nombre == null) return null;
-        String needle = nombre.toLowerCase();
-        for (Medico medico : medicos) {
-            String n = medico.getNombre();
-            if (n != null && n.toLowerCase().contains(needle)) return medico;
-        }
-        return null;
+    public Medico buscarPorNombre(String nombre) {
+        return  medicos.buscarPorNombre(nombre);
     }
 
     // Agrega un médico si el ID no está repetido
-    public boolean agregarMedico(Medico medico) { // (antes: aregarMedico)
-        if (medico == null) return false;
-        if (!existeMedico(medico.getId())) {
-            medicos.add(medico);
-            return true;
-        }
-        return false;
+    public Medico agregar(Medico medico) throws IllegalArgumentException { // (antes: aregarMedico)
+        return medicos.agregar(medico);
     }
 
     // Reemplaza los datos de un médico existente (match por ID)
-    public boolean modificarMedico(Medico medicoPorActualizar) { // (antes: pacienteporactualizar)
-        if (medicoPorActualizar == null) return false;
-        for (int i = 0; i < medicos.size(); i++) {
-            if (medicos.get(i).getId().equals(medicoPorActualizar.getId())) {
-                medicos.set(i, medicoPorActualizar);
-                return true;
-            }
-        }
-        return false;
+    public Medico actualizar(Medico medico) throws IllegalArgumentException { // (antes: pacienteporactualizar)
+        return medicos.actualizar(medico);
     }
-
-    // Cambia la clave de un medico existente (match por ID)
-    public boolean cambiarClave(String id, String clave){
-        for (Medico medico : medicos) {
-            if (medico.getId().equals(id)) {
-                medico.setClave(clave);
-                return true;
-            }
-        }
-        return false;
-    }
-
     // Elimina un médico por ID
-    public boolean eliminarMedico(String id) {
-        for (int i = 0; i < medicos.size(); i++) {
-            if (medicos.get(i).getId().equals(id)) {
-                medicos.remove(i);
-                return true;
-            }
-        }
-        return false;
+    public Medico eliminar(String id) throws IllegalArgumentException {
+        return  medicos.eliminar(id);
     }
-
-    // Guarda toda la lista en datos/medicos.xml
-    public void guardarXML() throws Exception {
-        FileOutputStream flujo = new FileOutputStream("datos/medicos.xml");
-        JAXBContext context = JAXBContext.newInstance(GestorMedico.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(this, flujo);
-    }
-
-    // Carga la lista completa desde datos/medicos.xml
-    public void cargarXML() throws Exception {
-        FileInputStream flujo = new FileInputStream("datos/medicos.xml");
-        JAXBContext context = JAXBContext.newInstance(GestorMedico.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        GestorMedico temp = (GestorMedico) unmarshaller.unmarshal(flujo);
-        this.medicos = temp.medicos;
+    // Cambia la clave de un medico existente (match por ID)
+    public Medico cambiarClave(String id, String clave){
+        return  medicos.cambiarClave(id,clave);
     }
 
     // String legible de la lista (debug/impresión)
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Medico medico : medicos) {
+        StringBuilder sb = new StringBuilder("[");
+        for (Medico medico : medicos.obtenerListaMedicos()) {
             sb.append(String.format("%n\t%s,", medico));
         }
-        return sb.append("\n").toString();
+        sb.append("\n]");
+        return sb.toString();
     }
 
-    public List<Medico> getMedicos() {
-        return medicos;
-    }
-
-
-    @XmlElement(name = "medico")
-    private List<Medico> medicos;
+    private final MedicoDAO medicos;
 }

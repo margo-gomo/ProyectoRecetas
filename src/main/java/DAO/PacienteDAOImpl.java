@@ -79,13 +79,13 @@ public class PacienteDAOImpl implements PacienteDAO {
     }
     
     public void cargar (InputStream in) throws JAXBException {
-        PacienteDAOImpl.PacienteDAOX pac=(PacienteDAOImpl.PacienteDAOX) XMLUtils.loadFromXML(in, PacienteDAOImpl.PacienteDAOX.class);
+        PacienteDAOX pac=(PacienteDAOX) XMLUtils.loadFromXML(in, PacienteDAOX.class);
         pacientes.clear();
         for(Paciente p : pac.paciente)
             pacientes.putIfAbsent(p.getId(),p);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        PacienteDAOImpl.PacienteDAOX pac=new PacienteDAOImpl.PacienteDAOX();
+        PacienteDAOX pac=new PacienteDAOX();
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(pac));
         }

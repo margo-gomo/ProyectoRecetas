@@ -14,12 +14,12 @@ public class Dashboard {
     }
     public Map<Month,Integer>medicamentoPorMes(Medicamento medicamento, int mesInicio, int mesFin){
         Map<Month, Integer> estadisticas = new TreeMap<>();
-        for (PrescripcionReceta receta : recetas.getRecetas()){
+        for (PrescripcionReceta receta : recetas.obtenerListaRecetas()){
             if(receta.getFecha_confeccion()!=null){
                 Month mes=receta.getFecha_confeccion().getMonth();
                 if(mes.getValue()>=mesInicio&&mes.getValue()<=mesFin){
                     int total=0;
-                    for (Indicaciones indicacion : receta.getIndicaciones()){
+                    for (Indicaciones indicacion : receta.obtenerListaIndicaciones()){
                         if(indicacion.getMedicamento().getCodigo()==medicamento.getCodigo()){
                             total+= indicacion.getCantidad();
                         }
@@ -31,7 +31,7 @@ public class Dashboard {
         return estadisticas;
     }
     public Map<String, Long>recetasPorEstado(){
-        return recetas.getRecetas().stream().collect(Collectors.groupingBy(PrescripcionReceta::getEstado,Collectors.counting()));
+        return recetas.obtenerListaRecetas().stream().collect(Collectors.groupingBy(PrescripcionReceta::getEstado,Collectors.counting()));
     }
     private GestorRecetas recetas;
 }

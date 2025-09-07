@@ -1,131 +1,65 @@
 package Gestores;
 
+import DAO.MedicamentoDAO;
 import entidades.Medicamento;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.List;
-import java.util.ArrayList;
 
-import entidades.Medico;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlElement;
-
-@XmlRootElement(name = "lista_medicamentos")
 public class GestorMedicamento {
 
-    public GestorMedicamento() {
-        // Lista en memoria para el catálogo
-        medicamentos = new ArrayList<>();
+    public GestorMedicamento(MedicamentoDAO medicamentos) {
+        // Lista en memoria para los médicos
+        this.medicamentos=medicamentos;
     }
 
-    // Cantidad total en el catálogo
+    // Cantidad total de médicos
     public int cantidadMedicamentos() {
-        return medicamentos.size();
+        return medicamentos.cantidad();
     }
 
-    // ¿Existe un medicamento con ese código?
+    public List<Medicamento> ObtenerListaMedicamentos(){
+        return medicamentos.obtenerListaMedicamentos();
+    }
+
+    // Verifica si existe un médico con el ID indicado
     public boolean existeMedicamento(int codigo) {
-        for (Medicamento m : medicamentos) {
-            if (m.getCodigo() == codigo) return true;
-        }
-        return false;
+        return medicamentos.buscarPorCodigo(codigo) != null;
     }
 
-    // Busca por código exacto
-    public Medicamento buscarMedicamentoCodigo(int codigo) {
-        for (Medicamento m : medicamentos) {
-            if (m.getCodigo() == codigo) return m;
-        }
-        return null;
+    // Busca un médico por ID exacto (o null si no existe)
+    public Medicamento buscarPorID(int codigo) {
+            return medicamentos.buscarPorCodigo(codigo);
     }
 
-    // Busca por descripción o nombre (coincidencia aproximada, ignore case)
-    public Medicamento buscarMedicamentoDescripcion(String texto) {
-        if (texto == null) return null;
-        String needle = texto.toLowerCase();
-        for (Medicamento m : medicamentos) {
-            String nombre = m.getNombre();
-            String desc   = m.getDescripcion();
-            String pres   = m.getPresentacion();
-
-            if ((nombre != null && nombre.toLowerCase().contains(needle)) ||
-                    (desc   != null && desc.toLowerCase().contains(needle))   ||
-                    (pres   != null && pres.toLowerCase().contains(needle))) {
-                return m; // primer match
-            }
-        }
-        return null;
+    // Busca por nombre con coincidencia aproximada (ignorando mayúsculas/minúsculas)
+    public Medicamento buscarPorDescripcion(String descripcion) {
+        return  medicamentos.buscarPorDescripcion(descripcion);
     }
 
-    // Agrega si el código no está repetido
-    public boolean agregarMedicamento(Medicamento med) {
-        if (med == null) return false;
-        if (!existeMedicamento(med.getCodigo())) {
-            medicamentos.add(med);
-            return true;
-        }
-        return false;
+    // Agrega un médico si el ID no está repetido
+    public Medicamento agregar(Medicamento medicamento) throws IllegalArgumentException { // (antes: aregarMedicamento)
+        return medicamentos.agregar(medicamento);
     }
 
-    // Reemplaza el medicamento que tenga el mismo código
-    public boolean modificarMedicamento(Medicamento medPorActualizar) {
-        if (medPorActualizar == null) return false;
-        for (int i = 0; i < medicamentos.size(); i++) {
-            if (medicamentos.get(i).getCodigo() == medPorActualizar.getCodigo()) {
-                medicamentos.set(i, medPorActualizar);
-                return true;
-            }
-        }
-        return false;
+    // Reemplaza los datos de un médico existente (match por ID)
+    public Medicamento actualizar(Medicamento medicamento) throws IllegalArgumentException { // (antes: pacienteporactualizar)
+        return medicamentos.actualizar(medicamento);
+    }
+    // Elimina un médico por ID
+    public Medicamento eliminar(int codigo) throws IllegalArgumentException {
+        return  medicamentos.eliminar(codigo);
     }
 
-    // Elimina por código
-    public boolean eliminarMedicamento(int codigo) {
-        for (int i = 0; i < medicamentos.size(); i++) {
-            if (medicamentos.get(i).getCodigo() == codigo) {
-                medicamentos.remove(i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Guarda el catálogo en datos/medicamentos.xml
-    public void guardarXML() throws Exception {
-        FileOutputStream flujo = new FileOutputStream("datos/medicamentos.xml");
-        JAXBContext context = JAXBContext.newInstance(GestorMedicamento.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(this, flujo);
-    }
-
-    // Carga el catálogo desde datos/medicamentos.xml
-    public void cargarXML() throws Exception {
-        FileInputStream flujo = new FileInputStream("datos/medicamentos.xml");
-        JAXBContext context = JAXBContext.newInstance(GestorMedicamento.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        GestorMedicamento temp = (GestorMedicamento) unmarshaller.unmarshal(flujo);
-        this.medicamentos = temp.medicamentos;
-    }
-
-    // Representación simple para depurar
+    // String legible de la lista (debug/impresión)
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Medicamento m : medicamentos) {
-            sb.append(String.format("%n\t%s,", m));
+        StringBuilder sb = new StringBuilder("[");
+        for (Medicamento medicamento : medicamentos.obtenerListaMedicamentos()) {
+            sb.append(String.format("%n\t%s,", medicamento));
         }
-        return sb.append("\n").toString();
+        sb.append("\n]");
+        return sb.toString();
     }
 
-    public List<Medicamento> getMedicamentos() {
-        return medicamentos;
-    }
-
-    @XmlElement(name = "medicamento")
-    private List<Medicamento> medicamentos;
+    private final MedicamentoDAO medicamentos;
 }

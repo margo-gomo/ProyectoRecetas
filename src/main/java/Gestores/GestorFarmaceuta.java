@@ -1,133 +1,69 @@
 package Gestores;
 
 import entidades.Farmaceuta;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import DAO.FarmaceutaDAO;
+
 import java.util.List;
-import java.util.ArrayList;
 
-import entidades.Medico;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlElement;
-
-@XmlRootElement(name = "lista-farmaceuta")
 public class GestorFarmaceuta {
 
-    public GestorFarmaceuta() {
-        // Lista en memoria para los farmaceutas
-        farmaceutas = new ArrayList<>();
+    public GestorFarmaceuta(FarmaceutaDAO farmaceutas) {
+        // Lista en memoria para los médicos
+        this.farmaceutas=farmaceutas;
     }
 
-    // Cantidad total de farmaceutas
+    // Cantidad total de médicos
     public int cantidadFarmaceutas() {
-        return farmaceutas.size();
+        return farmaceutas.cantidad();
     }
 
-    // Indica si existe un farmaceuta con el ID indicado
+    public List<Farmaceuta> ObtenerListaFarmaceutas(){
+        return farmaceutas.obtenerListaFarmaceutas();
+    }
+
+    // Verifica si existe un médico con el ID indicado
     public boolean existeFarmaceuta(String id) {
-        for (Farmaceuta f : farmaceutas) {
-            if (f.getId().equals(id)) return true;
-        }
-        return false;
+        return farmaceutas.buscarPorId(id) != null;
     }
 
-    // Busca y retorna un farmaceuta por ID exacto (o null si no existe)
-    public Farmaceuta buscarFarmaceutaID(String id) {
-        for (Farmaceuta f : farmaceutas) {
-            if (f.getId().equals(id)) return f;
-        }
-        return null;
+    // Busca un médico por ID exacto (o null si no existe)
+    public Farmaceuta buscarPorID(String id) {
+        return farmaceutas.buscarPorId(id);
     }
 
     // Busca por nombre con coincidencia aproximada (ignorando mayúsculas/minúsculas)
-    public Farmaceuta buscarFarmaceutaNombre(String nombre) {
-        if (nombre == null) return null;
-        String needle = nombre.toLowerCase();
-        for (Farmaceuta f : farmaceutas) {
-            String n = f.getNombre();
-            if (n != null && n.toLowerCase().contains(needle)) return f;
-        }
-        return null;
+    public Farmaceuta buscarPorNombre(String nombre) {
+        return  farmaceutas.buscarPorNombre(nombre);
     }
 
-    // Agrega un farmaceuta si el ID no está repetido
-    public boolean agregarFarmaceuta(Farmaceuta farmaceuta) { // (antes: aregarFarmaceuta)
-        if (farmaceuta == null) return false;
-        if (!existeFarmaceuta(farmaceuta.getId())) {
-            farmaceutas.add(farmaceuta);
-            return true;
-        }
-        return false;
+    // Agrega un médico si el ID no está repetido
+    public Farmaceuta agregar(Farmaceuta farmaceuta) throws IllegalArgumentException { // (antes: aregarFarmaceuta)
+        return farmaceutas.agregar(farmaceuta);
     }
 
-    // Reemplaza los datos del farmaceuta que tenga el mismo ID
-    public boolean modificarFarmaceuta(Farmaceuta farmaceutaPorActualizar) { // (antes: pacienteporactualizar)
-        if (farmaceutaPorActualizar == null) return false;
-        for (int i = 0; i < farmaceutas.size(); i++) {
-            if (farmaceutas.get(i).getId() == farmaceutaPorActualizar.getId()) {
-                farmaceutas.set(i, farmaceutaPorActualizar);
-                return true;
-            }
-        }
-        return false;
+    // Reemplaza los datos de un médico existente (match por ID)
+    public Farmaceuta actualizar(Farmaceuta farmaceuta) throws IllegalArgumentException { // (antes: pacienteporactualizar)
+        return farmaceutas.actualizar(farmaceuta);
     }
-
+    // Elimina un médico por ID
+    public Farmaceuta eliminar(String id) throws IllegalArgumentException {
+        return  farmaceutas.eliminar(id);
+    }
     // Cambia la clave de un farmaceuta existente (match por ID)
-    public boolean cambiarClave(String id, String clave){
-        for (Farmaceuta farmaceuta : farmaceutas) {
-            if (farmaceuta.getId().equals(id)) {
-                farmaceuta.setClave(clave);
-                return true;
-            }
-        }
-        return false;
+    public Farmaceuta cambiarClave(String id, String clave){
+        return  farmaceutas.cambiarClave(id,clave);
     }
 
-    // Elimina un farmaceuta por ID
-    public boolean eliminarFarmaceuta(String id) {
-        for (int i = 0; i < farmaceutas.size(); i++) {
-            if (farmaceutas.get(i).getId().equals(id)) {
-                farmaceutas.remove(i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // Guarda toda la lista en datos/farmaceutas.xml
-    public void guardarXML() throws Exception {
-        FileOutputStream flujo = new FileOutputStream("datos/farmaceutas.xml");
-        JAXBContext context = JAXBContext.newInstance(GestorFarmaceuta.class);
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.marshal(this, flujo);
-    }
-
-    // Carga la lista completa desde datos/farmaceutas.xml
-    public void cargarXML() throws Exception {
-        FileInputStream flujo = new FileInputStream("datos/farmaceutas.xml");
-        JAXBContext context = JAXBContext.newInstance(GestorFarmaceuta.class);
-        Unmarshaller unmarshaller = context.createUnmarshaller();
-        GestorFarmaceuta temp = (GestorFarmaceuta) unmarshaller.unmarshal(flujo);
-        this.farmaceutas = temp.farmaceutas;
-    }
-
-    // Muestra la lista en texto legible (debug/impresión)
+    // String legible de la lista (debug/impresión)
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Farmaceuta f : farmaceutas) {
-            sb.append(String.format("%n\t%s,", f));
+        StringBuilder sb = new StringBuilder("[");
+        for (Farmaceuta farmaceuta : farmaceutas.obtenerListaFarmaceutas()) {
+            sb.append(String.format("%n\t%s,", farmaceuta));
         }
-        return sb.append("\n").toString();
+        sb.append("\n]");
+        return sb.toString();
     }
 
-    public List<Farmaceuta> getFarmaceutas() {
-        return farmaceutas;
-    }
-    @XmlElement(name = "farmaceuta")
-    private List<Farmaceuta> farmaceutas;
+    private final FarmaceutaDAO farmaceutas;
 }

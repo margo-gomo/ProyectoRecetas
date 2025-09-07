@@ -31,7 +31,7 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
     }
 
     @Override
-    public Medicamento buscarPorId(int codigo) {
+    public Medicamento buscarPorCodigo(int codigo) {
         return medicamentos.get(codigo);
     }
 
@@ -78,13 +78,13 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
     }
 
     public void cargar (InputStream in) throws JAXBException {
-        MedicamentoDAOImpl.MedicamentoDAOX med=(MedicamentoDAOImpl.MedicamentoDAOX) XMLUtils.loadFromXML(in, MedicamentoDAOImpl.MedicamentoDAOX.class);
+        MedicamentoDAOX med=(MedicamentoDAOX) XMLUtils.loadFromXML(in, MedicamentoDAOX.class);
         medicamentos.clear();
         for(Medicamento m : med.medicamento)
             medicamentos.putIfAbsent(m.getCodigo(),m);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        MedicamentoDAOImpl.MedicamentoDAOX med=new MedicamentoDAOImpl.MedicamentoDAOX();
+        MedicamentoDAOX med=new MedicamentoDAOX();
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(med));
         }

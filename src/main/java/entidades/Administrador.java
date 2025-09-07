@@ -3,13 +3,18 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Objects;
+
 //admin
 @XmlRootElement(name = "administrador")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
+@ToString
 @Data
 public class Administrador {
 
@@ -17,9 +22,24 @@ public class Administrador {
         this.nombre = nombre;
         this.id = id;
         this.clave = this.id;
-        this.token = 2; // Token para identificar administrador
+        this.token = 0; // Token para identificar administrador
     }
-
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Administrador))
+            return false;
+        Administrador other = (Administrador) obj;
+        return Objects.equals(id, other.id) && Objects.equals(nombre, other.nombre);
+    }
+    @Override
+    public int hashCode() {
+        int hash=5;
+        hash=29 * hash + Objects.hashCode(this.id);
+        hash=29 * hash + Objects.hashCode(this.nombre);
+        return hash;
+    }
     @Getter
     @Setter
     private String nombre;
