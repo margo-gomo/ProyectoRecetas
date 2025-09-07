@@ -14,4 +14,15 @@ public class MenuVista {
     private JButton limpiarButton;
     private JButton descartarButton;
     private JButton detallesButton;
+    private JButton buscarRecetaButton;
+    private JTextField textField1;
+    private JTextField textField2;
+    private JTextField textField3;
+    private JTextField textField4;
+    private JTextField textField5;
+    private JTextField textField6;
+    private JButton iniciarProcesoButton;
+    private JButton marcarListaButton;
+    private JButton entregarButton;
+    private JButton detallesButton1;
 }
