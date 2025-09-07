@@ -6,9 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import java.util.Objects;
+
 @XmlRootElement (name = "farmaceuta")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
+@ToString
 @Data
 public class Farmaceuta {
     public  Farmaceuta(String id, String nombre) {
@@ -16,6 +20,22 @@ public class Farmaceuta {
         this.id = id;
         clave=this.id;
         token=2; //Token para identificar farmaceuta;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Farmaceuta))
+            return false;
+        Farmaceuta other = (Farmaceuta) obj;
+        return Objects.equals(id, other.id) && Objects.equals(nombre, other.nombre);
+    }
+    @Override
+    public int hashCode() {
+        int hash=5;
+        hash=29 * hash + Objects.hashCode(this.id);
+        hash=29 * hash + Objects.hashCode(this.nombre);
+        return hash;
     }
     @Getter
     @Setter
