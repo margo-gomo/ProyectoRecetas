@@ -8,7 +8,6 @@ import java.awt.*;
 
 public class MenuControlador {
 
-//menu
     private MenuPrincipalVista vista;
 
     public MenuControlador(MenuPrincipalVista vista) {
