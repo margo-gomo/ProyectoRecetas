@@ -24,7 +24,7 @@ public class GestorFarmaceuta {
         return farmaceutas.buscarPorId(id) != null;
     }
 
-    public Farmaceuta buscarPorID(String id) {
+    public Farmaceuta buscarPorId(String id) {
         return farmaceutas.buscarPorId(id);
     }
 

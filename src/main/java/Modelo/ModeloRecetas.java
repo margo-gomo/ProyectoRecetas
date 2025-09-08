@@ -15,15 +15,12 @@ public class ModeloRecetas {
         datos=new GestorRecetas(dao);
     }
 
-    public int cantidadRecetas() {
+    public int cantidad() {
         return datos.cantidad();
     }
+
     public List<PrescripcionReceta> obtenerListaRecetas() {
         return datos.obtenerListaRecetas();
-    }
-
-    public boolean existeReceta(int idPaciente, LocalDate fechaConfeccion) {
-        return datos.buscarReceta(idPaciente, fechaConfeccion)!=null;
     }
 
     public PrescripcionReceta buscarReceta(int idPaciente, LocalDate fechaConfeccion) {

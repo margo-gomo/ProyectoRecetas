@@ -27,7 +27,7 @@ public class GestorMedico {
     }
 
     // Busca un médico por ID exacto (o null si no existe)
-    public Medico buscarPorID(String id) {
+    public Medico buscarPorId(String id) {
         return medicos.buscarPorId(id);
     }
 

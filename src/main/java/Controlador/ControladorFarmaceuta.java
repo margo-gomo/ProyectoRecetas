@@ -1,105 +1,53 @@
 package Controlador;
-import Vista.PanelFarmaceuta;
 import entidades.Farmaceuta;
-import Gestores.GestorFarmaceuta;
-import javax.swing.*;
-import java.util.List;
-import javax.swing.table.DefaultTableModel;
+import Modelo.ModeloFarmaceuta;
+import jakarta.xml.bind.JAXBException;
+import java.io.FileNotFoundException;
 
 
 public class ControladorFarmaceuta {
-
-    private PanelFarmaceuta vista;
-    private GestorFarmaceuta gestor;
-
-    public ControladorFarmaceuta(PanelFarmaceuta vista) {
-        this.vista = vista;
-        this.gestor = new GestorFarmaceuta();
-
+    public ControladorFarmaceuta(ModeloFarmaceuta modelo){
+        this.modelo=modelo;
+    }
+    public ControladorFarmaceuta(){
+        this(new ModeloFarmaceuta());
+    }
+    public void init() {
         try {
-            gestor.cargarXML();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(vista, "Error al cargar farmaceutas: " + e.getMessage());
+            modelo.cargar();
+        } catch (JAXBException | FileNotFoundException ex) {
+            System.err.printf("Ocurrió un error al cargar los datos: '%s'%n",
+                    ex.getMessage());
         }
-
-        cargarTabla();
-        configurarEventos();
     }
-
-    private void cargarTabla() {
-        String[] columnas = {"ID", "Nombre"};
-        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
-
-        for (Farmaceuta f : gestor.getFarmaceutas()) {
-            modelo.addRow(new Object[]{f.getId(), f.getNombre()});
-        }
-
-        vista.tablaFarmaceutas.setModel(modelo);
+    public Farmaceuta buscarPorId(String id){
+        return modelo.buscarPorId(id);
     }
-
-    private void configurarEventos() {
-        vista.btnGuardar.addActionListener(e -> guardarFarmaceuta());
-        vista.btnEliminar.addActionListener(e -> eliminarFarmaceuta());
-        vista.btnBuscar.addActionListener(e -> buscarFarmaceutaPorId());
+    public Farmaceuta buscarPorNombre(String nombre){
+        return modelo.buscarPorNombre(nombre);
     }
-
-    private void guardarFarmaceuta() {
-        String id = vista.txtId.getText().trim();
-        String nombre = vista.txtNombre.getText().trim();
-
-        if (id.isEmpty() || nombre.isEmpty()) {
-            JOptionPane.showMessageDialog(vista, "Todos los campos son obligatorios.");
-            return;
-        }
-
-        Farmaceuta nuevo = new Farmaceuta(nombre, id);
-
-        if (gestor.existeFarmaceuta(id)) {
-            gestor.modificarFarmaceuta(nuevo);
-        } else {
-            gestor.agregarFarmaceuta(nuevo);
-        }
-
+    public Farmaceuta agregar(Farmaceuta medico) throws IllegalArgumentException{
+        return modelo.agregar(medico);
+    }
+    public Farmaceuta actualizar(Farmaceuta medico) throws IllegalArgumentException{
+        return modelo.actualizar(medico);
+    }
+    public Farmaceuta eliminar(String id) throws IllegalArgumentException{
+        return modelo.eliminar(id);
+    }
+    public Farmaceuta cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException{
+        return modelo.cambiarClave(id,claveActual,claveNueva,claveConfirmar);
+    }
+    public void cerrarAplicacion() {
         try {
-            gestor.guardarXML();
-            cargarTabla();
-            JOptionPane.showMessageDialog(vista, "Farmaceuta guardado correctamente.");
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(vista, "Error al guardar: " + ex.getMessage());
+            modelo.guardar();
+        } catch (JAXBException | FileNotFoundException ex) {
+            System.err.printf("Ocurrió un error al guardar los datos: '%s'%n",
+                    ex.getMessage());
         }
+
+        System.out.println("Aplicación finalizada..");
+        System.exit(0);
     }
-
-    private void eliminarFarmaceuta() {
-        String id = vista.txtId.getText().trim();
-        if (id.isEmpty()) {
-            JOptionPane.showMessageDialog(vista, "Ingrese el ID del farmaceuta a eliminar.");
-            return;
-        }
-
-        if (gestor.eliminarFarmaceuta(id)) {
-            try {
-                gestor.guardarXML();
-                cargarTabla();
-                JOptionPane.showMessageDialog(vista, "Farmaceuta eliminado.");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(vista, "Error al guardar cambios: " + ex.getMessage());
-            }
-        } else {
-            JOptionPane.showMessageDialog(vista, "No se encontró el farmaceuta con ese ID.");
-        }
-    }
-
-    private void buscarFarmaceutaPorId() {
-        String id = JOptionPane.showInputDialog(vista, "Ingrese ID a buscar:");
-        if (id == null || id.trim().isEmpty()) return;
-
-        Farmaceuta encontrado = gestor.buscarFarmaceutaID(id.trim());
-        if (encontrado != null) {
-            vista.txtId.setText(encontrado.getId());
-            vista.txtNombre.setText(encontrado.getNombre());
-        } else {
-            JOptionPane.showMessageDialog(vista, "No se encontró ningún farmaceuta con ese ID.");
-        }
-    }
-
+    private ModeloFarmaceuta modelo;
 }

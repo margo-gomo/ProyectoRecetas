@@ -20,19 +20,19 @@ public class ModeloFarmaceuta {
         return datos.obtenerListaFarmaceutas();
     }
     public Farmaceuta buscarPorId(String id){
-        return dao.buscarPorId(id);
+        return datos.buscarPorId(id);
     }
     public Farmaceuta buscarPorNombre(String nombre){
-        return dao.buscarPorNombre(nombre);
+        return datos.buscarPorNombre(nombre);
     }
     public Farmaceuta agregar(Farmaceuta medico) throws IllegalArgumentException{
-        return dao.agregar(medico);
+        return datos.agregar(medico);
     }
     public Farmaceuta actualizar(Farmaceuta medico) throws IllegalArgumentException{
-        return dao.actualizar(medico);
+        return datos.actualizar(medico);
     }
     public Farmaceuta eliminar(String id) throws IllegalArgumentException{
-        return dao.eliminar(id);
+        return datos.eliminar(id);
     }
     public Farmaceuta cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException{
         return datos.cambiarClave(id,claveActual,claveNueva,claveConfirmar);

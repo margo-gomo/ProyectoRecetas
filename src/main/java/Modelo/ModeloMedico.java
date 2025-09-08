@@ -21,19 +21,19 @@ public class ModeloMedico {
         return datos.obtenerListaMedicos();
     }
     public Medico buscarPorId(String id){
-        return dao.buscarPorId(id);
+        return datos.buscarPorId(id);
     }
     public Medico buscarPorNombre(String nombre){
-        return dao.buscarPorNombre(nombre);
+        return datos.buscarPorNombre(nombre);
     }
     public Medico agregar(Medico medico) throws IllegalArgumentException{
-        return dao.agregar(medico);
+        return datos.agregar(medico);
     }
     public Medico actualizar(Medico medico) throws IllegalArgumentException{
-        return dao.actualizar(medico);
+        return datos.actualizar(medico);
     }
     public Medico eliminar(String id) throws IllegalArgumentException{
-        return dao.eliminar(id);
+        return datos.eliminar(id);
     }
     public Medico cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException{
         return datos.cambiarClave(id,claveActual,claveNueva,claveConfirmar);

@@ -21,7 +21,7 @@ public class ModeloMedicamento {
         return datos.obtenerListaMedicamentos();
     }
 
-    public Medicamento buscarPorID(int codigo) {
+    public Medicamento buscarPorCodigo(int codigo) {
         return datos.buscarPorCodigo(codigo);
     }
 
