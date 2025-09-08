@@ -56,4 +56,16 @@ public class MenuVista {
     private JButton limpiarButton2;
     private JButton aplicarFiltrosButton;
     private JTable table3;
+    private JTextField textField10;
+    private JTextField textField11;
+    private JTextField textField12;
+    private JButton modificarButton;
+    private JButton guardarButton2;
+    private JButton borrarButton;
+    private JTextField textField13;
+    private JButton buscarButton2;
+    private JTable table4;
+    private JTextField textField14;
+    private JButton limpiarButton3;
+    private JButton generarReporteButton;
 }
