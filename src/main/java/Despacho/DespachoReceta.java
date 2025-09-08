@@ -8,9 +8,7 @@ import entidades.Farmaceuta;
 import java.time.LocalDate;
 
 public class DespachoReceta {
-
-    private static final int VENTANA_DIAS = 3;
-
+/*
     // Inicia el proceso: requiere "confeccionada" y fecha_retiro dentro de la ventana
     public boolean iniciarProceso(GestorFarmaceuta gestorFarmas, Farmaceuta usuario,
                                   PrescripcionReceta receta, GestorRecetas gestorRecetas) {
@@ -48,7 +46,6 @@ public class DespachoReceta {
 //        gestorRecetas.upsertReceta(receta);
 //        try { gestorRecetas.guardarXML("recetas"); return true; } catch (Exception e) { return false; }
 //    }
-        final String rutaArchivo = "recetas.xml"; // mejor con extensión .xml
         try {
             gestorRecetas.cargarXML(rutaArchivo);
         } catch (Exception e) {
@@ -87,5 +84,8 @@ public class DespachoReceta {
     private LocalDate restarDias(LocalDate fecha, int dias) { return fecha.minusDays(dias); }
     private boolean esEntreInclusivo(LocalDate f, LocalDate ini, LocalDate fin) {
         return !f.isBefore(ini) && !f.isAfter(fin);
+
     }
+    private static final int VENTANA_DIAS = 3;
+    NO TOCAR*/
 }

@@ -3,7 +3,6 @@ package Prescripcion;
 import Adaptador.LocalDateAdapter;
 import Gestores.GestorPaciente;
 import entidades.Paciente;
-import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -101,10 +100,10 @@ public class PrescripcionReceta {
     public void estadoConfeccionado() {
         estado = "confeccionada";
     }
-
+    @XmlElement
     @Getter
     private final Map<Integer, Indicaciones> indicaciones;
-
+    @XmlElement
     @Getter
     private Paciente paciente;
 
