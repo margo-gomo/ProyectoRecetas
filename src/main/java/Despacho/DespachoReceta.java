@@ -44,10 +44,26 @@ public class DespachoReceta {
     }
 
     private boolean upsertYGuardar(GestorRecetas gestorRecetas, PrescripcionReceta receta) {
-        try { gestorRecetas.cargarXML(); } catch (Exception ignored) {}
-        gestorRecetas.upsertReceta(receta);
-        try { gestorRecetas.guardarXML(); return true; } catch (Exception e) { return false; }
+//        try { gestorRecetas.cargarXML("recetas"); } catch (Exception ignored) {}
+//        gestorRecetas.upsertReceta(receta);
+//        try { gestorRecetas.guardarXML("recetas"); return true; } catch (Exception e) { return false; }
+//    }
+        final String rutaArchivo = "recetas.xml"; // mejor con extensión .xml
+        try {
+            gestorRecetas.cargarXML(rutaArchivo);
+        } catch (Exception e) {
+            System.err.println("Advertencia: no se pudo cargar el archivo XML. Se continuará con los datos actuales.");
+        }
+        try {
+            gestorRecetas.upsertReceta(receta);
+            gestorRecetas.guardarXML(rutaArchivo);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Error al guardar la receta: " + e.getMessage());
+            return false;
+        }
     }
+
 
     private boolean esFarmaceutaValido(GestorFarmaceuta gestor, Farmaceuta usuario) {
         if (gestor == null || usuario == null) return false;
