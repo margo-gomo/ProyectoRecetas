@@ -1,5 +1,7 @@
 package Vista.Prescripción;
 
+import Vista.MenuVista;
+
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -14,6 +16,9 @@ public class DialogSeleccionarFecha extends JDialog {
     public DialogSeleccionarFecha() {
         setContentPane(contentPane);
         setModal(true);
+        setSize(600, 400);
+        setLocationRelativeTo(null);
+        setResizable(true);
         getRootPane().setDefaultButton(buttonOK);
 
         buttonOK.addActionListener(new ActionListener() {
@@ -42,6 +47,7 @@ public class DialogSeleccionarFecha extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
     }
 
     private void onOK() {

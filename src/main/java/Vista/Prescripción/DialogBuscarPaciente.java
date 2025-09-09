@@ -14,6 +14,9 @@ public class DialogBuscarPaciente extends JDialog {
     public DialogBuscarPaciente() {
         setContentPane(contentPane);
         setModal(true);
+        setSize(600, 400);
+        setLocationRelativeTo(null);
+        setResizable(true);
         getRootPane().setDefaultButton(buttonOK);
 
         buttonOK.addActionListener(new ActionListener() {
@@ -28,7 +31,7 @@ public class DialogBuscarPaciente extends JDialog {
             }
         });
 
-        // call onCancel() when cross is clicked
+        // Llama a onCancel() cuando se cierra con la cruz
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -36,21 +39,22 @@ public class DialogBuscarPaciente extends JDialog {
             }
         });
 
-        // call onCancel() on ESCAPE
+        // Llama a onCancel() al presionar ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+                                               public void actionPerformed(ActionEvent e) {
+                                                   onCancel();
+                                               }
+                                           }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     private void onOK() {
-        // add your code here
+        // Código a ejecutar al presionar OK
         dispose();
     }
 
     private void onCancel() {
-        // add your code here if necessary
+        // Código a ejecutar al presionar Cancelar o cerrar
         dispose();
     }
 

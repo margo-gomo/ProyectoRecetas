@@ -1,9 +1,21 @@
 package Vista;
 
+import Controlador.Entidades.ControladorReceta;
+import Prescripcion.PrescripcionReceta;
+import Prescripcion.Indicaciones;
+import Vista.Prescripción.DialogBuscarMedicamento;
+import Vista.Prescripción.DialogBuscarPaciente;
+import Vista.Prescripción.DialogBuscarReceta;
+import Vista.Prescripción.DialogSeleccionarFecha;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class MenuVista extends JFrame {
 
@@ -11,7 +23,6 @@ public class MenuVista extends JFrame {
     private JPanel panelPrincipal;
     private JButton buscarPacienteButton;
     private JButton agregarMedicamentoButton;
-    private JFormattedTextField ddMmYyyyFormattedTextField;
     private JButton elegirFechaButton;
     private JTable table1;
     private JButton guardarButton;
@@ -19,8 +30,8 @@ public class MenuVista extends JFrame {
     private JButton descartarButton;
     private JButton detallesButton;
     private JButton buscarRecetaButton;
-    private JTextField textField1;
-    private JTextField textField2;
+    private JTextField textField1; // Fecha actual (confección)
+    private JTextField textField2; // Fecha de retiro
     private JTextField textField3;
     private JTextField textField4;
     private JTextField textField5;
@@ -66,10 +77,8 @@ public class MenuVista extends JFrame {
     private JButton modificarButton;
     private JButton guardarButton2;
     private JButton borrarButton;
-    private JTextField textField13;
     private JButton buscarButton2;
     private JTable table4;
-    private JTextField textField14;
     private JButton limpiarButton3;
     private JButton generarReporteButton;
     private JFormattedTextField formattedTextField4;
@@ -77,6 +86,12 @@ public class MenuVista extends JFrame {
     private JPanel panelContenedor;
     private JPanel controlPrescripcionPanel;
     private JPanel RecetaMedicaPrescripcionPanel;
+    private JComboBox comboBox5;
+
+    private ControladorReceta controladorReceta;
+    private DefaultTableModel modeloTablaRecetas;
+
+    private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public MenuVista() {
         setTitle("Sistema de Prescripción y Despacho de Recetas");
@@ -85,30 +100,57 @@ public class MenuVista extends JFrame {
         setSize(1100, 700);
         setLocationRelativeTo(null);
 
-        aplicarEstilos();
+        configurarTablaRecetas();
+
+        buscarPacienteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DialogBuscarPaciente dialog = new DialogBuscarPaciente();
+                dialog.setModal(true);
+                dialog.setLocationRelativeTo(MenuVista.this);
+                dialog.setVisible(true);
+            }
+        });
+
+        agregarMedicamentoButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DialogBuscarMedicamento dialog = new DialogBuscarMedicamento();
+                dialog.setModal(true);
+                dialog.setLocationRelativeTo(MenuVista.this);
+                dialog.setVisible(true);
+            }
+        });
+
+        elegirFechaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DialogSeleccionarFecha dialog = new DialogSeleccionarFecha();
+                dialog.setModal(true);
+                dialog.setLocationRelativeTo(MenuVista.this);
+                dialog.setVisible(true);
+            }
+        });
+
+        buscarRecetaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DialogBuscarReceta dialog = new DialogBuscarReceta();
+                dialog.setModal(true);
+                dialog.setSize(700, 450);
+                dialog.setLocationRelativeTo(MenuVista.this);
+                dialog.setResizable(true);
+                dialog.setVisible(true);
+            }
+        });
+
     }
 
-    private void aplicarEstilos() {
-        JButton[] botonesPrescripcion = {
-                buscarPacienteButton, agregarMedicamentoButton, elegirFechaButton,
-                guardarButton, limpiarButton, descartarButton, detallesButton
-        };
 
-        for (JButton b : botonesPrescripcion) {
-            if (b != null) {
-                b.setFocusPainted(false);
-                b.setBorderPainted(false);
-                b.setBackground(new Color(66, 133, 244));
-                b.setForeground(Color.WHITE);
-                b.setFont(new Font("Segoe UI", Font.BOLD, 13));
-            }
-        }
-
-        if (table1 != null) {
-            table1.setFillsViewportHeight(true);
-            table1.setRowHeight(25);
-            table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
-        }
+    private void configurarTablaRecetas() {
+        String[] columnas = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección"};
+        modeloTablaRecetas = new DefaultTableModel(columnas, 0);
+        table1.setModel(modeloTablaRecetas);
     }
 
     public static void main(String[] args) {
@@ -118,8 +160,6 @@ public class MenuVista extends JFrame {
             System.err.println("Error iniciando FlatLaf: " + ex.getMessage());
         }
 
-        SwingUtilities.invokeLater(() -> {
-            new MenuVista().setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new MenuVista().setVisible(true));
     }
 }

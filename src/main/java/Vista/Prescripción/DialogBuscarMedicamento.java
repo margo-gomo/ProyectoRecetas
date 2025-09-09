@@ -7,14 +7,16 @@ public class DialogBuscarMedicamento extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
+    private JTable table1;
     private JComboBox comboBox1;
     private JTextField textField1;
-    private JTable table1;
-    private JTable table2;
 
     public DialogBuscarMedicamento() {
         setContentPane(contentPane);
         setModal(true);
+        setSize(600, 400);
+        setLocationRelativeTo(null);
+        setResizable(true);
         getRootPane().setDefaultButton(buttonOK);
 
         buttonOK.addActionListener(new ActionListener() {
