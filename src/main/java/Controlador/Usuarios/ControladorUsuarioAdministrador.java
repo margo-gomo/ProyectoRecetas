@@ -5,12 +5,13 @@ import Prescripcion.PrescripcionReceta;
 import entidades.*;
 import Estadísticas.Dashboard;
 import java.time.LocalDate;
-import java.time.Month;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 
-public class ControladorUsuarioAdministrador extends Dashboard{
+public class ControladorUsuarioAdministrador{
     public ControladorUsuarioAdministrador(ModeloMedico modeloMedico, ModeloPaciente modeloPaciente, ModeloFarmaceuta modeloFarmaceuta, ModeloMedicamento modeloMedicamento,ModeloRecetas modeloRecetas) {
         this.modeloMedico = modeloMedico;
         this.modeloPaciente = modeloPaciente;
@@ -144,11 +145,14 @@ public class ControladorUsuarioAdministrador extends Dashboard{
         System.out.println("Aplicación finalizada..");
         System.exit(0);
     }
-    public Map<Month,Integer> medicamentoPorMes(Medicamento medicamento, int mesInicio, int mesFin){
-        return medicamentoPorMes(modeloRecetas.obtenerListaRecetas(), medicamento, mesInicio, mesFin);
+    public Map<YearMonth,Integer> medicamentoPorMes(List<Medicamento> medicamentosSeleccionados,
+                                                LocalDate startDate, LocalDate endDate){
+        Dashboard dashboard = new Dashboard();
+        return dashboard.medicamentosPorMes(modeloRecetas.obtenerListaRecetas(),medicamentosSeleccionados,startDate,endDate);
     }
     public Map<String, Long>recetasPorEstado(){
-        return recetasPorEstado(modeloRecetas.obtenerListaRecetas());
+        Dashboard dashboard = new Dashboard();
+        return dashboard.recetasPorEstado(modeloRecetas.obtenerListaRecetas());
     }
     private ModeloMedico modeloMedico;
     private ModeloPaciente modeloPaciente;

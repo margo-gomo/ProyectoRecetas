@@ -5,29 +5,67 @@ import entidades.Medicamento;
 import java.util.Map;
 import java.util.List;
 import java.util.TreeMap;
-import java.time.Month;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Collections;
+import java.time.YearMonth;
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class Dashboard {
-    public static Map<Month,Integer>medicamentoPorMes(List<PrescripcionReceta> recetas, Medicamento medicamento, int mesInicio, int mesFin){
-        Map<Month, Integer> estadisticas = new TreeMap<>();
-        for (PrescripcionReceta receta : recetas){
-            if(receta.getFecha_confeccion()!=null){
-                Month mes=receta.getFecha_confeccion().getMonth();
-                if(mes.getValue()>=mesInicio&&mes.getValue()<=mesFin){
-                    int total=0;
-                    for (Indicaciones indicacion : receta.obtenerListaIndicaciones()){
-                        if(indicacion.getMedicamento().getCodigo()==medicamento.getCodigo()){
-                            total+= indicacion.getCantidad();
-                        }
-                    }
-                    estadisticas.put(mes,estadisticas.getOrDefault(mes,0)+total);
+    public Map<YearMonth, Integer> medicamentosPorMes(
+            List<PrescripcionReceta> recetas,
+            List<Medicamento> medicamentosSeleccionados,
+            LocalDate startDate, LocalDate endDate) {
+
+        Map<YearMonth, Integer> estadisticas = new TreeMap<>();
+        if (recetas == null || medicamentosSeleccionados == null || startDate == null || endDate == null) {
+            return estadisticas;
+        }
+
+        // Prepara un set de códigos para lookup O(1)
+        Set<Integer> codigos = new HashSet<>();
+        for (Medicamento m : medicamentosSeleccionados) {
+            if (m != null) codigos.add(m.getCodigo());
+        }
+
+        // Itera recetas
+        for (PrescripcionReceta receta : recetas) {
+            LocalDate fc = receta.getFecha_confeccion();
+            if (fc == null) continue;
+            if (fc.isBefore(startDate) || fc.isAfter(endDate)) continue;
+
+            YearMonth ym = YearMonth.from(fc);
+            int totalReceta = 0;
+            for (Indicaciones ind : receta.obtenerListaIndicaciones()) {
+                if (ind == null || ind.getMedicamento() == null) continue;
+                if (codigos.contains(ind.getMedicamento().getCodigo())) {
+                    totalReceta += ind.getCantidad();
                 }
             }
+            estadisticas.put(ym, estadisticas.getOrDefault(ym, 0) + totalReceta);
         }
+
+        // Asegurar que todos los YearMonth del rango existan (llenar con 0)
+        YearMonth startYM = YearMonth.from(startDate);
+        YearMonth endYM = YearMonth.from(endDate);
+        YearMonth cur = startYM;
+        while (!cur.isAfter(endYM)) {
+            estadisticas.putIfAbsent(cur, 0);
+            cur = cur.plusMonths(1);
+        }
+
         return estadisticas;
     }
-    public static Map<String, Long>recetasPorEstado(List<PrescripcionReceta> recetas){
-        return recetas.stream().collect(Collectors.groupingBy(PrescripcionReceta::getEstado,Collectors.counting()));
+
+    /**
+     * Recetas por estado (ya estás bien).
+     */
+    public Map<String, Long> recetasPorEstado(List<PrescripcionReceta> recetas) {
+        if (recetas == null) return Collections.emptyMap();
+        return recetas.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.groupingBy(PrescripcionReceta::getEstado, Collectors.counting()));
     }
 }

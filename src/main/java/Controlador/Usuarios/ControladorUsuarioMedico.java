@@ -4,11 +4,12 @@ import Prescripcion.PrescripcionReceta;
 import Estadísticas.Dashboard;
 import entidades.Medicamento;
 import java.time.LocalDate;
-import java.time.Month;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.Map;
 import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
-public class ControladorUsuarioMedico extends Dashboard{
+public class ControladorUsuarioMedico{
     public ControladorUsuarioMedico(ModeloRecetas modelo) {
         this.modelo = modelo;
     }
@@ -49,11 +50,14 @@ public class ControladorUsuarioMedico extends Dashboard{
         System.out.println("Aplicación finalizada..");
         System.exit(0);
     }
-    public Map<Month,Integer> medicamentoPorMes(Medicamento medicamento, int mesInicio, int mesFin){
-        return medicamentoPorMes(modelo.obtenerListaRecetas(), medicamento, mesInicio, mesFin);
+    public Map<YearMonth,Integer> medicamentoPorMes(List<Medicamento> medicamentosSeleccionados,
+                                                    LocalDate startDate, LocalDate endDate){
+        Dashboard dashboard = new Dashboard();
+        return dashboard.medicamentosPorMes(modelo.obtenerListaRecetas(),medicamentosSeleccionados,startDate,endDate);
     }
     public Map<String, Long>recetasPorEstado(){
-        return recetasPorEstado(modelo.obtenerListaRecetas());
+        Dashboard dashboard = new Dashboard();
+        return dashboard.recetasPorEstado(modelo.obtenerListaRecetas());
     }
     private ModeloRecetas modelo;
 }
