@@ -570,14 +570,14 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <scrollpane id="e4a1a">
+                          <scrollpane id="e4a1a" binding="scrollmedicos">
                             <constraints>
                               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="99abc" class="javax.swing.JTable" binding="table4" default-binding="true">
+                              <component id="99abc" class="javax.swing.JTable" binding="tabloMedicos">
                                 <constraints/>
                                 <properties/>
                               </component>
@@ -732,7 +732,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="2ab30" class="javax.swing.JTable" default-binding="true">
+                              <component id="2ab30" class="javax.swing.JTable" binding="tablaFarma">
                                 <constraints/>
                                 <properties/>
                               </component>
@@ -971,7 +971,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="e6378" class="javax.swing.JTable" default-binding="true">
+                              <component id="e6378" class="javax.swing.JTable" binding="tablaPac">
                                 <constraints/>
                                 <properties/>
                               </component>
@@ -1089,7 +1089,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="ed417" class="javax.swing.JTable" default-binding="true">
+                              <component id="ed417" class="javax.swing.JTable" binding="tablaMed">
                                 <constraints/>
                                 <properties/>
                               </component>
@@ -1461,7 +1461,7 @@
                         </properties>
                         <border type="none"/>
                         <children>
-                          <component id="97edc" class="javax.swing.JTable" binding="table3" default-binding="true">
+                          <component id="97edc" class="javax.swing.JTable" binding="tabHistorico">
                             <constraints/>
                             <properties/>
                           </component>
@@ -1619,7 +1619,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="a31ae" class="javax.swing.JTable" binding="table2" default-binding="true">
+                              <component id="a31ae" class="javax.swing.JTable" binding="tablaDashboard">
                                 <constraints/>
                                 <properties/>
                               </component>

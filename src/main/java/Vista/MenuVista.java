@@ -1,6 +1,5 @@
 package Vista;
 
-import Controlador.Entidades.ControladorReceta;
 import Vista.Prescripción.DialogBuscarMedicamento;
 import Vista.Prescripción.DialogBuscarPaciente;
 import Vista.Prescripción.DialogBuscarReceta;
@@ -46,7 +45,7 @@ public class MenuVista extends JFrame {
     private JButton button3;
     private JButton button4;
     private JButton button5;
-    private JTable table2;
+    private JTable tablaDashboard;
     private JButton refrescarButton;
     private JButton limpiarButton1;
     private JComboBox comboBox2;
@@ -64,7 +63,7 @@ public class MenuVista extends JFrame {
     private JButton verDetallesButton;
     private JButton limpiarButton2;
     private JButton aplicarFiltrosButton;
-    private JTable table3;
+    private JTable tabHistorico;
     private JTextField textField10;
     private JTextField textField11;
     private JTextField textField12;
@@ -72,7 +71,7 @@ public class MenuVista extends JFrame {
     private JButton guardarButton2;
     private JButton borrarButton;
     private JButton buscarButton2;
-    private JTable table4;
+    private JTable tabloMedicos;
     private JButton limpiarButton3;
     private JButton generarReporteButton;
     private JFormattedTextField formattedTextField4;
@@ -100,7 +99,10 @@ public class MenuVista extends JFrame {
     private JButton buscarMedicamento;
     private JButton generarMedicamento;
     private JTable tablaDespacho;
-
+    private JScrollPane scrollmedicos;
+    private JTable tablaFarma;
+    private JTable tablaPac;
+    private JTable tablaMed;
     private DefaultTableModel modeloTablaRecetas;
     private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -113,6 +115,12 @@ public class MenuVista extends JFrame {
 
         configurarTablaRecetas();
         aplicarEstilosGenerales();
+        configurarTablaMedicos();
+        configurarTablaFarmaceuticos();
+        configurarTablaPacientes();
+        configurarTablaMedicamentos();
+        configurarTablaHistorico();
+        configurarTablaDashboard();
 
         buscarPacienteButton.addActionListener(new ActionListener() {
             @Override
@@ -223,7 +231,7 @@ public class MenuVista extends JFrame {
             }
         }
 
-        JTable[] todasLasTablas = {table1, table2, table3, table4};
+        JTable[] todasLasTablas = {table1, tablaDashboard, tabHistorico, tabloMedicos};
         for (JTable t : todasLasTablas) {
             if (t != null) {
                 t.setFillsViewportHeight(true);
@@ -278,10 +286,235 @@ public class MenuVista extends JFrame {
         }
     }
 
+    private void configurarTablaMedicos() {
+        if (tabloMedicos != null) {
+            String[] columnasMedicos = {"ID", "Nombre", "Especialidad"};
+            DefaultTableModel modeloMedicos = new DefaultTableModel(columnasMedicos, 0);
+            tabloMedicos.setModel(modeloMedicos);
+
+            // Estilo similar a otras tablas
+            tabloMedicos.setFillsViewportHeight(true);
+            tabloMedicos.setRowHeight(25);
+            tabloMedicos.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            tabloMedicos.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tabloMedicos.getTableHeader().setBackground(new Color(66, 133, 244));
+            tabloMedicos.getTableHeader().setForeground(Color.WHITE);
+            tabloMedicos.setSelectionBackground(new Color(204, 228, 255));
+            tabloMedicos.setSelectionForeground(Color.BLACK);
+
+            tabloMedicos.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column) {
+                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    if (!isSelected) {
+                        c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                    }
+                    return c;
+                }
+            });
+        }
+    }
+
+    private void configurarTablaFarmaceuticos() {
+        if (tablaFarma != null) {
+            String[] columnasFarma = {"ID", "Nombre"};
+            DefaultTableModel modeloFarma = new DefaultTableModel(columnasFarma, 0);
+            tablaFarma.setModel(modeloFarma);
+
+            tablaFarma.setFillsViewportHeight(true);
+            tablaFarma.setRowHeight(25);
+            tablaFarma.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            tablaFarma.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tablaFarma.getTableHeader().setBackground(new Color(66, 133, 244));
+            tablaFarma.getTableHeader().setForeground(Color.WHITE);
+            tablaFarma.setSelectionBackground(new Color(204, 228, 255));
+            tablaFarma.setSelectionForeground(Color.BLACK);
+
+            tablaFarma.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column) {
+                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    if (!isSelected) {
+                        c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                    }
+                    return c;
+                }
+            });
+        }
+    }
+
+
+    private void configurarTablaPacientes() {
+        if (tablaPac != null) {
+            String[] columnasPac = {"ID Paciente", "Nombre", "Fecha de Nacimiento", "Teléfono"};
+            DefaultTableModel modeloPac = new DefaultTableModel(columnasPac, 0);
+            tablaPac.setModel(modeloPac);
+
+            tablaPac.setFillsViewportHeight(true);
+            tablaPac.setRowHeight(25);
+            tablaPac.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            tablaPac.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tablaPac.getTableHeader().setBackground(new Color(66, 133, 244));
+            tablaPac.getTableHeader().setForeground(Color.WHITE);
+            tablaPac.setSelectionBackground(new Color(204, 228, 255));
+            tablaPac.setSelectionForeground(Color.BLACK);
+
+            tablaPac.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column) {
+                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    if (!isSelected) {
+                        c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                    }
+                    return c;
+                }
+            });
+        }
+    }
+
+    private void configurarTablaMedicamentos() {
+        if (tablaMed != null) {
+            String[] columnasMed = {"Código", "Nombre", "Descripción"};
+            DefaultTableModel modeloMed = new DefaultTableModel(columnasMed, 0);
+            tablaMed.setModel(modeloMed);
+
+            tablaMed.setFillsViewportHeight(true);
+            tablaMed.setRowHeight(25);
+            tablaMed.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            tablaMed.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tablaMed.getTableHeader().setBackground(new Color(66, 133, 244));
+            tablaMed.getTableHeader().setForeground(Color.WHITE);
+            tablaMed.setSelectionBackground(new Color(204, 228, 255));
+            tablaMed.setSelectionForeground(Color.BLACK);
+
+            tablaMed.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column) {
+                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    if (!isSelected) {
+                        c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                    }
+                    return c;
+                }
+            });
+        }
+    }
+
+
     private void configurarTablaRecetas() {
-        String[] columnas = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección"};
-        modeloTablaRecetas = new DefaultTableModel(columnas, 0);
+        // Configuración tabla recetas
+        String[] columnasRecetas = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección"};
+        modeloTablaRecetas = new DefaultTableModel(columnasRecetas, 0);
         table1.setModel(modeloTablaRecetas);
+
+        // Configuración tabla despacho
+        if (tablaDespacho != null) {
+            String[] columnasDespacho = {"ID Paciente", "Nombre Paciente", "Fecha Actual", "Fecha de Retiro", "Estado"};
+            DefaultTableModel modeloDespacho = new DefaultTableModel(columnasDespacho, 0);
+            tablaDespacho.setModel(modeloDespacho);
+
+            // Estilo similar a otras tablas
+            tablaDespacho.setFillsViewportHeight(true);
+            tablaDespacho.setRowHeight(25);
+            tablaDespacho.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            tablaDespacho.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tablaDespacho.getTableHeader().setBackground(new Color(66, 133, 244));
+            tablaDespacho.getTableHeader().setForeground(Color.WHITE);
+            tablaDespacho.setSelectionBackground(new Color(204, 228, 255));
+            tablaDespacho.setSelectionForeground(Color.BLACK);
+
+            tablaDespacho.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column) {
+                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    if (!isSelected) {
+                        c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                    }
+                    return c;
+                }
+            });
+        }
+    }
+
+
+    private void configurarTablaHistorico() {
+        if (tabHistorico != null) {
+            String[] columnasHistorico = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección", "Fecha de Retiro", "Estado"};
+            DefaultTableModel modeloHistorico = new DefaultTableModel(columnasHistorico, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            tabHistorico.setModel(modeloHistorico);
+
+            tabHistorico.setFillsViewportHeight(true);
+            tabHistorico.setRowHeight(25);
+            tabHistorico.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            tabHistorico.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tabHistorico.getTableHeader().setBackground(new Color(66, 133, 244));
+            tabHistorico.getTableHeader().setForeground(Color.WHITE);
+            tabHistorico.setSelectionBackground(new Color(204, 228, 255));
+            tabHistorico.setSelectionForeground(Color.BLACK);
+
+            tabHistorico.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column) {
+                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    if (!isSelected) {
+                        c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                    }
+                    return c;
+                }
+            });
+        }
+    }
+
+    private void configurarTablaDashboard() {
+        if (tablaDashboard != null) {
+            String[] columnasDashboard = {"Mes", "Cantidad de Recetas", "Cantidad de Medicamentos Prescritos", "Estado más Común"};
+            DefaultTableModel modeloDashboard = new DefaultTableModel(columnasDashboard, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            tablaDashboard.setModel(modeloDashboard);
+
+            tablaDashboard.setFillsViewportHeight(true);
+            tablaDashboard.setRowHeight(25);
+            tablaDashboard.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            tablaDashboard.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tablaDashboard.getTableHeader().setBackground(new Color(66, 133, 244));
+            tablaDashboard.getTableHeader().setForeground(Color.WHITE);
+            tablaDashboard.setSelectionBackground(new Color(204, 228, 255));
+            tablaDashboard.setSelectionForeground(Color.BLACK);
+
+            tablaDashboard.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column) {
+                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    if (!isSelected) {
+                        c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                    }
+                    return c;
+                }
+            });
+        }
     }
 
     public static void main(String[] args) {
@@ -293,4 +526,5 @@ public class MenuVista extends JFrame {
 
         SwingUtilities.invokeLater(() -> new MenuVista().setVisible(true));
     }
+
 }
