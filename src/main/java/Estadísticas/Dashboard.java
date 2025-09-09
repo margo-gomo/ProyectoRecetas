@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class Dashboard {
-    public static Map<YearMonth, Integer> medicamentosPorMes(
+    public Map<YearMonth, Integer> medicamentosPorMes(
             List<PrescripcionReceta> recetas,
             List<Medicamento> medicamentosSeleccionados,
             LocalDate startDate, LocalDate endDate) {
@@ -62,7 +62,7 @@ public class Dashboard {
     /**
      * Recetas por estado (ya estás bien).
      */
-    public static Map<String, Long> recetasPorEstado(List<PrescripcionReceta> recetas) {
+    public Map<String, Long> recetasPorEstado(List<PrescripcionReceta> recetas) {
         if (recetas == null) return Collections.emptyMap();
         return recetas.stream()
                 .filter(Objects::nonNull)

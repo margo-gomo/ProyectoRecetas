@@ -2,12 +2,16 @@ package Controlador.Usuarios;
 import Despacho.DespachoReceta;
 import Modelo.ModeloRecetas;
 import Prescripcion.PrescripcionReceta;
+import entidades.Medicamento;
 import jakarta.xml.bind.JAXBException;
-
+import Estadísticas.Dashboard;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import java.util.Map;
 
-public class ControladorUsuarioFarmaceuta extends DespachoReceta {
+public class ControladorUsuarioFarmaceuta extends DespachoReceta{
     public ControladorUsuarioFarmaceuta(ModeloRecetas modelo) {
         this.modelo = modelo;
     }
@@ -48,6 +52,7 @@ public class ControladorUsuarioFarmaceuta extends DespachoReceta {
         System.out.println("Aplicación finalizada..");
         System.exit(0);
     }
+
     public boolean iniciarProceso(int idPaciente, LocalDate fechaRetiro) throws IllegalArgumentException {
         for(PrescripcionReceta receta: modelo.obtenerListaRecetas()){
             if(receta.getPaciente().getId() == idPaciente && receta.getFecha_retiro().equals(fechaRetiro)){
@@ -74,6 +79,15 @@ public class ControladorUsuarioFarmaceuta extends DespachoReceta {
             }
         }
         return  false;
+    }
+    public Map<YearMonth,Integer> medicamentoPorMes(List<Medicamento> medicamentosSeleccionados,
+                                                    LocalDate startDate, LocalDate endDate){
+        Dashboard dashboard = new Dashboard();
+        return dashboard.medicamentosPorMes(modelo.obtenerListaRecetas(),medicamentosSeleccionados,startDate,endDate);
+    }
+    public Map<String, Long>recetasPorEstado(){
+        Dashboard dashboard = new Dashboard();
+        return dashboard.recetasPorEstado(modelo.obtenerListaRecetas());
     }
     private ModeloRecetas modelo;
 }
