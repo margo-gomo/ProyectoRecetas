@@ -9,53 +9,43 @@ import java.time.LocalDate;
 
 public class DespachoReceta {
     // Inicia el proceso: requiere "confeccionada" y fecha_retiro dentro de la ventana
-    public boolean iniciarProceso(GestorFarmaceuta gestorFarmas, Farmaceuta usuario,
-                                  PrescripcionReceta receta, GestorRecetas gestorRecetas) {
-        if (!esFarmaceutaValido(gestorFarmas, usuario) || receta == null || gestorRecetas == null) return false;
-        if (!"confeccionada".equalsIgnoreCase(receta.getEstado())) return false;
-        if (!fechaDentroVentana(receta.getFecha_retiro())) return false;
+    public static PrescripcionReceta iniciarProceso(PrescripcionReceta receta) throws IllegalArgumentException {
+        if ("confeccionada".equalsIgnoreCase(receta.getEstado())){
+            if (!fechaDentroVentana(receta.getFecha_retiro()))
+                receta.setEstado("proceso");
+            else
+                throw new IllegalArgumentException(receta.getEstado());
+        }
+        else
+            throw new IllegalArgumentException(receta.getFecha_retiro().toString());
 
-        receta.setEstado("proceso");
-        return upsertYGuardar(gestorRecetas, receta);
+        return receta;
     }
 
     // Marca "lista": requiere que esté en "proceso"
-    public boolean marcarLista(GestorFarmaceuta gestorFarmas, Farmaceuta usuario,
-                               PrescripcionReceta receta, GestorRecetas gestorRecetas) {
-        if (!esFarmaceutaValido(gestorFarmas, usuario) || receta == null || gestorRecetas == null) return false;
-        if (!"proceso".equalsIgnoreCase(receta.getEstado())) return false;
-
-        receta.setEstado("lista");
-        return upsertYGuardar(gestorRecetas, receta);
+    public static PrescripcionReceta marcarLista(PrescripcionReceta receta) throws IllegalArgumentException {
+        if ("proceso".equalsIgnoreCase(receta.getEstado())) receta.setEstado("lista");
+        else
+            throw new IllegalArgumentException(receta.getEstado());
+        return receta;
     }
 
     // Entrega al paciente: requiere "lista" y validar ventana
-    public boolean entregar(GestorFarmaceuta gestorFarmas, Farmaceuta usuario,
-                            PrescripcionReceta receta, GestorRecetas gestorRecetas) {
-        if (!esFarmaceutaValido(gestorFarmas, usuario) || receta == null || gestorRecetas == null) return false;
-        if (!"lista".equalsIgnoreCase(receta.getEstado())) return false;
-        if (!fechaDentroVentana(receta.getFecha_retiro())) return false;
-
-        receta.setEstado("entregada");
-        return upsertYGuardar(gestorRecetas, receta);
+    public PrescripcionReceta entregar(PrescripcionReceta receta) throws IllegalArgumentException {
+        if ("lista".equalsIgnoreCase(receta.getEstado())){
+            if (fechaDentroVentana(receta.getFecha_retiro()))
+                receta.setEstado("entregada");
+            else
+                throw new IllegalArgumentException(receta.getEstado());
+        }
+        else
+            throw new IllegalArgumentException(receta.getFecha_retiro().toString());
+        return receta;
     }
 
-    private boolean upsertYGuardar(GestorRecetas gestorRecetas, PrescripcionReceta receta) {
-        try { gestorRecetas.cargarXML("datos/recetas.xml"); } catch (Exception ignored) {}
-        gestorRecetas.upsertReceta(receta);
-        try { gestorRecetas.guardarXML("datos/recetas.xml"); return true; } catch (Exception e) { return false; }
-    }
-
-    private boolean esFarmaceutaValido(GestorFarmaceuta gestor, Farmaceuta usuario) {
-        if (gestor == null || usuario == null) return false;
-        boolean registrado = gestor.existeFarmaceuta(usuario.getId());
-        boolean esFarma = true;
-        try { esFarma = usuario.getToken() == 2; } catch (Throwable ignored) {}
-        return registrado && esFarma;
-    }
 
     // True si fechaRetiro [HOY-VENTANA_DIAS, HOY+VENTANA_DIAS]
-    private boolean fechaDentroVentana(LocalDate fechaRetiro) {
+    private static boolean fechaDentroVentana(LocalDate fechaRetiro) {
         if (fechaRetiro == null) return false;
         LocalDate hoy = hoy();
         LocalDate min = restarDias(hoy, VENTANA_DIAS);
@@ -63,10 +53,10 @@ public class DespachoReceta {
         return esEntreInclusivo(fechaRetiro, min, max);
     }
 
-    private LocalDate hoy() { return LocalDate.now(); }
-    private LocalDate sumarDias(LocalDate fecha, int dias) { return fecha.plusDays(dias); }
-    private LocalDate restarDias(LocalDate fecha, int dias) { return fecha.minusDays(dias); }
-    private boolean esEntreInclusivo(LocalDate f, LocalDate ini, LocalDate fin) {
+    private static LocalDate hoy() { return LocalDate.now(); }
+    private static LocalDate sumarDias(LocalDate fecha, int dias) { return fecha.plusDays(dias); }
+    private static LocalDate restarDias(LocalDate fecha, int dias) { return fecha.minusDays(dias); }
+    private static boolean esEntreInclusivo(LocalDate f, LocalDate ini, LocalDate fin) {
         return !f.isBefore(ini) && !f.isAfter(fin);
 
     }

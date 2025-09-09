@@ -1,13 +1,14 @@
 package Controlador.Usuarios;
 
 import Modelo.*;
+import Prescripcion.PrescripcionReceta;
 import entidades.*;
 import Estadísticas.Dashboard;
-import jakarta.xml.bind.JAXBException;
-
-import java.io.FileNotFoundException;
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.Map;
+import jakarta.xml.bind.JAXBException;
+import java.io.FileNotFoundException;
 
 public class ControladorUsuarioAdministrador extends Dashboard{
     public ControladorUsuarioAdministrador(ModeloMedico modeloMedico, ModeloPaciente modeloPaciente, ModeloFarmaceuta modeloFarmaceuta, ModeloMedicamento modeloMedicamento,ModeloRecetas modeloRecetas) {
@@ -105,7 +106,9 @@ public class ControladorUsuarioAdministrador extends Dashboard{
         return  modeloPaciente.eliminar(id);
     }
 
-
+    public PrescripcionReceta buscarReceta(int idPaciente, LocalDate fechaConfeccion) {
+        return modeloRecetas.buscarReceta(idPaciente, fechaConfeccion);
+    }
 
     public void cerrarAplicacion() {
         try {

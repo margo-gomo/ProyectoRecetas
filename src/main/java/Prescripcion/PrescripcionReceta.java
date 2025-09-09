@@ -10,12 +10,14 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
 @XmlRootElement (name = "prescripcion-recetas")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PrescripcionReceta {
@@ -28,6 +30,7 @@ public class PrescripcionReceta {
     }
 
     public int cantidad(){ return indicaciones.size(); }
+
     public List<Indicaciones> obtenerListaIndicaciones(){
         return List.copyOf(indicaciones.values());
     }
@@ -89,11 +92,6 @@ public class PrescripcionReceta {
         else
             throw new IllegalArgumentException(gestorPaciente.toString());
         return paciente;
-    }
-
-    // Cambia el estado de la receta a "NO finalizada"
-    public void estadoNoFinalizado() {
-        estado = "NO finalizada";
     }
 
     // Cambia el estado de la receta a "confeccionada"

@@ -1,18 +1,17 @@
 package Controlador.Usuarios;
+import Despacho.DespachoReceta;
 import Modelo.ModeloRecetas;
 import Prescripcion.PrescripcionReceta;
-import Estadísticas.Dashboard;
-import entidades.Medicamento;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.Map;
 import jakarta.xml.bind.JAXBException;
+
 import java.io.FileNotFoundException;
-public class ControladorUsuarioMedico extends Dashboard{
-    public ControladorUsuarioMedico(ModeloRecetas modelo) {
+import java.time.LocalDate;
+
+public class ControladorUsuarioFarmaceuta extends DespachoReceta {
+    public ControladorUsuarioFarmaceuta(ModeloRecetas modelo) {
         this.modelo = modelo;
     }
-    public ControladorUsuarioMedico() {
+    public ControladorUsuarioFarmaceuta() {
         this(new ModeloRecetas());
     }
     public void init() {
@@ -49,11 +48,32 @@ public class ControladorUsuarioMedico extends Dashboard{
         System.out.println("Aplicación finalizada..");
         System.exit(0);
     }
-    public Map<Month,Integer> medicamentoPorMes(Medicamento medicamento, int mesInicio, int mesFin){
-        return medicamentoPorMes(modelo.obtenerListaRecetas(), medicamento, mesInicio, mesFin);
+    public boolean iniciarProceso(int idPaciente, LocalDate fechaRetiro) throws IllegalArgumentException {
+        for(PrescripcionReceta receta: modelo.obtenerListaRecetas()){
+            if(receta.getPaciente().getId() == idPaciente && receta.getFecha_retiro().equals(fechaRetiro)){
+                actualizar(iniciarProceso(receta));
+                return true;
+            }
+        }
+        return  false;
     }
-    public Map<String, Long>recetasPorEstado(){
-        return recetasPorEstado(modelo.obtenerListaRecetas());
+    public boolean marcarLista(int idPaciente, LocalDate fechaRetiro)throws IllegalArgumentException{
+        for(PrescripcionReceta receta: modelo.obtenerListaRecetas()){
+            if(receta.getPaciente().getId() == idPaciente && receta.getFecha_retiro().equals(fechaRetiro)){
+                actualizar(marcarLista(receta));
+                return true;
+            }
+        }
+        return  false;
+    }
+    public boolean entregar(int idPaciente, LocalDate fechaRetiro)throws IllegalArgumentException{
+        for(PrescripcionReceta receta: modelo.obtenerListaRecetas()){
+            if(receta.getPaciente().getId() == idPaciente && receta.getFecha_retiro().equals(fechaRetiro)){
+                actualizar(entregar(receta));
+                return true;
+            }
+        }
+        return  false;
     }
     private ModeloRecetas modelo;
 }

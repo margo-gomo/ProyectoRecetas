@@ -44,6 +44,7 @@ public class RecetaDAOImpl implements RecetaDAO {
     public PrescripcionReceta agregar(PrescripcionReceta receta) throws IllegalArgumentException {
         ClaveCompuesta clave=new ClaveCompuesta(receta.getPaciente().getId(),receta.getFecha_confeccion());
         if(!recetas.containsKey(clave)){
+            receta.estadoConfeccionado();
             recetas.putIfAbsent(clave,receta);
             System.out.printf("Receta agregada correctamente: '%s'%n", receta);
         }
