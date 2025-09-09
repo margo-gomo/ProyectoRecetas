@@ -68,4 +68,6 @@ public class MenuVista {
     private JTextField textField14;
     private JButton limpiarButton3;
     private JButton generarReporteButton;
+    private JFormattedTextField formattedTextField4;
+    private JTextField textField15;
 }
