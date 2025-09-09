@@ -1,4 +1,4 @@
-package Controlador;
+package Controlador.Entidades;
 import entidades.Medicamento;
 import Modelo.ModeloMedicamento;
 import jakarta.xml.bind.JAXBException;

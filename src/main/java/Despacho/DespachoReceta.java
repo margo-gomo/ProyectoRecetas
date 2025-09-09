@@ -8,7 +8,6 @@ import entidades.Farmaceuta;
 import java.time.LocalDate;
 
 public class DespachoReceta {
-/*
     // Inicia el proceso: requiere "confeccionada" y fecha_retiro dentro de la ventana
     public boolean iniciarProceso(GestorFarmaceuta gestorFarmas, Farmaceuta usuario,
                                   PrescripcionReceta receta, GestorRecetas gestorRecetas) {
@@ -42,25 +41,10 @@ public class DespachoReceta {
     }
 
     private boolean upsertYGuardar(GestorRecetas gestorRecetas, PrescripcionReceta receta) {
-//        try { gestorRecetas.cargarXML("recetas"); } catch (Exception ignored) {}
-//        gestorRecetas.upsertReceta(receta);
-//        try { gestorRecetas.guardarXML("recetas"); return true; } catch (Exception e) { return false; }
-//    }
-        try {
-            gestorRecetas.cargarXML(rutaArchivo);
-        } catch (Exception e) {
-            System.err.println("Advertencia: no se pudo cargar el archivo XML. Se continuará con los datos actuales.");
-        }
-        try {
-            gestorRecetas.upsertReceta(receta);
-            gestorRecetas.guardarXML(rutaArchivo);
-            return true;
-        } catch (Exception e) {
-            System.err.println("Error al guardar la receta: " + e.getMessage());
-            return false;
-        }
+        try { gestorRecetas.cargarXML("datos/recetas.xml"); } catch (Exception ignored) {}
+        gestorRecetas.upsertReceta(receta);
+        try { gestorRecetas.guardarXML("datos/recetas.xml"); return true; } catch (Exception e) { return false; }
     }
-
 
     private boolean esFarmaceutaValido(GestorFarmaceuta gestor, Farmaceuta usuario) {
         if (gestor == null || usuario == null) return false;
@@ -87,5 +71,4 @@ public class DespachoReceta {
 
     }
     private static final int VENTANA_DIAS = 3;
-    NO TOCAR*/
 }

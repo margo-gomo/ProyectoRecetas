@@ -1,6 +1,5 @@
 package org.example;
 
-import Controlador.LoginControlador;
 import Gestores.GestorPaciente;
 import Gestores.GestorMedico;
 import Gestores.GestorFarmaceuta;
@@ -8,7 +7,6 @@ import entidades.Paciente;
 import entidades.Medico;
 import entidades.Farmaceuta;
 import Vista.LoginVista;
-import Controlador.MenuControlador;
 
 import java.time.LocalDate;
 

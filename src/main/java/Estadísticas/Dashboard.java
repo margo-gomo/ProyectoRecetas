@@ -1,20 +1,17 @@
 package Estadísticas;
 import Prescripcion.PrescripcionReceta;
 import Prescripcion.Indicaciones;
-import Gestores.GestorRecetas;
 import entidades.Medicamento;
 import java.util.Map;
+import java.util.List;
 import java.util.TreeMap;
 import java.time.Month;
 import java.util.stream.Collectors;
 
 public class Dashboard {
-    public Dashboard(GestorRecetas gestorRecetas) {
-        recetas=gestorRecetas;
-    }
-    public Map<Month,Integer>medicamentoPorMes(Medicamento medicamento, int mesInicio, int mesFin){
+    public static Map<Month,Integer>medicamentoPorMes(List<PrescripcionReceta> recetas, Medicamento medicamento, int mesInicio, int mesFin){
         Map<Month, Integer> estadisticas = new TreeMap<>();
-        for (PrescripcionReceta receta : recetas.obtenerListaRecetas()){
+        for (PrescripcionReceta receta : recetas){
             if(receta.getFecha_confeccion()!=null){
                 Month mes=receta.getFecha_confeccion().getMonth();
                 if(mes.getValue()>=mesInicio&&mes.getValue()<=mesFin){
@@ -30,8 +27,7 @@ public class Dashboard {
         }
         return estadisticas;
     }
-    public Map<String, Long>recetasPorEstado(){
-        return recetas.obtenerListaRecetas().stream().collect(Collectors.groupingBy(PrescripcionReceta::getEstado,Collectors.counting()));
+    public static Map<String, Long>recetasPorEstado(List<PrescripcionReceta> recetas){
+        return recetas.stream().collect(Collectors.groupingBy(PrescripcionReceta::getEstado,Collectors.counting()));
     }
-    private GestorRecetas recetas;
 }

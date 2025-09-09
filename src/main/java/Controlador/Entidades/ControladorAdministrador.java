@@ -1,4 +1,4 @@
-package Controlador;
+package Controlador.Entidades;
 import entidades.Administrador;
 import Modelo.ModeloAdministrador;
 import jakarta.xml.bind.JAXBException;

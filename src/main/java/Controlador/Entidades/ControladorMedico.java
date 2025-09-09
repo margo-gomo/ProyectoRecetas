@@ -1,4 +1,4 @@
-package Controlador;
+package Controlador.Entidades;
 
 import Modelo.ModeloMedico;
 import entidades.Medico;
