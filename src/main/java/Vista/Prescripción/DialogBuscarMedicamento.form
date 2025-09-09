@@ -95,9 +95,9 @@
             <properties>
               <editable value="true"/>
               <model>
-                <item value="id"/>
+                <item value="código"/>
                 <item value="nombre"/>
-                <item value="teléfono"/>
+                <item value="descripción"/>
               </model>
             </properties>
           </component>

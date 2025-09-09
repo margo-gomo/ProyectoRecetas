@@ -80,9 +80,9 @@
                 <properties>
                   <editable value="true"/>
                   <model>
-                    <item value="id"/>
-                    <item value="paciente"/>
-                    <item value="fecha de retiro"/>
+                    <item value="id paciente"/>
+                    <item value="nombre paciente"/>
+                    <item value="estado"/>
                   </model>
                 </properties>
               </component>
