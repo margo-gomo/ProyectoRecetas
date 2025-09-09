@@ -70,6 +70,9 @@ public class ControladorUsuarioAdministrador{
     public Medico eliminarMedico(String id) throws IllegalArgumentException{
         return modeloMedico.eliminar(id);
     }
+    public List<Medico> obtenerListaMedicos(){
+        return modeloMedico.obtenerListaMedico();
+    }
 
     public Farmaceuta buscarFarmaceutaPorId(String id){
         return modeloFarmaceuta.buscarPorId(id);
