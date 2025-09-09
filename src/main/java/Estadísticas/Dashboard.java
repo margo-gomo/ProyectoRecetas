@@ -59,9 +59,7 @@ public class Dashboard {
         return estadisticas;
     }
 
-    /**
-     * Recetas por estado (ya estás bien).
-     */
+
     public Map<String, Long> recetasPorEstado(List<PrescripcionReceta> recetas) {
         if (recetas == null) return Collections.emptyMap();
         return recetas.stream()

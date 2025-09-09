@@ -1,11 +1,25 @@
 package Vista;
 
+import Controlador.Entidades.ControladorMedicamento;
+import Controlador.Usuarios.ControladorUsuarioFarmaceuta;
 import Vista.Prescripción.DialogBuscarMedicamento;
 import Vista.Prescripción.DialogBuscarPaciente;
 import Vista.Prescripción.DialogBuscarReceta;
 import Vista.Prescripción.DialogSeleccionarFecha;
-import com.formdev.flatlaf.FlatLightLaf;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import Prescripcion.PrescripcionReceta;
+
+import com.formdev.flatlaf.FlatLightLaf;
+import entidades.Medicamento;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -13,6 +27,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 public class MenuVista extends JFrame {
 
@@ -103,7 +118,11 @@ public class MenuVista extends JFrame {
     private JTable tablaFarma;
     private JTable tablaPac;
     private JTable tablaMed;
+    private JPanel panelLineas;
+    private JPanel panelPastel;
+    private JScrollPane scrollEstados;
     private DefaultTableModel modeloTablaRecetas;
+    private JTable tablaEstados;
     private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public MenuVista() {
@@ -121,6 +140,7 @@ public class MenuVista extends JFrame {
         configurarTablaMedicamentos();
         configurarTablaHistorico();
         configurarTablaDashboard();
+        configurarTablaEstados();
 
         buscarPacienteButton.addActionListener(new ActionListener() {
             @Override
@@ -292,7 +312,6 @@ public class MenuVista extends JFrame {
             DefaultTableModel modeloMedicos = new DefaultTableModel(columnasMedicos, 0);
             tabloMedicos.setModel(modeloMedicos);
 
-            // Estilo similar a otras tablas
             tabloMedicos.setFillsViewportHeight(true);
             tabloMedicos.setRowHeight(25);
             tabloMedicos.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -331,7 +350,6 @@ public class MenuVista extends JFrame {
             tablaFarma.getTableHeader().setForeground(Color.WHITE);
             tablaFarma.setSelectionBackground(new Color(204, 228, 255));
             tablaFarma.setSelectionForeground(Color.BLACK);
-
             tablaFarma.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
                 @Override
                 public Component getTableCellRendererComponent(JTable table, Object value,
@@ -482,9 +500,47 @@ public class MenuVista extends JFrame {
         }
     }
 
+    private void configurarTablaEstados() {
+        if (tablaEstados != null) {
+            String[] columnasEstados = {"Estado", "Cantidad de Recetas"};
+            DefaultTableModel modeloEstados = new DefaultTableModel(columnasEstados, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            tablaEstados.setModel(modeloEstados);
+
+            tablaEstados.setFillsViewportHeight(true);
+            tablaEstados.setRowHeight(25);
+            tablaEstados.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+            tablaEstados.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+            tablaEstados.getTableHeader().setBackground(new Color(66, 133, 244));
+            tablaEstados.getTableHeader().setForeground(Color.WHITE);
+            tablaEstados.setSelectionBackground(new Color(204, 228, 255));
+            tablaEstados.setSelectionForeground(Color.BLACK);
+
+            tablaEstados.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                @Override
+                public Component getTableCellRendererComponent(JTable table, Object value,
+                                                               boolean isSelected, boolean hasFocus,
+                                                               int row, int column) {
+                    Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                    if (!isSelected) {
+                        c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(245, 245, 245));
+                    }
+                    return c;
+                }
+            });
+        }
+    }
+
     private void configurarTablaDashboard() {
         if (tablaDashboard != null) {
-            String[] columnasDashboard = {"Mes", "Cantidad de Recetas", "Cantidad de Medicamentos Prescritos", "Estado más Común"};
+            String[] columnasDashboard = {
+                    "Mes/Año",
+                    "Cantidad de Recetas",
+            };
             DefaultTableModel modeloDashboard = new DefaultTableModel(columnasDashboard, 0) {
                 @Override
                 public boolean isCellEditable(int row, int column) {
@@ -515,6 +571,7 @@ public class MenuVista extends JFrame {
                 }
             });
         }
+
     }
 
     public static void main(String[] args) {

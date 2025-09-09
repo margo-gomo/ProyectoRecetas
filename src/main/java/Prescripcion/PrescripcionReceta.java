@@ -3,6 +3,7 @@ package Prescripcion;
 import Adaptador.LocalDateAdapter;
 import Gestores.GestorPaciente;
 import entidades.Paciente;
+import entidades.Medicamento;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ToString
 @XmlRootElement (name = "prescripcion-recetas")
@@ -35,7 +37,6 @@ public class PrescripcionReceta {
         return List.copyOf(indicaciones.values());
     }
 
-    // Agrega una indicación a la receta
     public Indicaciones agregarIndicacion(Indicaciones indicacion) throws IllegalArgumentException {
         if(!indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
             indicaciones.putIfAbsent(indicacion.getMedicamento().getCodigo(),indicacion);
@@ -46,7 +47,6 @@ public class PrescripcionReceta {
         return indicacion;
     }
 
-    // Modifica toda una indicación por código de medicamento
     public Indicaciones actualizarIndicacion(Indicaciones indicacion) throws IllegalArgumentException {
         if(indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
             indicaciones.put(indicacion.getMedicamento().getCodigo(),indicacion);
@@ -57,7 +57,6 @@ public class PrescripcionReceta {
         return indicacion;
     }
 
-    // Elimina una indicación por código del medicamento
     public Indicaciones eliminarIndicacion(int codigo) throws IllegalArgumentException {
         Indicaciones indicacion = indicaciones.remove(codigo);
         if(indicacion!=null)
@@ -66,7 +65,7 @@ public class PrescripcionReceta {
             throw new IllegalArgumentException(String.valueOf(codigo));
         return indicacion;
     }
-    // Se le asigna un paciente a la receta buscándolo por id
+
     public Paciente agregarPaciente(GestorPaciente gestorPaciente, int id) throws IllegalArgumentException {
         if (gestorPaciente != null){
             paciente = gestorPaciente.buscarPorId(id);
@@ -80,7 +79,6 @@ public class PrescripcionReceta {
         return paciente;
     }
 
-    // Se le asigna un paciente a la receta buscándolo por nombre
     public Paciente agregarPaciente(GestorPaciente gestorPaciente, String nombre) throws IllegalArgumentException {
         if (gestorPaciente != null){
             paciente = gestorPaciente.buscarPorNombre(nombre);
@@ -94,13 +92,14 @@ public class PrescripcionReceta {
         return paciente;
     }
 
-    // Cambia el estado de la receta a "confeccionada"
     public void estadoConfeccionado() {
         estado = "confeccionada";
     }
+
     @XmlElement
     @Getter
     private final Map<Integer, Indicaciones> indicaciones;
+
     @XmlElement
     @Getter
     private Paciente paciente;
@@ -118,4 +117,11 @@ public class PrescripcionReceta {
     @Getter
     @Setter
     private String estado;
+
+    public List<Medicamento> getMedicamentos() {
+        return indicaciones.values()
+                .stream()
+                .map(Indicaciones::getMedicamento)
+                .collect(Collectors.toList());
+    }
 }
