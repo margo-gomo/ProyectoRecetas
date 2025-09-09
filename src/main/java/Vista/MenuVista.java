@@ -1,10 +1,14 @@
 package Vista;
 
-import javax.swing.*;
+import com.formdev.flatlaf.FlatLightLaf;
 
-public class MenuVista {
-    private JTabbedPane tabbedPane1;
-    private JPanel panel1;
+import javax.swing.*;
+import java.awt.*;
+
+public class MenuVista extends JFrame {
+
+    private JTabbedPane tabbedPanePrincipal;
+    private JPanel panelPrincipal;
     private JButton buscarPacienteButton;
     private JButton agregarMedicamentoButton;
     private JFormattedTextField ddMmYyyyFormattedTextField;
@@ -70,4 +74,52 @@ public class MenuVista {
     private JButton generarReporteButton;
     private JFormattedTextField formattedTextField4;
     private JTextField textField15;
+    private JPanel panelContenedor;
+    private JPanel controlPrescripcionPanel;
+    private JPanel RecetaMedicaPrescripcionPanel;
+
+    public MenuVista() {
+        setTitle("Sistema de Prescripción y Despacho de Recetas");
+        setContentPane(panelPrincipal);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(1100, 700);
+        setLocationRelativeTo(null);
+
+        aplicarEstilos();
+    }
+
+    private void aplicarEstilos() {
+        JButton[] botonesPrescripcion = {
+                buscarPacienteButton, agregarMedicamentoButton, elegirFechaButton,
+                guardarButton, limpiarButton, descartarButton, detallesButton
+        };
+
+        for (JButton b : botonesPrescripcion) {
+            if (b != null) {
+                b.setFocusPainted(false);
+                b.setBorderPainted(false);
+                b.setBackground(new Color(66, 133, 244));
+                b.setForeground(Color.WHITE);
+                b.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            }
+        }
+
+        if (table1 != null) {
+            table1.setFillsViewportHeight(true);
+            table1.setRowHeight(25);
+            table1.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            FlatLightLaf.setup();
+        } catch (Exception ex) {
+            System.err.println("Error iniciando FlatLaf: " + ex.getMessage());
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            new MenuVista().setVisible(true);
+        });
+    }
 }
