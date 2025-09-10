@@ -17,6 +17,12 @@ public class login {
     public void eliminarUsuario(Usuario usuario) {
         usuarios.remove(usuario);
     }
+    public void cargarUsuarios(List<? extends Usuario> usuarios) {
+        this.usuarios.addAll(usuarios);
+    }
+    public void limpiar() {
+        usuarios.clear();
+    }
     public int devolverToken(String id, String clave) throws SecurityException {
         for (Usuario u : usuarios) {
             if (u.getId().equals(id) && u.getClave().equals(clave)) {

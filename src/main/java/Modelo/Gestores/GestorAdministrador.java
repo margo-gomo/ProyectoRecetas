@@ -36,16 +36,6 @@ public class GestorAdministrador {
         return administradores.agregar(administrador);
     }
 
-    public Administrador actualizar(Administrador administrador) throws IllegalArgumentException {
-        return administradores.actualizar(administrador);
-    }
-    public Administrador eliminar(String id) throws IllegalArgumentException {
-        return  administradores.eliminar(id);
-    }
-    public Administrador cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar){
-        return  administradores.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
-    }
-
     // String legible de la lista (debug/impresión)
     @Override
     public String toString() {

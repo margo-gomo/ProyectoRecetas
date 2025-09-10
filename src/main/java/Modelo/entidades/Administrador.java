@@ -14,10 +14,10 @@ import java.util.Objects;
 @ToString
 public class Administrador implements Usuario {
 
-    public Administrador(String nombre, String id){
+    public Administrador(String nombre, String id,String clave){
         this.nombre = nombre;
         this.id = id;
-        this.clave = this.id;
+        this.clave = clave;
         this.token = 0; // Token para identificar administrador
     }
     @Override
