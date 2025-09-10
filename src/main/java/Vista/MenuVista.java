@@ -5,17 +5,7 @@ import Vista.Prescripción.DialogBuscarPaciente;
 import Vista.Prescripción.DialogBuscarReceta;
 import Vista.Prescripción.DialogSeleccionarFecha;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.List;
-
 import com.formdev.flatlaf.FlatLightLaf;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.DefaultPieDataset;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -23,7 +13,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 public class MenuVista extends JFrame {
 
@@ -117,6 +106,9 @@ public class MenuVista extends JFrame {
     private JPanel panelLineas;
     private JPanel panelPastel;
     private JScrollPane scrollEstados;
+    private JTextField tfIdMedico;
+    private JTextField tfNombreMedico;
+    private JTextField tfEspMedico;
     private DefaultTableModel modeloTablaRecetas;
     private JTable tablaEstados;
     private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -128,16 +120,18 @@ public class MenuVista extends JFrame {
         setSize(1100, 700);
         setLocationRelativeTo(null);
 
+        // Inicialización de métodos
         configurarTablaRecetas();
         aplicarEstilosGenerales();
         configurarTablaMedicos();
-        configurarTablaFarmaceuticos();
+        configurarTablaFarmaceutas();
         configurarTablaPacientes();
         configurarTablaMedicamentos();
         configurarTablaHistorico();
         configurarTablaDashboard();
         configurarTablaEstados();
 
+        // Action listeners de los botones
         buscarPacienteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -158,16 +152,6 @@ public class MenuVista extends JFrame {
             }
         });
 
-        elegirFechaButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DialogSeleccionarFecha dialog = new DialogSeleccionarFecha();
-                dialog.setModal(true);
-                dialog.setLocationRelativeTo(MenuVista.this);
-                dialog.setVisible(true);
-            }
-        });
-
         buscarRecetaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -176,6 +160,16 @@ public class MenuVista extends JFrame {
                 dialog.setSize(700, 450);
                 dialog.setLocationRelativeTo(MenuVista.this);
                 dialog.setResizable(true);
+                dialog.setVisible(true);
+            }
+        });
+
+        elegirFechaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DialogSeleccionarFecha dialog = new DialogSeleccionarFecha();
+                dialog.setModal(true);
+                dialog.setLocationRelativeTo(MenuVista.this);
                 dialog.setVisible(true);
             }
         });
@@ -189,6 +183,7 @@ public class MenuVista extends JFrame {
                 dialog.setVisible(true);
             }
         });
+
         elegirFechaButton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -208,6 +203,7 @@ public class MenuVista extends JFrame {
                 dialog.setVisible(true);
             }
         });
+
         elegirFechaButton4.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -218,6 +214,8 @@ public class MenuVista extends JFrame {
             }
         });
     }
+
+    // ------------------------------- ESTILOS DEL MENÚ PRINCIPAL --------------------------------------
 
     private void aplicarEstilosGenerales() {
         JButton[] todosLosBotones = {
@@ -302,6 +300,11 @@ public class MenuVista extends JFrame {
         }
     }
 
+    // --------------------------------------------------------------------------------------------------------------
+
+    // -------------------------------------CONFIGURACIÓN DE TABLAS--------------------------------------------------
+
+    // Tabla de médicos
     private void configurarTablaMedicos() {
         if (tabloMedicos != null) {
             String[] columnasMedicos = {"ID", "Nombre", "Especialidad"};
@@ -332,7 +335,8 @@ public class MenuVista extends JFrame {
         }
     }
 
-    private void configurarTablaFarmaceuticos() {
+    // Tabla de farmaceutas
+    private void configurarTablaFarmaceutas() {
         if (tablaFarma != null) {
             String[] columnasFarma = {"ID", "Nombre"};
             DefaultTableModel modeloFarma = new DefaultTableModel(columnasFarma, 0);
@@ -361,7 +365,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-
+    // Tabla de pacientes
     private void configurarTablaPacientes() {
         if (tablaPac != null) {
             String[] columnasPac = {"ID Paciente", "Nombre", "Fecha de Nacimiento", "Teléfono"};
@@ -392,6 +396,7 @@ public class MenuVista extends JFrame {
         }
     }
 
+    // Tabla de medicamentos
     private void configurarTablaMedicamentos() {
         if (tablaMed != null) {
             String[] columnasMed = {"Código", "Nombre", "Descripción"};
@@ -422,20 +427,18 @@ public class MenuVista extends JFrame {
         }
     }
 
-
+    // Tabla de recetas
     private void configurarTablaRecetas() {
-        // Configuración tabla recetas
+
         String[] columnasRecetas = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección"};
         modeloTablaRecetas = new DefaultTableModel(columnasRecetas, 0);
         table1.setModel(modeloTablaRecetas);
 
-        // Configuración tabla despacho
         if (tablaDespacho != null) {
             String[] columnasDespacho = {"ID Paciente", "Nombre Paciente", "Fecha Actual", "Fecha de Retiro", "Estado"};
             DefaultTableModel modeloDespacho = new DefaultTableModel(columnasDespacho, 0);
             tablaDespacho.setModel(modeloDespacho);
 
-            // Estilo similar a otras tablas
             tablaDespacho.setFillsViewportHeight(true);
             tablaDespacho.setRowHeight(25);
             tablaDespacho.setFont(new Font("Segoe UI", Font.PLAIN, 12));
@@ -460,7 +463,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-
+    // Tabla Histórico
     private void configurarTablaHistorico() {
         if (tabHistorico != null) {
             String[] columnasHistorico = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección", "Fecha de Retiro", "Estado"};
@@ -496,6 +499,7 @@ public class MenuVista extends JFrame {
         }
     }
 
+    // Tabla de estados Dashboarad
     private void configurarTablaEstados() {
         if (tablaEstados != null) {
             String[] columnasEstados = {"Estado", "Cantidad de Recetas"};
@@ -531,6 +535,7 @@ public class MenuVista extends JFrame {
         }
     }
 
+    // Tabla de tiempo Dashboard
     private void configurarTablaDashboard() {
         if (tablaDashboard != null) {
             String[] columnasDashboard = {
@@ -568,8 +573,11 @@ public class MenuVista extends JFrame {
             });
         }
 
+        // ----------------------------------------------------------------------------------------------------------------
+
     }
 
+    // Main de menú principal
     public static void main(String[] args) {
         try {
             FlatLightLaf.setup();
