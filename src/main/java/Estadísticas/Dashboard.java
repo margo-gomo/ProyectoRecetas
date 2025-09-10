@@ -1,7 +1,7 @@
-/*package Estadísticas;
-import Prescripcion.PrescripcionReceta;
-import Prescripcion.Indicaciones;
-import entidades.Medicamento;
+package Estadísticas;
+import Modelo.entidades.Receta.Receta;
+import Modelo.entidades.Receta.Indicacion;
+import Modelo.entidades.Medicamento;
 import java.util.Map;
 import java.util.List;
 import java.util.TreeMap;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class Dashboard {
     public Map<YearMonth, Integer> medicamentosPorMes(
-            List<PrescripcionReceta> recetas,
+            List<Receta> recetas,
             List<Medicamento> medicamentosSeleccionados,
             LocalDate startDate, LocalDate endDate) {
 
@@ -31,14 +31,14 @@ public class Dashboard {
         }
 
         // Itera recetas
-        for (PrescripcionReceta receta : recetas) {
+        for (Receta receta : recetas) {
             LocalDate fc = receta.getFecha_confeccion();
             if (fc == null) continue;
             if (fc.isBefore(startDate) || fc.isAfter(endDate)) continue;
 
             YearMonth ym = YearMonth.from(fc);
             int totalReceta = 0;
-            for (Indicaciones ind : receta.obtenerListaIndicaciones()) {
+            for (Indicacion ind : receta.obtenerListaIndicaciones()) {
                 if (ind == null || ind.getMedicamento() == null) continue;
                 if (codigos.contains(ind.getMedicamento().getCodigo())) {
                     totalReceta += ind.getCantidad();
@@ -60,10 +60,10 @@ public class Dashboard {
     }
 
 
-    public Map<String, Long> recetasPorEstado(List<PrescripcionReceta> recetas) {
+    public Map<String, Long> recetasPorEstado(List<Receta> recetas) {
         if (recetas == null) return Collections.emptyMap();
         return recetas.stream()
                 .filter(Objects::nonNull)
-                .collect(Collectors.groupingBy(PrescripcionReceta::getEstado, Collectors.counting()));
-    }
-}*/
+                .collect(Collectors.groupingBy(Receta::getEstado, Collectors.counting()));
+    }*/
+}

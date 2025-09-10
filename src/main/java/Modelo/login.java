@@ -6,6 +6,9 @@ public class login {
     public login() {
         usuarios = new ArrayList<>();
     }
+    public int cantidad(){
+        return usuarios.size();
+    }
     public void agregarUsuario(Usuario usuario) {
         usuarios.add(usuario);
     }

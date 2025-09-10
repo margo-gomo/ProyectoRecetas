@@ -61,7 +61,8 @@ public class Controlador {
             System.err.printf("Ocurrió un error al cargar los datos: '%s'%n",
                     ex.getMessage());
         }
-        //usuarios.limpiar();
+        if(usuarios.cantidad()!=0)
+            usuarios.limpiar();
         usuarios.cargarUsuarios(modeloAdministrador.obtenerListaAdministradores());
         usuarios.cargarUsuarios(modeloMedico.obtenerListaMedicos());
         usuarios.cargarUsuarios(modeloFarmaceuta.obtenerListaFarmaceutas());

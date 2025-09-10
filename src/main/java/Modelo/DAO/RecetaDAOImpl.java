@@ -1,16 +1,12 @@
 package Modelo.DAO;
 
 import Adaptador.XMLUtils;
-import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.AllArgsConstructor;
-import lombok.ToString;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;

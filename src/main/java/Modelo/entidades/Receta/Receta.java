@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 @ToString
 @XmlRootElement (name = "prescripcion-recetas")
 public class Receta {
-    public Receta(String codigo) {
+    public Receta() {
         indicaciones = new HashMap<>();
         paciente = new Paciente();
         fecha_confeccion = LocalDate.now();
         fecha_retiro = null;
         estado = "NO finalizada";
-        this.codigo = codigo;
+        codigo="";
     }
 
     public int cantidad(){ return indicaciones.size(); }
