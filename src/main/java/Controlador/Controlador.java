@@ -2,21 +2,19 @@ package Controlador;
 import Modelo.entidades.*;
 import Modelo.Gestores.*;
 import Modelo.DAO.*;
-import Modelo.Estadísticas.Dashboard;
+import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import Modelo.login;
+import Modelo.Estadísticas.*;
 import jakarta.xml.bind.JAXBException;
-import lombok.Setter;
-
-import javax.management.modelmbean.ModelMBean;
 import java.awt.*;
 import java.io.FileNotFoundException;
-
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Setter;
 public class Controlador {
     public Controlador(GestorAdministrador modeloAdministrador,GestorMedico modeloMedico, GestorFarmaceuta modeloFarmaceuta,
                        GestorMedicamento modeloMedicamento,GestorPaciente modeloPaciente,GestorRecetas modeloRecetas) {
@@ -28,9 +26,13 @@ public class Controlador {
         this.modeloRecetas = modeloRecetas;
         usuarios=new login();
         dashboard=new Dashboard();
+        historial=new Historicos();
     }
     public Controlador() {
         this(new GestorAdministrador(),new GestorMedico(),new GestorFarmaceuta(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetas());
+        usuarios=new login();
+        dashboard=new Dashboard();
+        historial=new Historicos();
     }
     public int devolverToken(String id, String clave) throws SecurityException{
         token= usuarios.devolverToken(id, clave);
@@ -146,6 +148,9 @@ public class Controlador {
     public List<Receta> obtenerListaRecetas(){
         return modeloRecetas.obtenerListaRecetas();
     }
+    public  Receta buscarRecetaPorCodigo(String codigo){
+        return modeloRecetas.buscarRecetaPorCodigo(codigo);
+    }
     public Receta buscarReceta(int idPaciente, LocalDate fechaConfeccion){
         return modeloRecetas.buscarReceta(idPaciente, fechaConfeccion);
     }
@@ -217,6 +222,15 @@ public class Controlador {
     public Map<String, Long> recetasPorEstado(){
         return dashboard.recetasPorEstado(modeloRecetas.obtenerListaRecetas());
     }
+    public Receta buscarRecetaHistorial(String codigo){
+        return historial.buscarPorCodigo(buscarRecetaPorCodigo(codigo));
+    }
+    public Receta buscarRecetaHistorial(int idPaciente, LocalDate fechaConfeccion){
+        return historial.buscarPorPacienteFecha(buscarReceta(idPaciente, fechaConfeccion));
+    }
+    public List<Indicacion>mostrarIndicaciones(){
+        return historial.mostrarIndicaciones();
+    }
     private GestorAdministrador modeloAdministrador;
     private GestorMedico modeloMedico;
     private GestorFarmaceuta modeloFarmaceuta;
@@ -227,4 +241,5 @@ public class Controlador {
     @Setter
     private int token;
     private Dashboard  dashboard;
+    private Historicos historial;
 }
