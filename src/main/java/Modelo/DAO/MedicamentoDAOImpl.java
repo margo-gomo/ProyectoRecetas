@@ -35,6 +35,11 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
     }
 
     @Override
+    public Medicamento buscarPorNombre(String nombre) {
+        return medicamentos.get(nombre);
+    }
+
+    @Override
     public Medicamento buscarPorDescripcion(String descripcion) {
         String needle = descripcion.toLowerCase();
         for (Medicamento medicamento : medicamentos.values()){

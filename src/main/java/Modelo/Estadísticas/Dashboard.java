@@ -1,25 +1,28 @@
-package Estadísticas;
+package Modelo.Estadísticas;
 import Modelo.entidades.Receta.Receta;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Medicamento;
-import java.util.Map;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Collections;
+import lombok.Getter;
+import java.util.*;
 import java.time.YearMonth;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class Dashboard {
     public Dashboard(){
-
+        medicamentosSeleccionados=new ArrayList<>();
+    }
+    public int cantidad(){
+        return medicamentosSeleccionados.size();
+    }
+    public void limpiar(){
+        medicamentosSeleccionados.clear();
+    }
+    public void agregarMedicameno(Medicamento medicamento){
+        medicamentosSeleccionados.add(medicamento);
     }
     public Map<YearMonth, Integer> medicamentosPorMes(
             List<Receta> recetas,
-            List<Medicamento> medicamentosSeleccionados,
             LocalDate startDate, LocalDate endDate) {
 
         Map<YearMonth, Integer> estadisticas = new TreeMap<>();
@@ -69,5 +72,6 @@ public class Dashboard {
                 .filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(Receta::getEstado, Collectors.counting()));
     }
+    @Getter
     private List<Medicamento> medicamentosSeleccionados;
 }

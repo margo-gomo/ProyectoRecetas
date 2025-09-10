@@ -33,6 +33,10 @@ public class GestorMedicamento {
             return medicamentos.buscarPorCodigo(codigo);
     }
 
+    public  Medicamento buscarPorNombre(String nombre) {
+        return medicamentos.buscarPorNombre(nombre);
+    }
+
     public Medicamento buscarPorDescripcion(String descripcion) {
         return  medicamentos.buscarPorDescripcion(descripcion);
     }

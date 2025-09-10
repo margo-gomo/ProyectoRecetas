@@ -2,6 +2,7 @@ package Controlador;
 import Modelo.entidades.*;
 import Modelo.Gestores.*;
 import Modelo.DAO.*;
+import Modelo.Estadísticas.Dashboard;
 import Modelo.entidades.Receta.Receta;
 import Modelo.login;
 import jakarta.xml.bind.JAXBException;
@@ -12,7 +13,9 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 
 public class Controlador {
     public Controlador(GestorAdministrador modeloAdministrador,GestorMedico modeloMedico, GestorFarmaceuta modeloFarmaceuta,
@@ -23,6 +26,8 @@ public class Controlador {
         this.modeloPaciente = modeloPaciente;
         this.modeloMedicamento = modeloMedicamento;
         this.modeloRecetas = modeloRecetas;
+        usuarios=new login();
+        dashboard=new Dashboard();
     }
     public Controlador() {
         this(new GestorAdministrador(),new GestorMedico(),new GestorFarmaceuta(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetas());
@@ -62,8 +67,6 @@ public class Controlador {
             System.err.printf("Ocurrió un error al cargar los datos: '%s'%n",
                     ex.getMessage());
         }
-        if(usuarios.cantidad()!=0)
-            usuarios.limpiar();
         usuarios.cargarUsuarios(modeloAdministrador.obtenerListaAdministradores());
         usuarios.cargarUsuarios(modeloMedico.obtenerListaMedicos());
         usuarios.cargarUsuarios(modeloFarmaceuta.obtenerListaFarmaceutas());
@@ -177,8 +180,24 @@ public class Controlador {
             System.err.printf("Ocurrió un error al guardar los datos: '%s'%n",
                     ex.getMessage());
         }
+        if(usuarios.cantidad()!=0)
+            usuarios.limpiar();
+        if(dashboard.cantidad()!=0)
+            dashboard.limpiar();
         System.out.println("Aplicación finalizada..");
         System.exit(0);
+    }
+    public void limpiarDashboard(){
+        dashboard.limpiar();
+    }
+    public void agregarMedicamentoDashboard(String nombre){
+        dashboard.agregarMedicameno(modeloMedicamento.buscarPorNombre(nombre));
+    }
+    public Map<YearMonth, Integer> medicamentosPorMes(LocalDate startDate, LocalDate endDate){
+        return dashboard.medicamentosPorMes(modeloRecetas.obtenerListaRecetas(), startDate, endDate);
+    }
+    public Map<String, Long> recetasPorEstado(){
+        return dashboard.recetasPorEstado(modeloRecetas.obtenerListaRecetas());
     }
     private GestorAdministrador modeloAdministrador;
     private GestorMedico modeloMedico;
@@ -189,4 +208,5 @@ public class Controlador {
     private login usuarios;
     @Setter
     private int token;
+    private Dashboard  dashboard;
 }
