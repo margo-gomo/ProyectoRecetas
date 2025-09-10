@@ -32,7 +32,9 @@ public class GestorRecetas {
     public Receta buscarReceta(int idPaciente, LocalDate fechaConfeccion) {
         return recetas.buscarReceta(idPaciente, fechaConfeccion);
     }
-
+    public Receta buscarRecetaPorCodigo(String codigo){
+        return recetas.buscarRecetaPorCodigo(codigo);
+    }
     public Receta agregar(Receta receta,int token) throws IllegalArgumentException {
         if(token!=1)
             throw new SecurityException(String.valueOf(token));

@@ -134,6 +134,15 @@ public class Controlador {
     public Medicamento buscarMedicamentoPorDescripcion(String descripcion){
         return modeloMedicamento.buscarPorDescripcion(descripcion);
     }
+    public Medicamento agregarMedicamento(Medicamento medicamento) throws IllegalArgumentException, SecurityException{
+        return modeloMedicamento.agregar(medicamento,token);
+    }
+    public Medicamento actualizarMedicamento(Medicamento medicamento) throws IllegalArgumentException, SecurityException{
+        return modeloMedicamento.actualizar(medicamento,token);
+    }
+    public Medicamento eliminarMedicamento(int codigo) throws IllegalArgumentException, SecurityException{
+        return modeloMedicamento.eliminar(codigo,token);
+    }
     public List<Receta> obtenerListaRecetas(){
         return modeloRecetas.obtenerListaRecetas();
     }
