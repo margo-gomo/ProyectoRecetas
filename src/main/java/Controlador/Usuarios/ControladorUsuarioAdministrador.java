@@ -1,8 +1,8 @@
 package Controlador.Usuarios;
 
 import Modelo.*;
-import Prescripcion.PrescripcionReceta;
-import entidades.*;
+//import Prescripcion.PrescripcionReceta;
+//import entidades.*;
 import Estadísticas.Dashboard;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -12,7 +12,7 @@ import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 
 public class ControladorUsuarioAdministrador{
-    public ControladorUsuarioAdministrador(ModeloMedico modeloMedico, ModeloPaciente modeloPaciente, ModeloFarmaceuta modeloFarmaceuta, ModeloMedicamento modeloMedicamento,ModeloRecetas modeloRecetas) {
+    /*public ControladorUsuarioAdministrador(ModeloMedico modeloMedico, ModeloPaciente modeloPaciente, ModeloFarmaceuta modeloFarmaceuta, ModeloMedicamento modeloMedicamento,ModeloRecetas modeloRecetas) {
         this.modeloMedico = modeloMedico;
         this.modeloPaciente = modeloPaciente;
         this.modeloFarmaceuta = modeloFarmaceuta;
@@ -158,5 +158,5 @@ public class ControladorUsuarioAdministrador{
     private ModeloPaciente modeloPaciente;
     private ModeloFarmaceuta modeloFarmaceuta;
     private ModeloMedicamento modeloMedicamento;
-    private ModeloRecetas modeloRecetas;
+    private ModeloRecetas modeloRecetas;*/
 }

@@ -1,7 +1,4 @@
 package Controlador.Usuarios;
-import Prescripcion.PrescripcionReceta;
-import Estadísticas.Dashboard;
-import entidades.Medicamento;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -9,7 +6,7 @@ import java.util.Map;
 import jakarta.xml.bind.JAXBException;
 import java.io.FileNotFoundException;
 public class ControladorUsuarioMedico{
-    public ControladorUsuarioMedico(ModeloRecetas modelo) {
+    /*public ControladorUsuarioMedico(ModeloRecetas modelo) {
         this.modelo = modelo;
     }
     public ControladorUsuarioMedico() {
@@ -58,5 +55,5 @@ public class ControladorUsuarioMedico{
         Dashboard dashboard = new Dashboard();
         return dashboard.recetasPorEstado(modelo.obtenerListaRecetas());
     }
-    private ModeloRecetas modelo;
+    private ModeloRecetas modelo;*/
 }
