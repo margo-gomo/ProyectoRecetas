@@ -104,7 +104,7 @@ public class Controlador {
     public Farmaceuta eliminarFarmaceuta(String id) throws IllegalArgumentException, SecurityException{
         return modeloFarmaceuta.eliminar(id,token);
     }
-    public List<Paciente> obtenerListaPaciente(){
+    public List<Paciente> obtenerListaPacientes(){
         return modeloPaciente.obtenerListaPacientes();
     }
     public Paciente buscarPacientePorId(int id){
@@ -122,11 +122,17 @@ public class Controlador {
     public Paciente eliminarPaciente(int id) throws IllegalArgumentException, SecurityException{
         return modeloPaciente.eliminar(id,token);
     }
+    public List<Medicamento> obtenerListaMedicamentos(){
+        return modeloMedicamento.obtenerListaMedicamentos();
+    }
     public Medicamento buscarMedicamentoPorCodigo(int codigo){
         return modeloMedicamento.buscarPorCodigo(codigo);
     }
     public Medicamento buscarMedicamentoPorDescripcion(String descripcion){
         return modeloMedicamento.buscarPorDescripcion(descripcion);
+    }
+    public List<Receta> obtenerListaRecetas(){
+        return modeloRecetas.obtenerListaRecetas();
     }
     public Receta buscarReceta(int idPaciente, LocalDate fechaConfeccion){
         return modeloRecetas.buscarReceta(idPaciente, fechaConfeccion);
