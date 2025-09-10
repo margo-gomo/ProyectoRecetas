@@ -88,6 +88,7 @@ public class RecetaDAOImpl implements RecetaDAO {
             printwriter.println(XMLUtils.toXMLString(rec));
         }
     }
+
     private final Map<String,Receta> recetas;
 
     @XmlRootElement(name = "lista_recetas")
