@@ -123,8 +123,8 @@ public class Controlador {
     public Receta actualizarReceta(Receta receta) throws IllegalArgumentException, SecurityException{
         return modeloRecetas.actualizar(receta,token);
     }
-    public Receta eliminarReceta(int idPaciente, LocalDate fechaConfeccion) throws IllegalArgumentException, SecurityException{
-        return modeloRecetas.eliminar(idPaciente, fechaConfeccion,token);
+    public Receta eliminarReceta(String codigo) throws IllegalArgumentException, SecurityException{
+        return modeloRecetas.eliminar(codigo,token);
     }
     public void cerrarAplicacion() {
         try {
