@@ -1,4 +1,4 @@
-package Modelo.Estadísticas;
+/*package Modelo.Estadísticas;
 
 import Prescripcion.Indicaciones;
 import Prescripcion.PrescripcionReceta;
@@ -62,4 +62,4 @@ public class Dashboard {
                 .filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(PrescripcionReceta::getEstado, Collectors.counting()));
     }
-}
+}*/
