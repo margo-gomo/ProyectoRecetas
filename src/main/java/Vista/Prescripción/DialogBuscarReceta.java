@@ -23,6 +23,7 @@ public class DialogBuscarReceta extends JDialog {
     private JTable table1;
     private JComboBox<String> comboBox1;
     private JTextField textField1;
+    private JButton buscarButton;
 
     private DefaultTableModel modeloTabla;
 

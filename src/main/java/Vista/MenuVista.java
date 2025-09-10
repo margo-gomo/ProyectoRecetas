@@ -82,8 +82,8 @@ public class MenuVista extends JFrame {
     private JTable tabloMedicos;
     private JButton limpiarButton3;
     private JButton generarReporteButton;
-    private JFormattedTextField formattedTextField4;
-    private JTextField textField15;
+    private JFormattedTextField tfFechaNacPaciente;
+    private JTextField tfTelefonoPaciente;
     private JPanel panelContenedor;
     private JPanel controlPrescripcionPanel;
     private JPanel RecetaMedicaPrescripcionPanel;
@@ -115,11 +115,16 @@ public class MenuVista extends JFrame {
     private JPanel panelPastel;
     private JScrollPane scrollEstados;
     private JTable tablaEstados;
-
-    // Campos formulario médicos
     private JTextField tfIdMedico;
     private JTextField tfNombreMedico;
     private JTextField tfEspMedico;
+    private JTextField tfIdFarma;
+    private JTextField tfNombreFarma;
+    private JTextField tfIdPaciente;
+    private JTextField tfNombrePaciente;
+    private JTextField tfCodigoMed;
+    private JTextField tfNombreMed;
+    private JTextField tfDescMed;
 
     private DefaultTableModel modeloTablaRecetas;
     private Controlador controlador;
@@ -416,7 +421,7 @@ public class MenuVista extends JFrame {
         JComponent[] camposTexto = {
                 textField1, textField2, textField3, textField4, textField5, textField6,
                 textField7, textField8, textField9, textField10, textField11, textField12,
-                textField15, formattedTextField1, formattedTextField2, formattedTextField3, formattedTextField4,
+                tfTelefonoPaciente, formattedTextField1, formattedTextField2, formattedTextField3, tfFechaNacPaciente,
                 tfIdMedico, tfNombreMedico, tfEspMedico
         };
         for (JComponent c : camposTexto) {
@@ -429,7 +434,6 @@ public class MenuVista extends JFrame {
             }
         }
 
-        // Botones primarios (confirmar/crear)
         JButton[] primarios = {
                 guardarButton, guardarButton2,
                 guardarFarm, guardarPaciente, guardarMedicamento,
@@ -438,7 +442,6 @@ public class MenuVista extends JFrame {
                 generarReporteButton, entregarButton, marcarListaButton
         };
 
-        // Botones secundarios (búsqueda, limpieza, detalles, fechas, etc.)
         JButton[] secundarios = {
                 buscarPacienteButton, agregarMedicamentoButton, buscarRecetaButton,
                 buscarButton, buscarButton1, buscarButton2, buscarFarma, buscarPaciente, buscarMedicamento,
