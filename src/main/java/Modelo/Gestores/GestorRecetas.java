@@ -2,6 +2,7 @@ package Modelo.Gestores;
 
 import Modelo.DAO.RecetaDAO;
 import Modelo.DAO.RecetaDAOImpl;
+import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import jakarta.xml.bind.JAXBException;
 
@@ -44,11 +45,12 @@ public class GestorRecetas {
         return recetas.actualizar(recetaPorActualizar);
     }
 
-    public Receta eliminar(int idPaciente, LocalDate fechaConfeccion,int token) throws IllegalArgumentException {
+    public Receta eliminar(String codigo,int token) throws IllegalArgumentException {
         if(token!=1)
             throw new SecurityException(String.valueOf(token));
-        return recetas.eliminar(idPaciente, fechaConfeccion);
+        return recetas.eliminar(codigo);
     }
+
 
     @Override
     public String toString() {
