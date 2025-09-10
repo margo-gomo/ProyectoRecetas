@@ -1,6 +1,6 @@
 package Vista;
 
-import Controlador.Entidades.ControladorMedicamento;
+//import Controlador.Entidades.ControladorMedicamento;
 import Controlador.Usuarios.ControladorUsuarioFarmaceuta;
 import Vista.Prescripción.DialogBuscarMedicamento;
 import Vista.Prescripción.DialogBuscarPaciente;
@@ -10,10 +10,10 @@ import Vista.Prescripción.DialogSeleccionarFecha;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
-import Prescripcion.PrescripcionReceta;
+//import Prescripcion.PrescripcionReceta;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import entidades.Medicamento;
+//import entidades.Medicamento;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;

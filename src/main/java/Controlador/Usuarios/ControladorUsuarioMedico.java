@@ -1,5 +1,4 @@
 package Controlador.Usuarios;
-import Modelo.ModeloRecetas;
 import Prescripcion.PrescripcionReceta;
 import Estadísticas.Dashboard;
 import entidades.Medicamento;
