@@ -11,8 +11,7 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
 @ToString
-@Data
-public class Farmaceuta {
+public class Farmaceuta implements Usuario {
     public  Farmaceuta(String id, String nombre) {
         this.nombre = nombre;
         this.id = id;
