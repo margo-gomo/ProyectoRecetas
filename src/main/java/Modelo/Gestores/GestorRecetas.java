@@ -14,8 +14,8 @@ import java.util.List;
 
 public class GestorRecetas {
 
-    public GestorRecetas(RecetaDAO recetas) {
-        this.recetas = recetas;
+    public GestorRecetas() {
+        recetas=new RecetaDAOImpl();
     }
 
     public int cantidad() {

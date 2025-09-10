@@ -79,20 +79,6 @@ public class RecetaDAOImpl implements RecetaDAO {
         return receta;
     }
 
-    /*public Indicacion agregarIndicacion(Indicacion indicacion,String codigo) throws IllegalArgumentException {
-        Receta receta=recetas.get(codigo);
-        if(receta != null){
-            receta.agregarIndicacion(indicacion);
-            System.out.printf("Indicacion agregada correctamente: '%s'%n", receta);
-            actu
-        }
-    }
-    public Receta actualizarIndicacion(Indicacion indicacion) throws IllegalArgumentException{
-
-    }
-    public Receta eliminarIndicacion(int codigo) throws IllegalArgumentException{
-
-    }*/
     public void cargar (InputStream in) throws JAXBException {
         RecetasDAOX rec=(RecetasDAOX) XMLUtils.loadFromXML(in, RecetasDAOX.class);
         recetas.clear();

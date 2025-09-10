@@ -11,9 +11,9 @@ import java.io.FileOutputStream;
 import java.util.List;
 
 public class GestorPaciente { 
-    public GestorPaciente(PacienteDAO pacientes) {
+    public GestorPaciente() {
         // Lista en memoria para los médicos
-        this.pacientes=pacientes;
+        pacientes=new PacienteDAOImpl();
     }
 
     public int cantidad() {

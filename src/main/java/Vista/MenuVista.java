@@ -123,6 +123,7 @@ public class MenuVista extends JFrame {
 
     private DefaultTableModel modeloTablaRecetas;
     private Controlador controlador;
+    private int token;
     private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     // ------------------------------------------------------------------------------------------
@@ -130,6 +131,10 @@ public class MenuVista extends JFrame {
     // ------------------------------------------------------------------------------------------
 
     public MenuVista() {
+        Controlador controlador = new Controlador();
+        controlador.setToken(0);
+
+
         setTitle("Sistema de Prescripción y Despacho de Recetas");
         setContentPane(panelPrincipal);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -247,13 +252,6 @@ public class MenuVista extends JFrame {
         }
     }
 
-    // ------------------------------------------------------------------------------------------
-    // ------------------------------- SETTER DEL CONTROLADOR -----------------------------------
-    // ------------------------------------------------------------------------------------------
-
-    public void setControlador(Controlador controlador) {
-        this.controlador = controlador;
-    }
 
     // ------------------------------------------------------------------------------------------
     // ------------------------------- ESTILOS DEL MENÚ PRINCIPAL --------------------------------

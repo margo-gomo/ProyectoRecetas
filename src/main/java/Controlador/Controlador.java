@@ -1,9 +1,13 @@
 package Controlador;
 import Modelo.entidades.*;
 import Modelo.Gestores.*;
+import Modelo.DAO.*;
 import Modelo.entidades.Receta.Receta;
 import Modelo.login;
 import jakarta.xml.bind.JAXBException;
+import lombok.Setter;
+
+import javax.management.modelmbean.ModelMBean;
 import java.io.FileNotFoundException;
 
 import java.time.LocalDate;
@@ -18,10 +22,9 @@ public class Controlador {
         this.modeloPaciente = modeloPaciente;
         this.modeloMedicamento = modeloMedicamento;
         this.modeloRecetas = modeloRecetas;
-        usuarios.limpiar();
-        usuarios.cargarUsuarios(this.modeloAdministrador.obtenerListaAdministradores());
-        usuarios.cargarUsuarios(this.modeloMedico.obtenerListaMedicos());
-        usuarios.cargarUsuarios(this.modeloFarmaceuta.obtenerListaFarmaceutas());
+    }
+    public Controlador() {
+        this(new GestorAdministrador(),new GestorMedico(),new GestorFarmaceuta(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetas());
     }
     public int devolverToken(String id, String clave) throws SecurityException{
         token= usuarios.devolverToken(id, clave);
@@ -58,7 +61,7 @@ public class Controlador {
             System.err.printf("Ocurrió un error al cargar los datos: '%s'%n",
                     ex.getMessage());
         }
-        usuarios.limpiar();
+        //usuarios.limpiar();
         usuarios.cargarUsuarios(modeloAdministrador.obtenerListaAdministradores());
         usuarios.cargarUsuarios(modeloMedico.obtenerListaMedicos());
         usuarios.cargarUsuarios(modeloFarmaceuta.obtenerListaFarmaceutas());
@@ -167,5 +170,6 @@ public class Controlador {
     private GestorMedicamento modeloMedicamento;
     private GestorRecetas modeloRecetas;
     private login usuarios;
+    @Setter
     private int token;
 }

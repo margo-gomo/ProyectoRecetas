@@ -12,9 +12,9 @@ import java.util.List;
 
 public class GestorFarmaceuta {
 
-    public GestorFarmaceuta(FarmaceutaDAO farmaceutas) {
+    public GestorFarmaceuta() {
         // Lista en memoria para los médicos
-        this.farmaceutas=farmaceutas;
+        farmaceutas=new FarmaceutaDAOImpl();
     }
 
     public int cantidad() {

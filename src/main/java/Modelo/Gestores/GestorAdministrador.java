@@ -1,5 +1,6 @@
 package Modelo.Gestores;
 import Modelo.DAO.AdministradorDAO;
+import Modelo.DAO.AdministradorDAOImpl;
 import Modelo.entidades.Administrador;
 
 import java.util.List;
@@ -7,9 +8,9 @@ import java.util.List;
 //admin
 public class GestorAdministrador {
 
-    public GestorAdministrador(AdministradorDAO administradores) {
+    public GestorAdministrador() {
         // Lista en memoria para los médicos
-        this.administradores=administradores;
+        administradores=new AdministradorDAOImpl();
     }
 
     public int cantidad() {
