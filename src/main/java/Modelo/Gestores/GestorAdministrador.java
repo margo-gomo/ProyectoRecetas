@@ -1,6 +1,6 @@
 package Modelo.Gestores;
-import DAO.AdministradorDAO;
-import entidades.Administrador;
+import Modelo.DAO.AdministradorDAO;
+import Modelo.entidades.Administrador;
 
 import java.util.List;
 

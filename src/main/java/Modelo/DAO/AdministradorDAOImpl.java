@@ -1,7 +1,7 @@
 package Modelo.DAO;
 
 import Adaptador.XMLUtils;
-import entidades.Administrador;
+import Modelo.entidades.Administrador;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
