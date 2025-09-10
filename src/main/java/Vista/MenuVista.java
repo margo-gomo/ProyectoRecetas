@@ -131,7 +131,7 @@ public class MenuVista extends JFrame {
     // ------------------------------------------------------------------------------------------
 
     public MenuVista() {
-        Controlador controlador = new Controlador();
+        this.controlador = new Controlador();
         controlador.setToken(0);
 
 
@@ -215,7 +215,7 @@ public class MenuVista extends JFrame {
 
                     if (controlador == null) {
                         JOptionPane.showMessageDialog(MenuVista.this,
-                                "No hay controlador inicializado.",
+                                "No se puede guardar.",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -233,7 +233,7 @@ public class MenuVista extends JFrame {
                             return;
                         }
 
-                        Medico nuevo = new Medico(id, nom, esp);
+                        Medico nuevo = new Medico(nom, id, esp);
                         Medico agregado = controlador.agregarMedico(nuevo);
                         agregarMedicoATabla(agregado);
                         limpiarCamposMedico();
@@ -250,6 +250,149 @@ public class MenuVista extends JFrame {
                 }
             });
         }
+
+        // ------------------------- LISTENER: MODIFICAR MÉDICO -------------------------
+        if (modificarButton != null) {
+            modificarButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    if (controlador == null) {
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "No hay controlador inicializado.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // ID desde el formulario o, si está vacío, desde la fila seleccionada
+                    String id = obtenerIdDesdeFormularioOSel();
+                    if (id.isEmpty()) {
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "Ingrese el ID o seleccione un médico en la tabla.",
+                                "Falta ID", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    try {
+                        Medico existente = controlador.buscarMedicoPorId(id);
+                        if (existente == null) {
+                            JOptionPane.showMessageDialog(MenuVista.this,
+                                    "No existe un médico con ID: " + id,
+                                    "No encontrado", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+
+                        // Si nombre/especialidad vienen vacíos en el form, conservar los del existente
+                        String nom = (tfNombreMedico != null) ? tfNombreMedico.getText().trim() : "";
+                        String esp = (tfEspMedico != null) ? tfEspMedico.getText().trim() : "";
+
+                        if (nom.isEmpty()) nom = existente.getNombre();
+                        if (esp.isEmpty()) esp = existente.getEspecialidad();
+
+                        Medico actualizado = new Medico(nom, id, esp); // constructor (nombre, id, especialidad)
+                        Medico resultado   = controlador.actualizarMedico(actualizado);
+
+                        // Refrescar tabla
+                        actualizarMedicoEnTabla(resultado);
+
+                        // Limpiar formulario
+                        limpiarCamposMedico();
+
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "Médico modificado correctamente.",
+                                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "Error al modificar: " + ex.getMessage(),
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+        }
+
+
+        // ------------------------- LISTENER: BORRAR MÉDICO -------------------------
+
+        if (borrarButton != null) {
+            borrarButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (controlador == null) {
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "No hay controlador inicializado.",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Tomar ID del formulario o de la fila seleccionada
+                    String id = (tfIdMedico != null) ? tfIdMedico.getText().trim() : "";
+                    if ((id == null || id.isEmpty()) && tabloMedicos != null && tabloMedicos.getSelectedRow() >= 0) {
+                        int sel = tabloMedicos.getSelectedRow();
+                        Object val = tabloMedicos.getValueAt(sel, 0);
+                        id = (val != null) ? val.toString() : "";
+                    }
+
+                    if (id == null || id.isEmpty()) {
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "Ingrese el ID del médico o seleccione una fila en la tabla.",
+                                "Falta ID", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    // Confirmación
+                    int opc = JOptionPane.showConfirmDialog(
+                            MenuVista.this,
+                            "¿Desea eliminar al médico con ID: " + id + "?",
+                            "Confirmar borrado",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    if (opc != JOptionPane.YES_OPTION) return;
+
+                    try {
+                        // Verificar existencia
+                        Medico existente = controlador.buscarMedicoPorId(id);
+                        if (existente == null) {
+                            JOptionPane.showMessageDialog(MenuVista.this,
+                                    "No existe un médico con ID: " + id,
+                                    "No encontrado", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+
+                        // Eliminar en modelo
+                        controlador.eliminarMedico(id);
+
+                        // Refrescar UI (tabla + formulario)
+                        eliminarMedicoDeTablaPorId(id);
+                        limpiarCamposMedico();
+
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "Médico eliminado correctamente.",
+                                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "Error al eliminar: " + ex.getMessage(),
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+        }
+
+        limpiarButton3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (tabloMedicos != null && tabloMedicos.isEditing()) {
+                    tabloMedicos.getCellEditor().stopCellEditing();
+                }
+                if (tabloMedicos != null) {
+                    tabloMedicos.clearSelection();
+                }
+                limpiarCamposMedico();
+            }
+        });
+
     }
 
     // ------------------------------------------------------------------------------------------
@@ -349,12 +492,32 @@ public class MenuVista extends JFrame {
     // ------------------------------------------------------------------------------------------
 
     private void configurarTablaMedicos() {
-        if (tabloMedicos != null) {
-            String[] columnasMedicos = {"ID", "Nombre", "Especialidad"};
-            DefaultTableModel modeloMedicos = new DefaultTableModel(columnasMedicos, 0);
-            tabloMedicos.setModel(modeloMedicos);
-        }
+        if (tabloMedicos == null) return;
+
+        String[] columnasMedicos = {"ID", "Nombre", "Especialidad"};
+        DefaultTableModel modeloMedicos = new DefaultTableModel(columnasMedicos, 0) {
+            @Override public boolean isCellEditable(int row, int column) { return false; } // <- no editable
+        };
+        tabloMedicos.setModel(modeloMedicos);
+
+        // Selección simple
+        tabloMedicos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        tabloMedicos.getSelectionModel().addListSelectionListener(e -> {
+            if (e.getValueIsAdjusting()) return;
+            int row = tabloMedicos.getSelectedRow();
+            if (row >= 0) {
+                Object vId  = tabloMedicos.getValueAt(row, 0);
+                Object vNom = tabloMedicos.getValueAt(row, 1);
+                Object vEsp = tabloMedicos.getValueAt(row, 2);
+
+                if (tfIdMedico      != null) tfIdMedico.setText(vId  != null ? vId.toString()  : "");
+                if (tfNombreMedico  != null) tfNombreMedico.setText(vNom != null ? vNom.toString() : "");
+                if (tfEspMedico     != null) tfEspMedico.setText(vEsp != null ? vEsp.toString() : "");
+            }
+        });
     }
+
 
     private void configurarTablaFarmaceutas() {
         if (tablaFarma != null) {
@@ -451,6 +614,43 @@ public class MenuVista extends JFrame {
             return false;
         }
         return true;
+    }
+
+    private void actualizarMedicoEnTabla(Medico m) {
+        if (tabloMedicos == null || m == null) return;
+        DefaultTableModel model = (DefaultTableModel) tabloMedicos.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Object idCell = model.getValueAt(i, 0);
+            String idTabla = idCell != null ? idCell.toString() : "";
+            if (idTabla.equals(m.getId())) {
+                model.setValueAt(m.getNombre(), i, 1);
+                model.setValueAt(m.getEspecialidad(), i, 2);
+                break;
+            }
+        }
+    }
+
+    private String obtenerIdDesdeFormularioOSel() {
+        String id = (tfIdMedico != null) ? tfIdMedico.getText().trim() : "";
+        if ((id == null || id.isEmpty()) && tabloMedicos != null && tabloMedicos.getSelectedRow() >= 0) {
+            int sel = tabloMedicos.getSelectedRow();
+            Object val = tabloMedicos.getValueAt(sel, 0); // col 0 = ID
+            id = (val != null) ? val.toString() : "";
+        }
+        return (id != null) ? id : "";
+    }
+
+    private void eliminarMedicoDeTablaPorId(String id) {
+        if (tabloMedicos == null || id == null) return;
+        DefaultTableModel model = (DefaultTableModel) tabloMedicos.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Object idCell = model.getValueAt(i, 0);
+            String idTabla = (idCell != null) ? idCell.toString() : "";
+            if (id.equals(idTabla)) {
+                model.removeRow(i);
+                break;
+            }
+        }
     }
 
     // ------------------------------------------------------------------------------------------
