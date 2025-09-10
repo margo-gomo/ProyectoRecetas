@@ -1,6 +1,7 @@
 package Modelo.DAO;
 
 import Adaptador.XMLUtils;
+import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -32,51 +33,71 @@ public class RecetaDAOImpl implements RecetaDAO {
 
     @Override
     public Receta buscarReceta(int idPaciente, LocalDate fecha_confeccion) {
-        ClaveCompuesta clave=new ClaveCompuesta(idPaciente,fecha_confeccion);
-        return recetas.get(clave);
+        for (Receta receta : recetas.values()) {
+            if(receta.getFecha_confeccion().isEqual(fecha_confeccion)&&receta.getPaciente().getId()==idPaciente){
+                return receta;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Receta buscarRecetaPorCodigo(String codigo) {
+        return recetas.get(codigo);
     }
 
     @Override
     public Receta agregar(Receta receta) throws IllegalArgumentException {
-        ClaveCompuesta clave=new ClaveCompuesta(receta.getPaciente().getId(),receta.getFecha_confeccion());
-        if(!recetas.containsKey(clave)){
+        if(!recetas.containsKey(receta.getCodigo())){
             receta.estadoConfeccionado();
-            recetas.putIfAbsent(clave,receta);
+            recetas.putIfAbsent(receta.getCodigo(),receta);
             System.out.printf("Receta agregada correctamente: '%s'%n", receta);
         }
         else
-            throw new IllegalArgumentException(clave.toString());
+            throw new IllegalArgumentException(receta.toString());
         return receta;
     }
 
     @Override
     public Receta actualizar(Receta receta) throws IllegalArgumentException {
-        ClaveCompuesta clave=new ClaveCompuesta(receta.getPaciente().getId(),receta.getFecha_confeccion());
-        if(recetas.containsKey(clave)){
-            recetas.put(clave,receta);
+        if(recetas.containsKey(receta.getCodigo())){
+            recetas.put(receta.getCodigo(),receta);
             System.out.printf("Receta actualizada correctamente: '%s'%n", receta);
         }
         else
-            throw new IllegalArgumentException(clave.toString());
+            throw new IllegalArgumentException(receta.toString());
         return receta;
     }
 
     @Override
-    public Receta eliminar(int idPaciente, LocalDate fecha_confeccion) throws IllegalArgumentException {
-        ClaveCompuesta clave=new ClaveCompuesta(idPaciente,fecha_confeccion);
-        Receta receta=recetas.remove(clave);
+    public Receta eliminar(String codigo) throws IllegalArgumentException {
+        Receta receta=recetas.remove(codigo);
         if(receta != null)
             System.out.printf("Receta eliminada correctamente: '%s'%n", receta);
         else
-            throw new IllegalArgumentException(clave.toString());
+            throw new IllegalArgumentException(codigo);
         return receta;
     }
+
+    /*public Indicacion agregarIndicacion(Indicacion indicacion,String codigo) throws IllegalArgumentException {
+        Receta receta=recetas.get(codigo);
+        if(receta != null){
+            receta.agregarIndicacion(indicacion);
+            System.out.printf("Indicacion agregada correctamente: '%s'%n", receta);
+            actu
+        }
+    }
+    public Receta actualizarIndicacion(Indicacion indicacion) throws IllegalArgumentException{
+
+    }
+    public Receta eliminarIndicacion(int codigo) throws IllegalArgumentException{
+
+    }*/
     public void cargar (InputStream in) throws JAXBException {
         RecetasDAOX rec=(RecetasDAOX) XMLUtils.loadFromXML(in, RecetasDAOX.class);
         recetas.clear();
         for(Receta r : rec.receta) {
-            ClaveCompuesta clave = new ClaveCompuesta(r.getPaciente().getId(), r.getFecha_confeccion());
-            recetas.putIfAbsent(clave, r);
+            recetas.putIfAbsent(r.getCodigo(), r);
         }
     }
     public void guardar (OutputStream out) throws JAXBException {
@@ -85,12 +106,12 @@ public class RecetaDAOImpl implements RecetaDAO {
             printwriter.println(XMLUtils.toXMLString(rec));
         }
     }
-    private final Map<ClaveCompuesta,Receta> recetas;
+    private final Map<String,Receta> recetas;
 
     @XmlRootElement(name = "lista_recetas")
     @XmlAccessorType(XmlAccessType.FIELD)
     class RecetasDAOX{
-        public RecetasDAOX(Map<ClaveCompuesta,Receta> r) {
+        public RecetasDAOX(Map<String,Receta> r) {
             this();
             for(Receta rec:r.values())
                 receta.add(rec);
@@ -102,28 +123,4 @@ public class RecetaDAOImpl implements RecetaDAO {
         public List<Receta> receta;
     }
 
-    @AllArgsConstructor
-    @ToString
-    class ClaveCompuesta {
-        private final int idPaciente;
-        private final LocalDate fecha_confeccion;
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (!(obj instanceof ClaveCompuesta))
-                return false;
-            ClaveCompuesta other = (ClaveCompuesta) obj;
-            return Objects.equals(idPaciente, other.idPaciente) && Objects.equals(fecha_confeccion, other.fecha_confeccion);
-        }
-        @Override
-        public int hashCode() {
-            int hash=5;
-            hash=29 * hash + Objects.hashCode(this.idPaciente);
-            hash=29 * hash + Objects.hashCode(this.fecha_confeccion);
-            return hash;
-        }
-
-    }
 }

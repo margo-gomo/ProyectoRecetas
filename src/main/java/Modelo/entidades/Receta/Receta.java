@@ -19,12 +19,13 @@ import java.util.stream.Collectors;
 @ToString
 @XmlRootElement (name = "prescripcion-recetas")
 public class Receta {
-    public Receta() {
+    public Receta(String codigo) {
         indicaciones = new HashMap<>();
         paciente = new Paciente();
         fecha_confeccion = LocalDate.now();
         fecha_retiro = null;
         estado = "NO finalizada";
+        this.codigo = codigo;
     }
 
     public int cantidad(){ return indicaciones.size(); }
@@ -169,4 +170,8 @@ public class Receta {
     @Setter
     @XmlElement
     private String estado;
+
+    @Setter
+    @Getter
+    String codigo;
 }
