@@ -4,6 +4,8 @@ import Vista.Prescripción.DialogBuscarMedicamento;
 import Vista.Prescripción.DialogBuscarPaciente;
 import Vista.Prescripción.DialogBuscarReceta;
 import Vista.Prescripción.DialogSeleccionarFecha;
+import Modelo.entidades.Medico;
+import Controlador.Controlador;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
@@ -111,6 +113,7 @@ public class MenuVista extends JFrame {
     private JTextField tfEspMedico;
     private DefaultTableModel modeloTablaRecetas;
     private JTable tablaEstados;
+    private Controlador controlador;
     private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public MenuVista() {
@@ -213,6 +216,57 @@ public class MenuVista extends JFrame {
                 dialog.setVisible(true);
             }
         });
+
+        guardarButton2.addActionListener(new ActionListener() { // Médicos
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Validación UI
+                if (!validarCamposMedico()) return;
+
+                // Controlador disponible
+                if (controlador == null) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "No hay controlador inicializado.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                String id  = tfIdMedico.getText().trim();
+                String nom = tfNombreMedico.getText().trim();
+                String esp = tfEspMedico.getText().trim();
+
+                try {
+                    Medico existente = controlador.buscarMedicoPorId(id);
+                    if (existente != null) {
+                        JOptionPane.showMessageDialog(MenuVista.this,
+                                "Ya existe un médico con ID: " + id,
+                                "Duplicado", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+
+                    Medico nuevo = new Medico(id, nom, esp);
+                    Medico agregado = controlador.agregarMedico(nuevo);
+                    agregarMedicoATabla(agregado);
+                    limpiarCamposMedico();
+
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Médico guardado correctamente.",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al guardar: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+    }
+
+
+    // ----------------------------------- SETTER DEL CONTROLADOR  --------------------------------------
+
+    public void setControlador(Controlador controlador) {
+        this.controlador = controlador;
     }
 
     // ------------------------------- ESTILOS DEL MENÚ PRINCIPAL --------------------------------------
@@ -299,8 +353,6 @@ public class MenuVista extends JFrame {
             tabbedPanePrincipal.setBackground(Color.WHITE);
         }
     }
-
-    // --------------------------------------------------------------------------------------------------------------
 
     // -------------------------------------CONFIGURACIÓN DE TABLAS--------------------------------------------------
 
@@ -572,10 +624,37 @@ public class MenuVista extends JFrame {
                 }
             });
         }
-
-        // ----------------------------------------------------------------------------------------------------------------
-
     }
+
+    // ----------------------- HELPERS: FORMULARIO MÉDICOS -----------------------
+
+    private void limpiarCamposMedico() {
+        if (tfIdMedico != null) tfIdMedico.setText("");
+        if (tfNombreMedico != null) tfNombreMedico.setText("");
+        if (tfEspMedico != null) tfEspMedico.setText("");
+        if (tfIdMedico != null) tfIdMedico.requestFocus();
+    }
+
+    private void agregarMedicoATabla(Medico m) {
+        if (tabloMedicos == null || m == null) return;
+        DefaultTableModel model = (DefaultTableModel) tabloMedicos.getModel();
+        model.addRow(new Object[]{ m.getId(), m.getNombre(), m.getEspecialidad() });
+    }
+
+    private boolean validarCamposMedico() {
+        String id  = (tfIdMedico != null)     ? tfIdMedico.getText().trim()     : "";
+        String nom = (tfNombreMedico != null) ? tfNombreMedico.getText().trim() : "";
+        String esp = (tfEspMedico != null)    ? tfEspMedico.getText().trim()    : "";
+
+        if (id.isEmpty() || nom.isEmpty() || esp.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Complete el ID, Nombre y Especialidad.",
+                    "Validación", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
 
     // Main de menú principal
     public static void main(String[] args) {
