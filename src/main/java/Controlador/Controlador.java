@@ -126,6 +126,40 @@ public class Controlador {
     public Receta eliminarReceta(int idPaciente, LocalDate fechaConfeccion) throws IllegalArgumentException, SecurityException{
         return modeloRecetas.eliminar(idPaciente, fechaConfeccion,token);
     }
+    public void cerrarAplicacion() {
+        try {
+            modeloMedico.guardar();
+        } catch (JAXBException | FileNotFoundException ex) {
+            System.err.printf("Ocurrió un error al guardar los datos: '%s'%n",
+                    ex.getMessage());
+        }
+        try {
+            modeloPaciente.guardar();
+        } catch (JAXBException | FileNotFoundException ex) {
+            System.err.printf("Ocurrió un error al guardar los datos: '%s'%n",
+                    ex.getMessage());
+        }
+        try {
+            modeloFarmaceuta.guardar();
+        } catch (JAXBException | FileNotFoundException ex) {
+            System.err.printf("Ocurrió un error al guardar los datos: '%s'%n",
+                    ex.getMessage());
+        }
+        try {
+            modeloMedicamento.guardar();
+        } catch (JAXBException | FileNotFoundException ex) {
+            System.err.printf("Ocurrió un error al guardar los datos: '%s'%n",
+                    ex.getMessage());
+        }
+        try {
+            modeloRecetas.guardar();
+        } catch (JAXBException | FileNotFoundException ex) {
+            System.err.printf("Ocurrió un error al guardar los datos: '%s'%n",
+                    ex.getMessage());
+        }
+        System.out.println("Aplicación finalizada..");
+        System.exit(0);
+    }
     private GestorAdministrador modeloAdministrador;
     private GestorMedico modeloMedico;
     private GestorFarmaceuta modeloFarmaceuta;
