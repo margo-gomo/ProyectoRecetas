@@ -13,5 +13,4 @@ public interface RecetaDAO {
     public Receta agregar(Receta receta) throws IllegalArgumentException;
     public Receta actualizar(Receta receta) throws IllegalArgumentException;
     public Receta eliminar(String codigo) throws IllegalArgumentException;
-
 }

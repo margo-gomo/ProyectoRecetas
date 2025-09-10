@@ -158,6 +158,15 @@ public class Controlador {
     public Receta eliminarReceta(String codigo) throws IllegalArgumentException, SecurityException{
         return modeloRecetas.eliminar(codigo,token);
     }
+    public void iniciarProceso(String codigo) throws IllegalArgumentException{
+        modeloRecetas.iniciarProceso(codigo);
+    }
+    public void marcarLista(String codigo) throws IllegalArgumentException{
+        modeloRecetas.marcarLista(codigo);
+    }
+    public void entregar(String codigo) throws IllegalArgumentException{
+        modeloRecetas.entregar(codigo);
+    }
     public void cerrarAplicacion() {
         try {
             modeloMedico.guardar();

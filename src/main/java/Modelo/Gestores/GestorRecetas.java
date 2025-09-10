@@ -53,6 +53,27 @@ public class GestorRecetas {
         return recetas.eliminar(codigo);
     }
 
+    public void iniciarProceso(String codigo) throws IllegalArgumentException{
+        Receta receta=recetas.buscarRecetaPorCodigo(codigo);
+        if(receta==null)
+            throw new SecurityException(codigo);
+        receta.iniciarProceso();
+        recetas.actualizar(receta);
+    }
+    public void marcarLista(String codigo) throws IllegalArgumentException{
+        Receta receta=recetas.buscarRecetaPorCodigo(codigo);
+        if(receta==null)
+            throw new SecurityException(codigo);
+        receta.marcarLista();
+        recetas.actualizar(receta);
+    }
+    public void entregar(String codigo) throws IllegalArgumentException{
+        Receta receta=recetas.buscarRecetaPorCodigo(codigo);
+        if(receta==null)
+            throw new SecurityException(codigo);
+        receta.entregar();
+        recetas.actualizar(receta);
+    }
 
     @Override
     public String toString() {
