@@ -1,15 +1,25 @@
 package Vista;
 
-import Controlador.Entidades.ControladorMedico;
-import Controlador.Usuarios.ControladorUsuarioAdministrador;
+import Controlador.Entidades.ControladorMedicamento;
+import Controlador.Usuarios.ControladorUsuarioFarmaceuta;
 import Vista.Prescripción.DialogBuscarMedicamento;
 import Vista.Prescripción.DialogBuscarPaciente;
 import Vista.Prescripción.DialogBuscarReceta;
 import Vista.Prescripción.DialogSeleccionarFecha;
 
-import com.formdev.flatlaf.FlatLightLaf;
-import entidades.Medico;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
+import Prescripcion.PrescripcionReceta;
 
+import com.formdev.flatlaf.FlatLightLaf;
+import entidades.Medicamento;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.DefaultPieDataset;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -17,6 +27,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 public class MenuVista extends JFrame {
 
@@ -68,9 +79,9 @@ public class MenuVista extends JFrame {
     private JButton limpiarButton2;
     private JButton aplicarFiltrosButton;
     private JTable tabHistorico;
-    private JTextField tfIdMedico;
-    private JTextField tfNombreMedico;
-    private JTextField tfEspMedico;
+    private JTextField textField10;
+    private JTextField textField11;
+    private JTextField textField12;
     private JButton modificarButton;
     private JButton guardarButton2;
     private JButton borrarButton;
@@ -112,8 +123,6 @@ public class MenuVista extends JFrame {
     private JScrollPane scrollEstados;
     private DefaultTableModel modeloTablaRecetas;
     private JTable tablaEstados;
-    private ControladorMedico controladorMedico;
-    private ControladorUsuarioAdministrador controladorUsuarioAdministrador;
     private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public MenuVista() {
@@ -132,8 +141,6 @@ public class MenuVista extends JFrame {
         configurarTablaHistorico();
         configurarTablaDashboard();
         configurarTablaEstados();
-
-        controladorUsuarioAdministrador = new ControladorUsuarioAdministrador();
 
         buscarPacienteButton.addActionListener(new ActionListener() {
             @Override
@@ -214,105 +221,6 @@ public class MenuVista extends JFrame {
                 dialog.setVisible(true);
             }
         });
-
-        // CRUD MÉDICO
-        guardarButton2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    String id = tfIdMedico.getText().trim();
-                    String nombre = tfNombreMedico.getText().trim();
-                    String especialidad = tfEspMedico.getText().trim();
-
-                    System.out.println("ID: '" + id + "', Nombre: '" + nombre + "', Especialidad: '" + especialidad + "'");
-
-                    if (id.isEmpty() || nombre.isEmpty() || especialidad.isEmpty()) {
-                        JOptionPane.showMessageDialog(MenuVista.this,
-                                "Complete todos los campos (ID, Nombre, Especialidad).",
-                                "Atención",
-                                JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    Medico medico = new Medico(nombre, id, especialidad);
-                    controladorUsuarioAdministrador.agregarMedico(medico);
-
-                    actualizarTablaMedicos();
-                    limpiarCamposMedico();
-
-                    JOptionPane.showMessageDialog(MenuVista.this, "Médico agregado correctamente.");
-                } catch (IllegalArgumentException ex) {
-                    JOptionPane.showMessageDialog(MenuVista.this,
-                            "Error al agregar médico: " + ex.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(MenuVista.this,
-                            "Error inesperado: " + ex.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        modificarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int filaSeleccionada = tabloMedicos.getSelectedRow();
-                if (filaSeleccionada == -1) {
-                    JOptionPane.showMessageDialog(MenuVista.this,
-                            "Seleccione un médico de la tabla para modificar.",
-                            "Atención",
-                            JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                String id = tfIdMedico.getText().trim();
-                String nombre = tfNombreMedico.getText().trim();
-                String especialidad = tfEspMedico.getText().trim();
-
-                if (id.isEmpty() || nombre.isEmpty() || especialidad.isEmpty()) {
-                    JOptionPane.showMessageDialog(MenuVista.this,
-                            "Complete todos los campos (ID, Nombre, Especialidad).",
-                            "Atención",
-                            JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-
-                try {
-                    Medico medicoModificado = new Medico(nombre, id, especialidad);
-
-                    controladorUsuarioAdministrador.actualizarMedico(medicoModificado);
-
-                    actualizarTablaMedicos();
-                    limpiarCamposMedico();
-
-                    JOptionPane.showMessageDialog(MenuVista.this,
-                            "Médico modificado correctamente.");
-                } catch (IllegalArgumentException ex) {
-                    JOptionPane.showMessageDialog(MenuVista.this,
-                            "Error al modificar médico: " + ex.getMessage(),
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-    }
-
-    private void actualizarTablaMedicos() {
-        DefaultTableModel model = (DefaultTableModel) tabloMedicos.getModel();
-        model.setRowCount(0);
-
-        for (Medico m : controladorUsuarioAdministrador.obtenerListaMedicos()) {
-            model.addRow(new Object[]{m.getId(), m.getNombre(), m.getEspecialidad()});
-        }
-    }
-
-    private void limpiarCamposMedico() {
-        tfIdMedico.setText("");
-        tfNombreMedico.setText("");
-        tfEspMedico.setText("");
     }
 
     private void aplicarEstilosGenerales() {
@@ -372,7 +280,7 @@ public class MenuVista extends JFrame {
 
         JComponent[] camposTexto = {
                 textField1, textField2, textField3, textField4, textField5, textField6,
-                textField7, textField8, textField9, tfIdMedico, tfNombreMedico, tfEspMedico,
+                textField7, textField8, textField9, textField10, textField11, textField12,
                 textField15, formattedTextField1, formattedTextField2, formattedTextField3, formattedTextField4
         };
 

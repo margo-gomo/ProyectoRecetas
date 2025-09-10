@@ -1,6 +1,5 @@
 package Controlador.Usuarios;
 import Despacho.DespachoReceta;
-import Modelo.ModeloRecetas;
 import Prescripcion.PrescripcionReceta;
 import entidades.Medicamento;
 import jakarta.xml.bind.JAXBException;
