@@ -8,10 +8,11 @@ import jakarta.xml.bind.JAXBException;
 import lombok.Setter;
 
 import javax.management.modelmbean.ModelMBean;
+import java.awt.*;
 import java.io.FileNotFoundException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.List;
 
 public class Controlador {
     public Controlador(GestorAdministrador modeloAdministrador,GestorMedico modeloMedico, GestorFarmaceuta modeloFarmaceuta,
@@ -67,6 +68,9 @@ public class Controlador {
         usuarios.cargarUsuarios(modeloMedico.obtenerListaMedicos());
         usuarios.cargarUsuarios(modeloFarmaceuta.obtenerListaFarmaceutas());
     }
+    public List<Medico> obtenerListaMedicos(){
+        return modeloMedico.obtenerListaMedicos();
+    }
     public Medico buscarMedicoPorId(String id) {
         return modeloMedico.buscarPorId(id);
     }
@@ -82,6 +86,9 @@ public class Controlador {
     public Medico eliminarMedico(String id) throws IllegalArgumentException, SecurityException{
         return modeloMedico.eliminar(id,token);
     }
+    public List<Farmaceuta> obtenerListaFarmaceutas(){
+        return modeloFarmaceuta.obtenerListaFarmaceutas();
+    }
     public Farmaceuta buscarFarmaceutaPorId(String id) {
         return modeloFarmaceuta.buscarPorId(id);
     }
@@ -96,6 +103,9 @@ public class Controlador {
     }
     public Farmaceuta eliminarFarmaceuta(String id) throws IllegalArgumentException, SecurityException{
         return modeloFarmaceuta.eliminar(id,token);
+    }
+    public List<Paciente> obtenerListaPaciente(){
+        return modeloPaciente.obtenerListaPacientes();
     }
     public Paciente buscarPacientePorId(int id){
         return modeloPaciente.buscarPorId(id);

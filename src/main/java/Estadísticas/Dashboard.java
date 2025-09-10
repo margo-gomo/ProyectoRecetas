@@ -14,6 +14,9 @@ import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class Dashboard {
+    public Dashboard(){
+
+    }
     public Map<YearMonth, Integer> medicamentosPorMes(
             List<Receta> recetas,
             List<Medicamento> medicamentosSeleccionados,
@@ -65,5 +68,6 @@ public class Dashboard {
         return recetas.stream()
                 .filter(Objects::nonNull)
                 .collect(Collectors.groupingBy(Receta::getEstado, Collectors.counting()));
-    }*/
+    }
+    private List<Medicamento> medicamentosSeleccionados;
 }
