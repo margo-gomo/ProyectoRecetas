@@ -25,6 +25,10 @@ public class DialogSeleccionarFecha extends JDialog {
 
     private final LocalDateAdapter adapter = new LocalDateAdapter();
 
+    // Estado de confirmación y valor elegido
+    private LocalDate fechaSeleccionada = null;
+    private boolean confirmado = false;
+
     // ------------------------------------------------------------------------------------------
     // ------------------------------------- CONSTRUCTOR ----------------------------------------
     // ------------------------------------------------------------------------------------------
@@ -45,9 +49,32 @@ public class DialogSeleccionarFecha extends JDialog {
         if (getRootPane() != null && buttonOK != null)
             getRootPane().setDefaultButton(buttonOK);
 
-        if (buttonOK != null)     buttonOK.addActionListener(e -> dispose());
-        if (buttonCancel != null) buttonCancel.addActionListener(e -> dispose());
+        // OK -> valida, guarda fecha y cierra (confirmado = true)
+        if (buttonOK != null) {
+            buttonOK.addActionListener(e -> {
+                try {
+                    String val = (formattedTextField1 != null) ? formattedTextField1.getText().trim() : "";
+                    fechaSeleccionada = val.isEmpty() ? null : adapter.unmarshal(val); // dd/MM/yyyy
+                    confirmado = true;
+                    dispose();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(DialogSeleccionarFecha.this,
+                            "Fecha inválida. Usa el formato dd/MM/yyyy.",
+                            "Validación", JOptionPane.WARNING_MESSAGE);
+                }
+            });
+        }
 
+        // Cancel -> descarta cambios (confirmado = false)
+        if (buttonCancel != null) {
+            buttonCancel.addActionListener(e -> {
+                confirmado = false;
+                fechaSeleccionada = null;
+                dispose();
+            });
+        }
+
+        // Hoy -> escribe la fecha de hoy en el campo
         if (hoyButton != null) {
             hoyButton.addActionListener(e -> {
                 try {
@@ -59,6 +86,7 @@ public class DialogSeleccionarFecha extends JDialog {
             });
         }
 
+        // Calendario -> abre JCalendar y vuelca selección al campo
         if (button2 != null) {
             button2.addActionListener(new ActionListener() {
                 @Override
@@ -87,11 +115,19 @@ public class DialogSeleccionarFecha extends JDialog {
         }
 
         addWindowListener(new WindowAdapter() {
-            @Override public void windowClosing(WindowEvent e) { dispose(); }
+            @Override public void windowClosing(WindowEvent e) {
+                confirmado = false;
+                fechaSeleccionada = null;
+                dispose();
+            }
         });
 
         if (contentPane != null) {
-            contentPane.registerKeyboardAction(e -> dispose(),
+            contentPane.registerKeyboardAction(e -> {
+                        confirmado = false;
+                        fechaSeleccionada = null;
+                        dispose();
+                    },
                     KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                     JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         }
@@ -176,15 +212,16 @@ public class DialogSeleccionarFecha extends JDialog {
     // -------------------------------------- UTILIDADES ----------------------------------------
     // ------------------------------------------------------------------------------------------
 
-    /** Devuelve la fecha actualmente mostrada en el campo, o null si no es válida. */
-    public LocalDate getFechaSeleccionada() {
+    public void setFechaInicial(LocalDate fecha) {
         try {
-            String val = formattedTextField1 != null ? formattedTextField1.getText().trim() : "";
-            if (val.isEmpty()) return null;
-            return adapter.unmarshal(val);
-        } catch (Exception e) {
-            return null;
-        }
+            if (formattedTextField1 != null) {
+                formattedTextField1.setText(fecha != null ? adapter.marshal(fecha) : "");
+            }
+        } catch (Exception ignored) {}
+    }
+
+    public LocalDate getFechaSeleccionada() {
+        return confirmado ? fechaSeleccionada : null;
     }
 
     // ------------------------------------------------------------------------------------------
