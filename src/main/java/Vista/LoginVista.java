@@ -3,6 +3,7 @@ package Vista;
 import com.formdev.flatlaf.FlatLightLaf;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
@@ -28,24 +29,17 @@ public class LoginVista extends JFrame {
     // ------------------------------------------------------------------------------------------
 
     public LoginVista() {
-        // L&F recomendado para mantener la estética en todo el sistema
-        try { FlatLightLaf.setup(); } catch (Exception ignored) {}
-
         setTitle("Ingreso al Sistema");
         setContentPane(panel1);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(420, 420);
         setLocationRelativeTo(null);
 
-        // Estilos unificados (celestes) + accesibilidad básica
         aplicarEstilosLogin();
 
-        // Default button al presionar Enter
-        if (getRootPane() != null && ingresarButton != null) {
+        if (getRootPane() != null && ingresarButton != null)
             getRootPane().setDefaultButton(ingresarButton);
-        }
 
-        // Acción rápida: limpiar formulario
         if (limpiarButton != null) {
             limpiarButton.addActionListener(e -> {
                 if (idText != null) idText.setText("");
@@ -60,18 +54,19 @@ public class LoginVista extends JFrame {
     // ------------------------------------------------------------------------------------------
 
     private void aplicarEstilosLogin() {
-        // Paleta del sistema
-        final Color PRIMARY = new Color(66, 133, 244);   // celeste principal
-        final Color SECOND  = new Color(204, 228, 255);  // celeste claro
-        final Color LABEL   = new Color(33, 37, 41);     // texto oscuro
+        final Color PRIMARY = new Color(66, 133, 244);
+        final Color SECOND  = new Color(204, 228, 255);
+        final Color LABEL   = new Color(33, 37, 41);
         final Font  FNT_TXT = new Font("Segoe UI", Font.PLAIN, 13);
         final Font  FNT_BTN = new Font("Segoe UI", Font.BOLD, 13);
         final Font  FNT_LBL = new Font("Segoe UI", Font.PLAIN, 12);
 
-        // Fondo general
-        if (panel1 != null) panel1.setBackground(Color.WHITE);
+        if (panel1 != null) {
+            panel1.setBackground(Color.WHITE);
+            ((JComponent) panel1).setBorder(new EmptyBorder(16, 20, 20, 20));
+            blanquearFondosRec(panel1);
+        }
 
-        // Labels
         JLabel[] labels = { idField, claveField };
         for (JLabel l : labels) {
             if (l == null) continue;
@@ -79,7 +74,6 @@ public class LoginVista extends JFrame {
             l.setForeground(LABEL);
         }
 
-        // Campos
         if (idText != null) {
             idText.setFont(FNT_TXT);
             idText.setForeground(Color.BLACK);
@@ -93,24 +87,29 @@ public class LoginVista extends JFrame {
             claveText.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
         }
 
-        // Botones: primario (Ingresar) + secundarios (Cambiar, Limpiar)
-        if (ingresarButton != null) {
-            estiloPrimario(ingresarButton, PRIMARY, FNT_BTN);
-        }
-        JButton[] secundarios = { cambiarContraseñaButton, limpiarButton };
-        for (JButton b : secundarios) {
-            if (b == null) continue;
-            estiloSecundario(b, SECOND, PRIMARY, FNT_BTN);
-        }
+        if (ingresarButton != null) estiloPrimario(ingresarButton, PRIMARY, FNT_BTN);
 
-        // Asegurar que ningún botón quede sin estilizar (secundario por defecto)
-        Set<JButton> ya = new HashSet<>();
-        if (ingresarButton != null) ya.add(ingresarButton);
-        for (JButton b : secundarios) if (b != null) ya.add(b);
-        estilizarBotonesRestantes(panel1, ya, SECOND, PRIMARY, FNT_BTN);
+        JButton[] secundarios = { cambiarContraseñaButton, limpiarButton };
+        for (JButton b : secundarios) if (b != null) estiloSecundario(b, SECOND, PRIMARY, FNT_BTN);
+
+        Set<JButton> pintados = new HashSet<>();
+        if (ingresarButton != null) pintados.add(ingresarButton);
+        for (JButton b : secundarios) if (b != null) pintados.add(b);
+        estilizarBotonesRestantes(panel1, pintados, SECOND, PRIMARY, FNT_BTN);
+
+        igualarTamanoBotones(240, 36, ingresarButton, cambiarContraseñaButton, limpiarButton);
     }
 
-    // -- helpers de estilo (mismo criterio usado en MenuVista) --------------------------------
+    private void blanquearFondosRec(Container root) {
+        if (root == null) return;
+        for (Component c : root.getComponents()) {
+            if (c instanceof JPanel) {
+                c.setBackground(Color.WHITE);
+                ((JComponent) c).setOpaque(true);
+            }
+            if (c instanceof Container) blanquearFondosRec((Container) c);
+        }
+    }
 
     private void estiloPrimario(JButton b, Color primary, Font fnt) {
         b.setFocusPainted(false);
@@ -119,6 +118,8 @@ public class LoginVista extends JFrame {
         b.setForeground(Color.WHITE);
         b.setFont(fnt);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.setRolloverEnabled(true);
+        b.putClientProperty("JButton.buttonType", "roundRect"); // permite hover FlatLaf
     }
 
     private void estiloSecundario(JButton b, Color bg, Color fg, Font fnt) {
@@ -128,6 +129,8 @@ public class LoginVista extends JFrame {
         b.setForeground(fg);
         b.setFont(fnt);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.setRolloverEnabled(true);
+        b.putClientProperty("JButton.buttonType", "roundRect");
     }
 
     private void estilizarBotonesRestantes(Container root, Set<JButton> ya, Color bg, Color fg, Font fnt) {
@@ -142,8 +145,18 @@ public class LoginVista extends JFrame {
         }
     }
 
+    private void igualarTamanoBotones(int w, int h, JButton... btns) {
+        Dimension d = new Dimension(w, h);
+        for (JButton b : btns) {
+            if (b == null) continue;
+            b.setMinimumSize(d);
+            b.setPreferredSize(d);
+            b.setMaximumSize(d);
+        }
+    }
+
     // ------------------------------------------------------------------------------------------
-    // --------------------------------- GETTERS / LISTENERS ------------------------------------
+    // ------------------------------- GETTERS / LISTENERS API ----------------------------------
     // ------------------------------------------------------------------------------------------
 
     public String getUsuarioId() {
@@ -171,6 +184,7 @@ public class LoginVista extends JFrame {
     // ------------------------------------------------------------------------------------------
 
     public static void main(String[] args) {
+        try { FlatLightLaf.setup(); } catch (Exception ignored) {}
         SwingUtilities.invokeLater(() -> new LoginVista().setVisible(true));
     }
 }

@@ -37,7 +37,9 @@
         <children>
           <vspacer id="6ba78">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+                <maximum-size width="13" height="-1"/>
+              </grid>
             </constraints>
           </vspacer>
           <component id="f1902" class="javax.swing.JButton" binding="ingresarButton" default-binding="true">
