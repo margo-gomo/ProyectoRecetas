@@ -1317,28 +1317,6 @@
                           <text value="Médico:"/>
                         </properties>
                       </component>
-                      <component id="7d3c2" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
-                        <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <model>
-                            <item value="id"/>
-                            <item value="nombre"/>
-                          </model>
-                        </properties>
-                      </component>
-                      <component id="f496e" class="javax.swing.JComboBox" binding="comboBox3" default-binding="true">
-                        <constraints>
-                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties>
-                          <model>
-                            <item value="id"/>
-                            <item value="nombre"/>
-                          </model>
-                        </properties>
-                      </component>
                       <component id="ef21c" class="javax.swing.JTextField" binding="textField7" default-binding="true">
                         <constraints>
                           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
@@ -1391,7 +1369,6 @@
                         <properties>
                           <model>
                             <item value="todas"/>
-                            <item value="confeccionada"/>
                             <item value="proceso"/>
                             <item value="lista"/>
                             <item value="entregada"/>
@@ -1444,6 +1421,22 @@
                         </constraints>
                         <properties>
                           <text value="Elegir fecha"/>
+                        </properties>
+                      </component>
+                      <component id="b7e11" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="ID:"/>
+                        </properties>
+                      </component>
+                      <component id="e563a" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="ID:"/>
                         </properties>
                       </component>
                     </children>

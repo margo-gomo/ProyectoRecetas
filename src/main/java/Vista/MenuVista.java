@@ -73,8 +73,6 @@ public class MenuVista extends JFrame {
     private JTable tablaDashboard;
     private JButton refrescarButton;
     private JButton limpiarButton1;
-    private JComboBox comboBox2;
-    private JComboBox comboBox3;
     private JTextField textField7;
     private JTextField textField8;
     private JButton buscarButton;
