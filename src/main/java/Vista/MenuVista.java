@@ -375,7 +375,6 @@ public class MenuVista extends JFrame {
                         return;
                     }
 
-                    // Tomar ID del formulario o de la fila seleccionada
                     String id = (tfIdMedico != null) ? tfIdMedico.getText().trim() : "";
                     if ((id == null || id.isEmpty()) && tabloMedicos != null && tabloMedicos.getSelectedRow() >= 0) {
                         int sel = tabloMedicos.getSelectedRow();
@@ -1361,7 +1360,7 @@ public class MenuVista extends JFrame {
     }
 
     private void configurarTablaRecetas() {
-        String[] columnasRecetas = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección"};
+        String[] columnasRecetas = {"Medicamento", "Presentación", "Cantidad", "Indicaciones", "Duración en días"};
         modeloTablaRecetas = new DefaultTableModel(columnasRecetas, 0);
         if (tablaPrescripcion != null) tablaPrescripcion.setModel(modeloTablaRecetas);
 
