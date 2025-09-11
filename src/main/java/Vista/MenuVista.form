@@ -118,7 +118,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="9726b" class="javax.swing.JTable" binding="table1" default-binding="true">
+                              <component id="9726b" class="javax.swing.JTable" binding="tablaPrescripcion">
                                 <constraints/>
                                 <properties>
                                   <autoCreateRowSorter value="true"/>

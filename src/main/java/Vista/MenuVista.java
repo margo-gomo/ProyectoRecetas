@@ -46,7 +46,7 @@ public class MenuVista extends JFrame {
     private JButton buscarPacienteButton;
     private JButton agregarMedicamentoButton;
     private JButton elegirFechaButton;
-    private JTable table1;
+    private JTable tablaPrescripcion;
     private JButton guardarButton;
     private JButton limpiarButton;
     private JButton descartarButton;
@@ -189,7 +189,7 @@ public class MenuVista extends JFrame {
             buscarPacienteButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    DialogBuscarPaciente dialog = new DialogBuscarPaciente();
+                    DialogBuscarPaciente dialog = new DialogBuscarPaciente(controlador);
                     dialog.setModal(true);
                     dialog.setLocationRelativeTo(MenuVista.this);
                     dialog.setVisible(true);
@@ -201,7 +201,7 @@ public class MenuVista extends JFrame {
             agregarMedicamentoButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    DialogBuscarMedicamento dialog = new DialogBuscarMedicamento();
+                    DialogBuscarMedicamento dialog = new DialogBuscarMedicamento(controlador);
                     dialog.setModal(true);
                     dialog.setLocationRelativeTo(MenuVista.this);
                     dialog.setVisible(true);
@@ -944,7 +944,7 @@ public class MenuVista extends JFrame {
         addButtonsToSet(yaEstilados, secundarios);
         estilizarBotonesRestantes(panelPrincipal, yaEstilados, SECOND, PRIMARY);
 
-        JTable[] todasLasTablas = { table1, tablaDashboard, tabHistorico, tabloMedicos, tablaDespacho, tablaFarma, tablaPac, tablaMed, tablaEstados };
+        JTable[] todasLasTablas = {tablaPrescripcion, tablaDashboard, tabHistorico, tabloMedicos, tablaDespacho, tablaFarma, tablaPac, tablaMed, tablaEstados };
         for (JTable t : todasLasTablas) {
             if (t == null) continue;
             t.setFillsViewportHeight(true);
@@ -1363,7 +1363,7 @@ public class MenuVista extends JFrame {
     private void configurarTablaRecetas() {
         String[] columnasRecetas = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección"};
         modeloTablaRecetas = new DefaultTableModel(columnasRecetas, 0);
-        if (table1 != null) table1.setModel(modeloTablaRecetas);
+        if (tablaPrescripcion != null) tablaPrescripcion.setModel(modeloTablaRecetas);
 
         if (tablaDespacho != null) {
             String[] columnasDespacho = {"ID Paciente", "Nombre Paciente", "Fecha Actual", "Fecha de Retiro", "Estado"};
