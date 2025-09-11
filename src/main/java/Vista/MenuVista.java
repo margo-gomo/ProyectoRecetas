@@ -159,7 +159,8 @@ public class MenuVista extends JFrame {
 
         setTitle("Sistema de Prescripción y Despacho de Recetas");
         setContentPane(panelPrincipal);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        //Cose Operation
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1100, 700);
         setLocationRelativeTo(null);
 
@@ -828,6 +829,13 @@ public class MenuVista extends JFrame {
             });
         }
 
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                finalizarVentana(evt);
+            }
+        });
+
+
         // ------------------------ LISTENER: LIMPIAR MEDICAMENTO ------------------------
 
         limpiarMedicamento.addActionListener(e -> {
@@ -837,6 +845,21 @@ public class MenuVista extends JFrame {
         });
 
     }
+
+    // ------------------------------------------------------------------------------------------
+    // ------------------------------- FINALIZAR VENTANA Y APLICACION --------------------------------
+    // ------------------------------------------------------------------------------------------
+
+    private void finalizarVentana(java.awt.event.WindowEvent evt) {
+        cerrarAplicacion();
+    }
+    public void cerrarAplicacion() {
+        controlador.cerrarAplicacion();
+    }
+
+
+
+
 
     // ------------------------------------------------------------------------------------------
     // ------------------------------- ESTILOS DEL MENÚ PRINCIPAL --------------------------------

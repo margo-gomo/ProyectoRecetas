@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lista_medicos>
+    <medico especialidad="Neurología">
+        <nombre>Josue</nombre>
+        <clave>1</clave>
+        <id>1</id>
+        <token>1</token>
+    </medico>
+</lista_medicos>
+
