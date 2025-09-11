@@ -147,6 +147,10 @@ public class MenuVista extends JFrame {
     private JComboBox comboPacientes;
     private JComboBox comboMedicamentos;
     private JLabel labelNomPaciente;
+    private JLabel labelFechaActualPresc;
+    private JLabel labelFechaRetiroPresc;
+    private JComboBox comboReceta;
+    private JTextField tfRecetas;
 
     private DefaultTableModel modeloTablaRecetas;
     private Controlador controlador;
@@ -1404,7 +1408,7 @@ public class MenuVista extends JFrame {
         if (tablaPrescripcion != null) tablaPrescripcion.setModel(modeloTablaRecetas);
 
         if (tablaDespacho != null) {
-            String[] columnasDespacho = {"Código de la receta", "Fecha Actual", "Fecha de Retiro", "Estado"};
+            String[] columnasDespacho = {"Código de la receta","ID Paciente", "Fecha Actual", "Fecha de Retiro", "Estado"};
             DefaultTableModel modeloDespacho = new DefaultTableModel(columnasDespacho, 0);
             tablaDespacho.setModel(modeloDespacho);
         }
