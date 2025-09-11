@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<lista_pacientes/>
+<lista_pacientes>
+    <paciente fecha_nacimiento="17/09/2017">
+        <id>111</id>
+        <nombre>Pedro</nombre>
+        <teléfono>777777</teléfono>
+    </paciente>
+</lista_pacientes>
 
