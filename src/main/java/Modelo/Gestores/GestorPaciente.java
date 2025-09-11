@@ -36,19 +36,19 @@ public class GestorPaciente {
         return  pacientes.buscarPorNombre(nombre);
     }
 
-    public Paciente agregar(Paciente paciente,int token) throws IllegalArgumentException { // (antes: aregarPaciente)
+    public Paciente agregar(Paciente paciente,int token) throws IllegalArgumentException,SecurityException { // (antes: aregarPaciente)
         if(token!=0)
             throw new SecurityException();
         return pacientes.agregar(paciente);
     }
 
-    public Paciente actualizar(Paciente paciente,int token) throws IllegalArgumentException { // (antes: pacienteporactualizar)
+    public Paciente actualizar(Paciente paciente,int token) throws IllegalArgumentException,SecurityException { // (antes: pacienteporactualizar)
         if(token!=0)
             throw new SecurityException();
         return pacientes.actualizar(paciente);
     }
 
-    public Paciente eliminar(int id,int token) throws IllegalArgumentException {
+    public Paciente eliminar(int id,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
             throw new SecurityException();
         return  pacientes.eliminar(id);

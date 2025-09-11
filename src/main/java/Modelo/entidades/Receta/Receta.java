@@ -32,29 +32,40 @@ public class Receta {
         return List.copyOf(indicaciones.values());
     }
 
-    public Indicacion agregarIndicacion(Indicacion indicacion) throws IllegalArgumentException {
+    public List<Indicacion> agregarIndicaciones(List<Indicacion> indicaciones) throws IllegalArgumentException {
+        if(indicaciones == null){
+            throw new IllegalArgumentException(indicaciones.toString());
+        }
+        for(Indicacion indicacion : indicaciones)
+            this.indicaciones.put(indicacion.getMedicamento().getCodigo(), indicacion);
+        return obtenerListaIndicaciones();
+        /*
         if(!indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
             indicaciones.putIfAbsent(indicacion.getMedicamento().getCodigo(),indicacion);
             System.out.printf("Indicacion agregado correctamente: '%s'%n", indicacion);
         }
         else
             throw new IllegalArgumentException(String.valueOf(indicaciones.get(indicacion.getMedicamento().getCodigo())));
-        return indicacion;
+        return indicacion;*/
     }
 
-    public Indicacion actualizarIndicacion(Indicacion indicacion) throws IllegalArgumentException {
-        if(indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
+    public List<Indicacion> actualizarIndicaciones(List<Indicacion> indicaciones) throws IllegalArgumentException {
+        if(indicaciones == null)
+            throw new IllegalArgumentException(indicaciones.toString());
+        this.indicaciones.clear();
+        return agregarIndicaciones(indicaciones);
+        /*if(indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
             indicaciones.put(indicacion.getMedicamento().getCodigo(),indicacion);
             System.out.printf("Indicacion actualizada correctamente: '%s'%n", indicacion);
         }
         else
             throw new IllegalArgumentException(String.valueOf(indicaciones.get(indicacion.getMedicamento().getCodigo())));
-        return indicacion;
+        return indicacion;*/
     }
 
-    public Indicacion eliminarIndicacion(int codigo) throws IllegalArgumentException {
-        Indicacion indicacion = indicaciones.remove(codigo);
-        if(indicacion!=null)
+    public Indicacion eliminarIndicacion(Indicacion indicacion) throws IllegalArgumentException {
+        Indicacion i = indicaciones.remove(indicacion.getMedicamento().getCodigo());
+        if(i!=null)
             System.out.printf("Indicacion eliminada correctamente: '%s'%n", indicacion);
         else
             throw new IllegalArgumentException(String.valueOf(codigo));

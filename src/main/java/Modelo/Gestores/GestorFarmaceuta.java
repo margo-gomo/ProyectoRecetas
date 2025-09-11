@@ -37,19 +37,19 @@ public class GestorFarmaceuta {
         return  farmaceutas.buscarPorNombre(nombre);
     }
 
-    public Farmaceuta agregar(Farmaceuta farmaceuta,int token) throws IllegalArgumentException {
+    public Farmaceuta agregar(Farmaceuta farmaceuta,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
             throw new SecurityException();
         return farmaceutas.agregar(farmaceuta);
     }
 
-    public Farmaceuta actualizar(Farmaceuta farmaceuta,int token) throws IllegalArgumentException {
+    public Farmaceuta actualizar(Farmaceuta farmaceuta,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
             throw new SecurityException();
         return farmaceutas.actualizar(farmaceuta);
     }
 
-    public Farmaceuta eliminar(String id,int token) throws IllegalArgumentException {
+    public Farmaceuta eliminar(String id,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
             throw new SecurityException();
         return  farmaceutas.eliminar(id);

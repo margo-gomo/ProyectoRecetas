@@ -41,19 +41,19 @@ public class GestorMedicamento {
         return  medicamentos.buscarPorDescripcion(descripcion);
     }
 
-    public Medicamento agregar(Medicamento medicamento,int token) throws IllegalArgumentException {
+    public Medicamento agregar(Medicamento medicamento,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
             throw new SecurityException(String.valueOf(token));
         return medicamentos.agregar(medicamento);
     }
 
-    public Medicamento actualizar(Medicamento medicamento,int token) throws IllegalArgumentException {
+    public Medicamento actualizar(Medicamento medicamento,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
             throw new SecurityException(String.valueOf(token));
         return medicamentos.actualizar(medicamento);
     }
 
-    public Medicamento eliminar(int codigo,int token) throws IllegalArgumentException {
+    public Medicamento eliminar(int codigo,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
             throw new SecurityException(String.valueOf(token));
         return  medicamentos.eliminar(codigo);

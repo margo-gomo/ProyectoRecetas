@@ -34,19 +34,19 @@ public class GestorRecetas {
     public Receta buscarRecetaPorCodigo(String codigo){
         return recetas.buscarRecetaPorCodigo(codigo);
     }
-    public Receta agregar(Receta receta,int token) throws IllegalArgumentException {
+    public Receta agregar(Receta receta,int token) throws IllegalArgumentException,SecurityException {
         if(token!=1)
             throw new SecurityException(String.valueOf(token));
         return  recetas.agregar(receta);
     }
 
-    public Receta actualizar(Receta recetaPorActualizar,int token) throws IllegalArgumentException {
+    public Receta actualizar(Receta recetaPorActualizar,int token) throws IllegalArgumentException,SecurityException {
         if(token!=1||token!=2)
             throw new SecurityException(String.valueOf(token));
         return recetas.actualizar(recetaPorActualizar);
     }
 
-    public Receta eliminar(String codigo,int token) throws IllegalArgumentException {
+    public Receta eliminar(String codigo,int token) throws IllegalArgumentException,SecurityException {
         if(token!=1)
             throw new SecurityException(String.valueOf(token));
         return recetas.eliminar(codigo);

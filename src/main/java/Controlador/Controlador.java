@@ -17,19 +17,20 @@ import java.util.Map;
 import lombok.Setter;
 public class Controlador {
     public Controlador(GestorAdministrador modeloAdministrador,GestorMedico modeloMedico, GestorFarmaceuta modeloFarmaceuta,
-                       GestorMedicamento modeloMedicamento,GestorPaciente modeloPaciente,GestorRecetas modeloRecetas) {
+                       GestorMedicamento modeloMedicamento,GestorPaciente modeloPaciente,GestorRecetas modeloRecetas,GestorIndicacion modeloIndicacion) {
         this.modeloAdministrador = modeloAdministrador;
         this.modeloMedico = modeloMedico;
         this.modeloFarmaceuta = modeloFarmaceuta;
         this.modeloPaciente = modeloPaciente;
         this.modeloMedicamento = modeloMedicamento;
         this.modeloRecetas = modeloRecetas;
+        this.modeloIndicacion = modeloIndicacion;
         usuarios=new login();
         dashboard=new Dashboard();
         historial=new Historicos();
     }
     public Controlador() {
-        this(new GestorAdministrador(),new GestorMedico(),new GestorFarmaceuta(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetas());
+        this(new GestorAdministrador(),new GestorMedico(),new GestorFarmaceuta(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetas(),new GestorIndicacion());
         usuarios=new login();
         dashboard=new Dashboard();
         historial=new Historicos();
@@ -163,6 +164,21 @@ public class Controlador {
     public Receta eliminarReceta(String codigo) throws IllegalArgumentException, SecurityException{
         return modeloRecetas.eliminar(codigo,token);
     }
+    public List<Indicacion> obtenerListaIndicaciones(){
+        return modeloIndicacion.obtenerListaIndicaciones();
+    }
+    public Indicacion buscarIndicacion(int codigo){
+        return modeloIndicacion.buscarIndicacion(codigo);
+    }
+    public Indicacion agregarIndicacion(Indicacion indicacion) throws IllegalArgumentException, SecurityException{
+        return modeloIndicacion.agregar(indicacion,token);
+    }
+    public Indicacion actualizarIndicacion(Indicacion indicacion)throws IllegalArgumentException, SecurityException{
+        return modeloIndicacion.actualizar(indicacion,token);
+    }
+    public Indicacion eliminarIndicacion(int codigo) throws IllegalArgumentException, SecurityException{
+        return modeloIndicacion.eliminar(codigo,token);
+    }
     public void iniciarProceso(String codigo) throws IllegalArgumentException{
         modeloRecetas.iniciarProceso(codigo);
     }
@@ -237,6 +253,7 @@ public class Controlador {
     private GestorPaciente modeloPaciente;
     private GestorMedicamento modeloMedicamento;
     private GestorRecetas modeloRecetas;
+    private GestorIndicacion modeloIndicacion;
     private login usuarios;
     @Setter
     private int token;
