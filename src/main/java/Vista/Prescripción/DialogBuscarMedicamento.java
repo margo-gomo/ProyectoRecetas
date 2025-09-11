@@ -35,7 +35,7 @@ public class DialogBuscarMedicamento extends JDialog {
     private JButton buscarButton;
     private JSpinner spinnerDuracionPresc;
     private JSpinner spinnerCantPresc;
-    private JTextField textField2;
+    private JTextField tfIndicacionesPresc;
 
     private DefaultTableModel modeloTabla;
     private TableRowSorter<DefaultTableModel> sorter;

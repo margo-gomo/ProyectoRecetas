@@ -23,7 +23,6 @@ public class DialogBuscarReceta extends JDialog {
     private JTable table1;
     private JComboBox<String> comboBox1;
     private JTextField textField1;
-    private JButton buscarButton;
 
     private DefaultTableModel modeloTabla;
 
@@ -183,7 +182,7 @@ public class DialogBuscarReceta extends JDialog {
     // ------------------------------------------------------------------------------------------
 
     private void configurarTabla() {
-        String[] columnas = { "ID paciente", "Nombre Paciente", "Fecha Confección", "Fecha Retiro" };
+        String[] columnas = {"Medicamento", "Presentación", "Cantidad", "Indicaciones", "Duración en días"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override public boolean isCellEditable(int row, int column) { return false; }
         };

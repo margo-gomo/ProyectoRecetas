@@ -5,6 +5,7 @@ import Vista.Prescripción.DialogBuscarPaciente;
 import Vista.Prescripción.DialogBuscarReceta;
 import Vista.Prescripción.DialogSeleccionarFecha;
 import Modelo.entidades.Medico;
+import Modelo.entidades.Paciente;
 import Controlador.Controlador;
 
 import com.formdev.flatlaf.FlatLightLaf;
@@ -145,6 +146,7 @@ public class MenuVista extends JFrame {
     private JComboBox comboFarmaceutas;
     private JComboBox comboPacientes;
     private JComboBox comboMedicamentos;
+    private JLabel labelNomPaciente;
 
     private DefaultTableModel modeloTablaRecetas;
     private Controlador controlador;
@@ -154,6 +156,8 @@ public class MenuVista extends JFrame {
     private TableRowSorter<DefaultTableModel> sorterFarma;
     private TableRowSorter<DefaultTableModel> sorterPac;
     private TableRowSorter<DefaultTableModel> sorterMed;
+
+    private Paciente pacienteSeleccionado;
 
     // ------------------------------------------------------------------------------------------
     // ------------------------------------- CONSTRUCTOR ----------------------------------------
@@ -184,7 +188,15 @@ public class MenuVista extends JFrame {
         configurarTablaEstados();
         cargarDatosIniciales();
 
+
+        // Placeholder para paciente en prescripción
+        if (labelNomPaciente != null) {
+            labelNomPaciente.setText("(sin paciente seleccionado)");
+        }
+
+
         // ------------------------- LISTENERS BÁSICOS (DIÁLOGOS) -------------------------
+
         if (buscarPacienteButton != null) {
             buscarPacienteButton.addActionListener(new ActionListener() {
                 @Override
@@ -193,6 +205,33 @@ public class MenuVista extends JFrame {
                     dialog.setModal(true);
                     dialog.setLocationRelativeTo(MenuVista.this);
                     dialog.setVisible(true);
+
+                    // Solo si el usuario aceptó:
+                    if (dialog.isAceptado()) {
+                        Object idObj = dialog.getIdSeleccionado();
+                        if (idObj != null) {
+                            try {
+                                int id = Integer.parseInt(idObj.toString());
+                                Paciente p = controlador.buscarPacientePorId(id);
+                                if (p != null) {
+                                    pacienteSeleccionado = p;
+                                    if (labelNomPaciente != null) {
+                                        labelNomPaciente.setText(p.getNombre() + " (ID " + p.getId() + ")");
+                                    }
+                                }
+                            } catch (NumberFormatException ex) {
+                                // ID inválido en la tabla (raro, pero prevenimos)
+                                JOptionPane.showMessageDialog(MenuVista.this,
+                                        "El ID del paciente seleccionado no es válido.",
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    } else {
+                        pacienteSeleccionado = null;
+                        if (labelNomPaciente != null) {
+                            labelNomPaciente.setText("(sin paciente seleccionado)");
+                        }
+                    }
                 }
             });
         }
@@ -1365,7 +1404,7 @@ public class MenuVista extends JFrame {
         if (tablaPrescripcion != null) tablaPrescripcion.setModel(modeloTablaRecetas);
 
         if (tablaDespacho != null) {
-            String[] columnasDespacho = {"ID Paciente", "Nombre Paciente", "Fecha Actual", "Fecha de Retiro", "Estado"};
+            String[] columnasDespacho = {"Código de la receta", "Fecha Actual", "Fecha de Retiro", "Estado"};
             DefaultTableModel modeloDespacho = new DefaultTableModel(columnasDespacho, 0);
             tablaDespacho.setModel(modeloDespacho);
         }

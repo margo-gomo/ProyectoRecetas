@@ -35,6 +35,9 @@ public class DialogBuscarPaciente extends JDialog {
     private DefaultTableModel modeloTabla;
     private TableRowSorter<DefaultTableModel> sorter;
 
+    private boolean aceptado = false;
+    public boolean isAceptado() { return aceptado; }
+
     private Controlador controlador;
 
     // ------------------------------------------------------------------------------------------
@@ -69,10 +72,25 @@ public class DialogBuscarPaciente extends JDialog {
         if (getRootPane() != null && buttonOK != null)
             getRootPane().setDefaultButton(buttonOK);
 
-        if (buttonOK != null)     buttonOK.addActionListener(e -> dispose());
-        if (buttonCancel != null) buttonCancel.addActionListener(e -> dispose());
+        if (buttonOK != null) {
+            buttonOK.addActionListener(e -> {
+                if (table1 == null || table1.getSelectedRow() < 0) {
+                    JOptionPane.showMessageDialog(this, "Seleccione un paciente de la lista.",
+                            "Aviso", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                aceptado = true;
+                dispose();
+            });
+        }
 
-        // Doble click/ENTER para aceptar
+        if (buttonCancel != null) {
+            buttonCancel.addActionListener(e -> {
+                aceptado = false;
+                dispose();
+            });
+        }
+
         if (table1 != null) {
             table1.addMouseListener(new MouseAdapter() {
                 @Override public void mouseClicked(MouseEvent e) {
@@ -92,11 +110,17 @@ public class DialogBuscarPaciente extends JDialog {
         if (buscarButton != null) buscarButton.addActionListener(e -> aplicarFiltro());
 
         addWindowListener(new WindowAdapter() {
-            @Override public void windowClosing(WindowEvent e) { dispose(); }
+            @Override public void windowClosing(WindowEvent e) {
+                aceptado = false;
+                dispose();
+            }
         });
 
         if (contentPane != null) {
-            contentPane.registerKeyboardAction(e -> dispose(),
+            contentPane.registerKeyboardAction(e -> {
+                        aceptado = false;
+                        dispose();
+                    },
                     KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                     JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         }
