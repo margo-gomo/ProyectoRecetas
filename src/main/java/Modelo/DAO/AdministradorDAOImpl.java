@@ -62,7 +62,7 @@ public class AdministradorDAOImpl implements AdministradorDAO {
             administradores.putIfAbsent(m.getId(),m);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        AdministradorDAOX med=new AdministradorDAOX();
+        AdministradorDAOX med=new AdministradorDAOX(administradores);
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(med));
         }
@@ -70,7 +70,7 @@ public class AdministradorDAOImpl implements AdministradorDAO {
     private final Map<String,Administrador> administradores;
     @XmlRootElement(name = "administradores")
     @XmlAccessorType(XmlAccessType.FIELD)
-    class AdministradorDAOX{
+    static class AdministradorDAOX{
         public AdministradorDAOX(Map<String,Administrador> m){
             this();
             for(Administrador med : m.values())

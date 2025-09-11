@@ -4,7 +4,7 @@ import Modelo.DAO.MedicoDAO;
 import Modelo.DAO.MedicoDAOImpl;
 import Modelo.entidades.Medico;
 import jakarta.xml.bind.JAXBException;
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -76,9 +76,14 @@ public class GestorMedico {
         return sb.toString();
     }
     public void cargar()throws FileNotFoundException, JAXBException {
-        MedicoDAOImpl impl = (MedicoDAOImpl) medicos;
-        impl.cargar(new FileInputStream(ARCHIVO_DATOS));
-        System.out.println("Datos cargados correctamente.");
+        File f=new File(ARCHIVO_DATOS);
+        if(!f.exists()||f.length()==0)
+            System.out.println("No hay datos previos para cargar.");
+        else{
+            MedicoDAOImpl impl = (MedicoDAOImpl) medicos;
+            impl.cargar(new FileInputStream(f));
+            System.out.println("Datos cargados correctamente.");
+        }
     }
     public void guardar()throws FileNotFoundException, JAXBException{
         MedicoDAOImpl impl = (MedicoDAOImpl) medicos;

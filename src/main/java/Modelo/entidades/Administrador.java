@@ -8,7 +8,6 @@ import lombok.*;
 import java.util.Objects;
 
 //admin
-@XmlRootElement(name = "administrador")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
 @ToString

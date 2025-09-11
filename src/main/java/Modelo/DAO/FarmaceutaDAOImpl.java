@@ -108,7 +108,7 @@ public class FarmaceutaDAOImpl implements FarmaceutaDAO {
             farmaceutas.putIfAbsent(f.getId(),f);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        FarmaceutaDAOX med=new FarmaceutaDAOX();
+        FarmaceutaDAOX med=new FarmaceutaDAOX(farmaceutas);
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(med));
         }
@@ -116,7 +116,7 @@ public class FarmaceutaDAOImpl implements FarmaceutaDAO {
     private final Map<String,Farmaceuta> farmaceutas;
     @XmlRootElement(name = "lista_farmaceutas")
     @XmlAccessorType(XmlAccessType.FIELD)
-    class FarmaceutaDAOX{
+    static class FarmaceutaDAOX{
         public FarmaceutaDAOX(Map<String,Farmaceuta> f){
             this();
             for(Farmaceuta far : f.values())

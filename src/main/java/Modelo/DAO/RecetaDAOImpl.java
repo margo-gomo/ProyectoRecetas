@@ -83,7 +83,7 @@ public class RecetaDAOImpl implements RecetaDAO {
         }
     }
     public void guardar (OutputStream out) throws JAXBException {
-        RecetasDAOX rec=new RecetasDAOX();
+        RecetasDAOX rec=new RecetasDAOX(recetas);
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(rec));
         }
@@ -93,7 +93,7 @@ public class RecetaDAOImpl implements RecetaDAO {
 
     @XmlRootElement(name = "lista_recetas")
     @XmlAccessorType(XmlAccessType.FIELD)
-    class RecetasDAOX{
+    static class RecetasDAOX{
         public RecetasDAOX(Map<String,Receta> r) {
             this();
             for(Receta rec:r.values())

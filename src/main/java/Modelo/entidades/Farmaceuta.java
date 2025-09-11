@@ -7,7 +7,6 @@ import lombok.*;
 
 import java.util.Objects;
 
-@XmlRootElement (name = "farmaceuta")
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
 @ToString

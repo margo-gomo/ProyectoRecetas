@@ -84,7 +84,7 @@ public class PacienteDAOImpl implements PacienteDAO {
             pacientes.putIfAbsent(p.getId(),p);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        PacienteDAOX pac=new PacienteDAOX();
+        PacienteDAOX pac=new PacienteDAOX(pacientes);
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(pac));
         }
@@ -92,7 +92,7 @@ public class PacienteDAOImpl implements PacienteDAO {
     private final Map<Integer,Paciente> pacientes;
     @XmlRootElement(name = "lista_pacientes")
     @XmlAccessorType(XmlAccessType.FIELD)
-    class PacienteDAOX{
+    static class PacienteDAOX{
         public PacienteDAOX(Map<Integer,Paciente> p){
             this();
             for(Paciente pac : p.values())

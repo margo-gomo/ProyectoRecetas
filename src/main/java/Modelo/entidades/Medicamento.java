@@ -8,8 +8,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Data
-@XmlRootElement(name = "medicamento")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Medicamento {
     @Override

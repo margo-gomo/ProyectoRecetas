@@ -4,7 +4,7 @@ import Modelo.DAO.PacienteDAO;
 import Modelo.DAO.PacienteDAOImpl;
 import Modelo.entidades.Paciente;
 import jakarta.xml.bind.JAXBException;
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -64,9 +64,14 @@ public class GestorPaciente {
         return sb.toString();
     }
     public void cargar()throws FileNotFoundException, JAXBException {
-        PacienteDAOImpl impl = (PacienteDAOImpl) pacientes;
-        impl.cargar(new FileInputStream(ARCHIVO_DATOS));
-        System.out.println("Datos cargados correctamente.");
+        File f=new File(ARCHIVO_DATOS);
+        if(!f.exists()||f.length()==0)
+            System.out.println("No hay datos previos para cargar.");
+        else{
+            PacienteDAOImpl impl = (PacienteDAOImpl) pacientes;
+            impl.cargar(new FileInputStream(ARCHIVO_DATOS));
+            System.out.println("Datos cargados correctamente.");
+        }
     }
     public void guardar()throws FileNotFoundException, JAXBException{
         PacienteDAOImpl impl = (PacienteDAOImpl) pacientes;

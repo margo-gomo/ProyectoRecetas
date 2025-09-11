@@ -88,7 +88,7 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
             medicamentos.putIfAbsent(m.getCodigo(),m);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        MedicamentoDAOX med=new MedicamentoDAOX();
+        MedicamentoDAOX med=new MedicamentoDAOX(medicamentos);
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(med));
         }
@@ -96,7 +96,7 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
     private final Map<Integer,Medicamento> medicamentos;
     @XmlRootElement(name = "lista_medicamentos")
     @XmlAccessorType(XmlAccessType.FIELD)
-    class MedicamentoDAOX{
+    static class MedicamentoDAOX{
         public MedicamentoDAOX(Map<Integer,Medicamento> m){
             this();
             for(Medicamento med : m.values())

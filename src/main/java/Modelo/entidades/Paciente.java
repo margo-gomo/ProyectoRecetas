@@ -11,7 +11,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@XmlRootElement (name = "paciente")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Paciente {
     @Override

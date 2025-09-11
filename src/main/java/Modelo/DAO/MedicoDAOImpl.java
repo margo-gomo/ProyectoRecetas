@@ -108,7 +108,7 @@ public class MedicoDAOImpl implements MedicoDAO {
             medicos.putIfAbsent(m.getId(),m);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        MedicoDAOX med=new MedicoDAOX();
+        MedicoDAOX med=new MedicoDAOX(medicos);
         try(PrintWriter printwriter=new PrintWriter(out)){
             printwriter.println(XMLUtils.toXMLString(med));
         }
@@ -116,7 +116,7 @@ public class MedicoDAOImpl implements MedicoDAO {
     private final Map<String,Medico> medicos;
     @XmlRootElement(name = "lista_medicos")
     @XmlAccessorType(XmlAccessType.FIELD)
-    class MedicoDAOX{
+    static class MedicoDAOX{
         public MedicoDAOX(Map<String,Medico> m){
             this();
             for(Medico med : m.values())

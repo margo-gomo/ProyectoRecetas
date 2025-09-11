@@ -1,7 +1,6 @@
 package Modelo.entidades.Receta;
 import Modelo.entidades.Medicamento;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.AllArgsConstructor;
@@ -9,15 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Setter;
-import lombok.Data;
 
 import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Data
-@XmlRootElement (name = "Indicaciones")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Indicacion {
     @Override

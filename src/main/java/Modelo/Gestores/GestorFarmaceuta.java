@@ -4,7 +4,7 @@ import Modelo.DAO.FarmaceutaDAO;
 import Modelo.DAO.FarmaceutaDAOImpl;
 import Modelo.entidades.Farmaceuta;
 import jakarta.xml.bind.JAXBException;
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -69,9 +69,14 @@ public class GestorFarmaceuta {
         return sb.toString();
     }
     public void cargar()throws FileNotFoundException, JAXBException {
-        FarmaceutaDAOImpl impl = (FarmaceutaDAOImpl) farmaceutas;
-        impl.cargar(new FileInputStream(ARCHIVO_DATOS));
-        System.out.println("Datos cargados correctamente.");
+        File f=new File(ARCHIVO_DATOS);
+        if(!f.exists()||f.length()==0)
+            System.out.println("No hay datos previos para cargar.");
+        else{
+            FarmaceutaDAOImpl impl = (FarmaceutaDAOImpl) farmaceutas;
+            impl.cargar(new FileInputStream(ARCHIVO_DATOS));
+            System.out.println("Datos cargados correctamente.");
+        }
     }
     public void guardar()throws FileNotFoundException, JAXBException{
         FarmaceutaDAOImpl impl = (FarmaceutaDAOImpl) farmaceutas;

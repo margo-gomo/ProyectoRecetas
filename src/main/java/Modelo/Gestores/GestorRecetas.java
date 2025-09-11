@@ -2,10 +2,9 @@ package Modelo.Gestores;
 
 import Modelo.DAO.RecetaDAO;
 import Modelo.DAO.RecetaDAOImpl;
-import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import jakarta.xml.bind.JAXBException;
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -89,9 +88,14 @@ public class GestorRecetas {
         return (a == null && b == null) || (a != null && a.equals(b));
     }
     public void cargar()throws FileNotFoundException, JAXBException {
-        RecetaDAOImpl impl=(RecetaDAOImpl)recetas;
-        impl.cargar(new FileInputStream(ARCHIVO_DATOS));
-        System.out.println("Datos cargados correctamente.");
+        File f=new File(ARCHIVO_DATOS);
+        if(!f.exists()||f.length()==0)
+            System.out.println("No hay datos previos para cargar.");
+        else{
+            RecetaDAOImpl impl=(RecetaDAOImpl)recetas;
+            impl.cargar(new FileInputStream(ARCHIVO_DATOS));
+            System.out.println("Datos cargados correctamente.");
+        }
     }
     public void guardar()throws FileNotFoundException, JAXBException{
         RecetaDAOImpl impl=(RecetaDAOImpl)recetas;

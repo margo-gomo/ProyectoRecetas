@@ -4,7 +4,6 @@ import Adaptador.LocalDateAdapter;
 import Modelo.entidades.Paciente;
 import Modelo.entidades.Medicamento;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +16,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ToString
-@XmlRootElement (name = "prescripcion-recetas")
 public class Receta {
     public Receta() {
         indicaciones = new HashMap<>();
