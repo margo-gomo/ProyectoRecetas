@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_medicamentos>
+    <medicamento codigo="70">
+        <nombre>Paracetamol</nombre>
+        <descripcion>Jarabe</descripcion>
+    </medicamento>
     <medicamento codigo="999">
         <nombre>Acetaminofen</nombre>
         <descripcion>Tableta</descripcion>

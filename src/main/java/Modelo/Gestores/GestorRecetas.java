@@ -41,7 +41,7 @@ public class GestorRecetas {
     }
 
     public Receta actualizar(Receta recetaPorActualizar,int token) throws IllegalArgumentException,SecurityException {
-        if(token!=1||token!=2)
+        if(token!=1&&token!=2)
             throw new SecurityException(String.valueOf(token));
         return recetas.actualizar(recetaPorActualizar);
     }
