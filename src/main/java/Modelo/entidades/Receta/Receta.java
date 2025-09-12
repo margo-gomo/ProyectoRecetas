@@ -3,6 +3,8 @@ package Modelo.entidades.Receta;
 import Adaptador.LocalDateAdapter;
 import Modelo.entidades.Paciente;
 import Modelo.entidades.Medicamento;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+@XmlAccessorType(XmlAccessType.FIELD)
 @ToString
 public class Receta {
     public Receta() {
@@ -142,8 +145,8 @@ public class Receta {
     private static boolean fechaDentroVentana(LocalDate fechaRetiro) {
         if (fechaRetiro == null) return false;
         LocalDate hoy = hoy();
-        LocalDate min = restarDias(hoy, VENTANA_DIAS);
-        LocalDate max = sumarDias(hoy, VENTANA_DIAS);
+        LocalDate min = restarDias(hoy, 3);
+        LocalDate max = sumarDias(hoy, 3);
         return esEntreInclusivo(fechaRetiro, min, max);
     }
 
@@ -153,8 +156,6 @@ public class Receta {
     private static boolean esEntreInclusivo(LocalDate f, LocalDate ini, LocalDate fin) {
         return !f.isBefore(ini) && !f.isAfter(fin);
     }
-
-    private static final int VENTANA_DIAS = 3;
     @XmlElement
     @Getter
     private final Map<Integer, Indicacion> indicaciones;

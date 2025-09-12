@@ -98,13 +98,9 @@ public class GestorRecetas {
         }
     }
     public void guardar()throws FileNotFoundException, JAXBException{
-        if(cantidad()==0)
-            System.out.println("No hay datos que guardar.");
-        else{
             RecetaDAOImpl impl=(RecetaDAOImpl)recetas;
             impl.guardar(new FileOutputStream(ARCHIVO_DATOS));
             System.out.println("Datos guardados correctamente.");
-        }
 
     }
     private static final String ARCHIVO_DATOS="datos/recetas.xml";
