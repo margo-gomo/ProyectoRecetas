@@ -3,6 +3,8 @@ package Modelo.entidades.Receta;
 import Adaptador.LocalDateAdapter;
 import Modelo.entidades.Paciente;
 import Modelo.entidades.Medicamento;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Getter;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 @ToString
 public class Receta {
     public Receta() {
@@ -182,5 +184,6 @@ public class Receta {
 
     @Setter
     @Getter
+    @XmlElement
     String codigo;
 }
