@@ -134,7 +134,7 @@
                               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
-                              <text value="Ingrese el código a asignar a la prescripción:"/>
+                              <text value="Ingrese el código a asignar a la receta:"/>
                             </properties>
                           </component>
                           <component id="fec13" class="javax.swing.JTextField" binding="tfCodPresc">
@@ -259,12 +259,12 @@
                           <text value="Limpiar"/>
                         </properties>
                       </component>
-                      <component id="d0185" class="javax.swing.JButton" binding="descartarPrescBtn">
+                      <component id="d0185" class="javax.swing.JButton" binding="descartarMedicamentoPresc">
                         <constraints>
                           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <text value="Descartar"/>
+                          <text value="Descartar medicamento"/>
                         </properties>
                       </component>
                       <vspacer id="8bb0f">

@@ -5,5 +5,10 @@
         <nombre>Paracetamol</nombre>
         <descripcion>Jarabe</descripcion>
     </medicamento>
+    <medicamento>
+        <codigo>444</codigo>
+        <nombre>Acetaminofén</nombre>
+        <descripcion>360 miligramos</descripcion>
+    </medicamento>
 </lista_medicamentos>
 

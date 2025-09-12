@@ -54,7 +54,7 @@ public class MenuVista extends JFrame {
     private JTable tablaPrescripcion;
     private JButton guardarButton;
     private JButton limpiarprescBtn;
-    private JButton descartarPrescBtn;
+    private JButton descartarMedicamentoPresc;
     private JButton detallesButton;
     private JButton buscarRecetaButton;
     private JTextField tfBusquedaMedicon;
@@ -323,8 +323,8 @@ public class MenuVista extends JFrame {
         }
 
         // DESCARTAR (borrar fila seleccionada o receta completa si ya fue guardada)
-        if (descartarPrescBtn != null) {
-            descartarPrescBtn.addActionListener(e -> descartarRecetaActual());
+        if (descartarMedicamentoPresc != null) {
+            descartarMedicamentoPresc.addActionListener(e -> descartarIndicacionActual());
         }
 
         // ------------------------- LISTENER: GUARDAR MÉDICO -------------------------
@@ -993,7 +993,7 @@ public class MenuVista extends JFrame {
                 buscarButton, buscarButton1, buscarButton2, buscarFarma, buscarPaciente, buscarMedicamento,
                 elegirFechaButton, elegirFechaButton1, elegirFechaButton2, elegirFechaButton3, elegirFechaButton4,
                 limpiarprescBtn, limpiarButton1, limpiarButton2, limpiarButton3, limpiarFarm, limpiarPaciente, limpiarMedicamento,
-                descartarPrescBtn, detallesButton, detallesButton1, verDetallesButton, refrescarButton,
+                descartarMedicamentoPresc, detallesButton, detallesButton1, verDetallesButton, refrescarButton,
                 modificarButton, modificarFarm, modificarPaciente, modificarMedicamento,
                 borrarButton, borrarFarm, borrarPaciente, borrarMedicamento,
                 button3, button4, button5
@@ -1981,7 +1981,6 @@ public class MenuVista extends JFrame {
         }
 
 
-        java.util.List<Indicacion> indicaciones = new java.util.ArrayList<>();
         for (int i = 0; i < modeloTablaRecetas.getRowCount(); i++) {
             int codigo = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 0)));
             Integer cantidad = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 3)));
@@ -1995,14 +1994,9 @@ public class MenuVista extends JFrame {
             }
 
             Indicacion in = new Indicacion(med, cantidad, indic, dias);
-            indicaciones.add(in);
+            controlador.agregarIndicacion(in);
         }
 
-        Receta receta = new Receta();
-        receta.setFecha_confeccion(fechaConf);
-        receta.setFecha_retiro(fechaRet);
-        receta.agregarPacienteporId(controlador.obtenerListaPacientes(), pacienteSeleccionado.getId());
-        receta.agregarIndicaciones(indicaciones);
 
         String codigoIngresado = leerCodigoPrescripcion();
         if (codigoIngresado.isEmpty()) {
@@ -2014,9 +2008,14 @@ public class MenuVista extends JFrame {
             JOptionPane.showMessageDialog(this, "Ya existe una receta con código: " + codigoIngresado, "Duplicado", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        receta.setCodigo(codigoIngresado);
 
         try {
+            Receta receta = new Receta();
+            receta.setFecha_confeccion(fechaConf);
+            receta.setFecha_retiro(fechaRet);
+            receta.agregarPacienteporId(controlador.obtenerListaPacientes(), pacienteSeleccionado.getId());
+            receta.setCodigo(codigoIngresado);
+            receta.agregarIndicaciones(controlador.obtenerListaIndicaciones());
             controlador.agregarReceta(receta);
             recetaEnPantalla = receta;
             escribirCodigoPrescripcion(receta.getCodigo());
@@ -2060,7 +2059,7 @@ public class MenuVista extends JFrame {
 
 
 
-    private void descartarRecetaActual() {
+    private void descartarIndicacionActual() {
         String codigo = leerCodigoPrescripcion();
         if ((codigo == null || codigo.isEmpty()) && recetaEnPantalla != null && recetaEnPantalla.getCodigo() != null) {
             codigo = recetaEnPantalla.getCodigo().trim();

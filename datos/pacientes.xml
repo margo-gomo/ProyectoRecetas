@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_pacientes>
+    <paciente fecha_nacimiento="24/06/2025">
+        <id>222</id>
+        <nombre>Kendall</nombre>
+        <teléfono>8888888</teléfono>
+    </paciente>
     <paciente fecha_nacimiento="17/09/2017">
         <id>111</id>
         <nombre>Pedro</nombre>

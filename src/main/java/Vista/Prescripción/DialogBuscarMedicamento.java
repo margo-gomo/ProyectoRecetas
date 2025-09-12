@@ -339,18 +339,15 @@ public class DialogBuscarMedicamento extends JDialog {
                 ? tfIndicacionesPresc.getText().trim() : "";
     }
 
-    // ----- PREFILL: seleccionar fila por código y setear campos -----
     public void setValoresIniciales(Integer codigoMedicamento, Integer cantidad, Integer duracion, String indicaciones) {
         this.codigoPrefill = codigoMedicamento;
 
-        // Mostrar el código en el buscador y filtrar por "código"
         if (codigoMedicamento != null) {
             if (comboBox1 != null) comboBox1.setSelectedItem("código");
             if (textField1 != null) textField1.setText(String.valueOf(codigoMedicamento));
             aplicarFiltro();
         }
 
-        // Seleccionar la fila correspondiente y hacer scroll
         if (table1 != null && codigoMedicamento != null) {
             DefaultTableModel m = (DefaultTableModel) table1.getModel();
             for (int i = 0; i < m.getRowCount(); i++) {
