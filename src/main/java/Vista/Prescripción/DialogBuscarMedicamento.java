@@ -39,6 +39,7 @@ public class DialogBuscarMedicamento extends JDialog {
 
     private DefaultTableModel modeloTabla;
     private TableRowSorter<DefaultTableModel> sorter;
+    private Integer codigoPrefill;
 
     // Fuente de datos (XML, vía Controlador)
     private Controlador controlador;
@@ -71,6 +72,9 @@ public class DialogBuscarMedicamento extends JDialog {
 
         aplicarEstilos();
         configurarTabla();
+
+        if (spinnerCantPresc != null)     spinnerCantPresc.setModel(new SpinnerNumberModel(1, 1, 999, 1));
+        if (spinnerDuracionPresc != null) spinnerDuracionPresc.setModel(new SpinnerNumberModel(1, 1, 365, 1));
 
         if (getRootPane() != null && buttonOK != null)
             getRootPane().setDefaultButton(buttonOK);
@@ -322,4 +326,39 @@ public class DialogBuscarMedicamento extends JDialog {
     public JTextField getCampoBusqueda() { return textField1; }
     public JTable getTabla() { return table1; }
     public DefaultTableModel getModeloTabla() { return modeloTabla; }
+
+    // ----- GETTERS para leer lo que el usuario eligió -----
+    public Integer getCantidadElegida() {
+        return (spinnerCantPresc != null) ? (Integer) spinnerCantPresc.getValue() : 1;
+    }
+    public Integer getDuracionElegida() {
+        return (spinnerDuracionPresc != null) ? (Integer) spinnerDuracionPresc.getValue() : 1;
+    }
+    public String getIndicacionesTexto() {
+        return (tfIndicacionesPresc != null && tfIndicacionesPresc.getText() != null)
+                ? tfIndicacionesPresc.getText().trim() : "";
+    }
+
+    // ----- PREFILL: seleccionar fila por código y setear campos -----
+    public void setValoresIniciales(Integer codigoMedicamento, Integer cantidad, Integer duracion, String indicaciones) {
+        this.codigoPrefill = codigoMedicamento;
+
+        if (table1 != null && codigoMedicamento != null) {
+            DefaultTableModel m = (DefaultTableModel) table1.getModel();
+            for (int i = 0; i < m.getRowCount(); i++) {
+                Object cod = m.getValueAt(i, 0);
+                if (cod != null && String.valueOf(cod).equals(String.valueOf(codigoMedicamento))) {
+                    int viewIndex = table1.convertRowIndexToView(i);
+                    table1.getSelectionModel().setSelectionInterval(viewIndex, viewIndex);
+                    table1.scrollRectToVisible(table1.getCellRect(viewIndex, 0, true));
+                    break;
+                }
+            }
+        }
+
+        if (cantidad != null && spinnerCantPresc != null) spinnerCantPresc.setValue(cantidad);
+        if (duracion != null && spinnerDuracionPresc != null) spinnerDuracionPresc.setValue(duracion);
+        if (indicaciones != null && tfIndicacionesPresc != null) tfIndicacionesPresc.setText(indicaciones);
+    }
+
 }
