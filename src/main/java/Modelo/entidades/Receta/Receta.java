@@ -156,17 +156,18 @@ public class Receta {
     private static boolean esEntreInclusivo(LocalDate f, LocalDate ini, LocalDate fin) {
         return !f.isBefore(ini) && !f.isAfter(fin);
     }
-    @XmlElement
+    @Setter
     @Getter
+    String codigo;
+    @Getter
+    @XmlElement
     private final Map<Integer, Indicacion> indicaciones;
 
-    @XmlElement
     @Getter
     private Paciente paciente;
 
     @Getter
     @Setter
-    @XmlElement
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fecha_confeccion;
 
@@ -177,11 +178,5 @@ public class Receta {
 
     @Getter
     @Setter
-    @XmlElement
     private String estado;
-
-    @Setter
-    @Getter
-    @XmlElement
-    String codigo;
 }

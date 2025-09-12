@@ -27,7 +27,6 @@ public class Medicamento {
         return hash;
     }
     @Getter @Setter
-    @XmlAttribute(name = "codigo")
     private int codigo;
 
     @Getter @Setter
