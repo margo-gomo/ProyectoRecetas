@@ -232,10 +232,10 @@ public class Controlador {
     public void agregarMedicamentoDashboard(String nombre){
         dashboard.agregarMedicameno(modeloMedicamento.buscarPorNombre(nombre));
     }
-    public Map<YearMonth, Integer> medicamentosPorMes(LocalDate startDate, LocalDate endDate){
+    public Map<YearMonth, Integer> DashboardMedicamentosPorMes(LocalDate startDate, LocalDate endDate){
         return dashboard.medicamentosPorMes(modeloRecetas.obtenerListaRecetas(), startDate, endDate);
     }
-    public Map<String, Long> recetasPorEstado(){
+    public Map<String, Long> DashboardRecetasPorEstado(){
         return dashboard.recetasPorEstado(modeloRecetas.obtenerListaRecetas());
     }
     public Receta buscarRecetaHistorial(String codigo){

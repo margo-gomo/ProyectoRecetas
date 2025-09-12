@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 @ToString
 public class Receta {
     public Receta() {
@@ -182,5 +181,6 @@ public class Receta {
 
     @Setter
     @Getter
+    @XmlElement
     String codigo;
 }
