@@ -10,6 +10,7 @@ import Controlador.Controlador;
 import Modelo.entidades.Medicamento;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
+import Adaptador.LocalDateAdapter;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
@@ -164,6 +165,7 @@ public class MenuVista extends JFrame {
     private TableRowSorter<DefaultTableModel> sorterFarma;
     private TableRowSorter<DefaultTableModel> sorterPac;
     private TableRowSorter<DefaultTableModel> sorterMed;
+    private Receta recetaEnPantalla;
 
     private Paciente pacienteSeleccionado;
 
@@ -248,7 +250,13 @@ public class MenuVista extends JFrame {
         }
 
         if (agregarMedicamentoButton != null) {
-            agregarMedicamentoButton.addActionListener(e -> abrirDialogMedicamentoYAgregar(null));
+            agregarMedicamentoButton.addActionListener(e -> {
+                Integer fila = null;
+                if (tablaPrescripcion != null && tablaPrescripcion.getSelectedRow() >= 0) {
+                    fila = tablaPrescripcion.convertRowIndexToModel(tablaPrescripcion.getSelectedRow());
+                }
+                abrirDialogMedicamentoYAgregar(fila);
+            });
         }
 
         if (buscarRecetaButton != null) {
@@ -1419,12 +1427,20 @@ public class MenuVista extends JFrame {
         };
         if (tablaPrescripcion != null) {
             tablaPrescripcion.setModel(modeloTablaRecetas);
-            // Ocultar la columna "Código"
             tablaPrescripcion.getColumnModel().getColumn(0).setMinWidth(0);
             tablaPrescripcion.getColumnModel().getColumn(0).setMaxWidth(0);
             tablaPrescripcion.getColumnModel().getColumn(0).setWidth(0);
 
-            // Doble clic / ENTER para editar
+            tablaPrescripcion.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+            tablaPrescripcion.getSelectionModel().addListSelectionListener(e -> {
+                if (e.getValueIsAdjusting()) return;
+                int viewRow = tablaPrescripcion.getSelectedRow();
+                if (viewRow < 0) return;
+                int modelRow = tablaPrescripcion.convertRowIndexToModel(viewRow);
+                mostrarFilaEnCampos(modelRow);
+            });
+
             tablaPrescripcion.addMouseListener(new java.awt.event.MouseAdapter() {
                 @Override public void mouseClicked(java.awt.event.MouseEvent e) {
                     if (e.getClickCount() == 2) editarFilaSeleccionadaEnDialog();
@@ -1449,6 +1465,7 @@ public class MenuVista extends JFrame {
             tablaDespacho.setModel(modeloDespacho);
         }
     }
+
 
 
     private void configurarTablaHistorico() {
@@ -1914,7 +1931,7 @@ public class MenuVista extends JFrame {
                 });
             }
         }
-        persistirRecetaSiExisteEnFormulario();
+        persistirRecetaSiExisteEnFormulario(true);
     }
 
     private Integer buscarFilaPorCodigoEnPrescripcion(int codigo) {
@@ -2004,10 +2021,6 @@ public class MenuVista extends JFrame {
             escribirCodigoPrescripcion(receta.getCodigo());
 
 
-            if (tfRecetas != null && receta.getCodigo() != null) {
-                tfRecetas.setText(receta.getCodigo());
-            }
-
             if (tablaDespacho != null && tablaDespacho.getModel() instanceof DefaultTableModel) {
                 DefaultTableModel md = (DefaultTableModel) tablaDespacho.getModel();
                 md.addRow(new Object[]{
@@ -2037,7 +2050,6 @@ public class MenuVista extends JFrame {
         if (labelNomPaciente != null) labelNomPaciente.setText("(sin paciente seleccionado)");
         if (labelFechaActualPresc != null) labelFechaActualPresc.setText(LocalDate.now().format(formatoFecha));
         if (labelFechaRetiroPresc != null) labelFechaRetiroPresc.setText("(sin fecha)");
-        if (tfRecetas != null) tfRecetas.setText("");
         if (tfCodPresc != null) tfCodPresc.setText("");
     }
 
@@ -2099,45 +2111,36 @@ public class MenuVista extends JFrame {
         }
     }
 
-    private void persistirRecetaSiExisteEnFormulario() {
+    private boolean persistirRecetaSiExisteEnFormulario(boolean avisar) {
         String code = leerCodigoPrescripcion();
-        if (code.isEmpty()) return; // aún no hay receta creada
+        if (code.isEmpty()) return false;
 
         Receta r = controlador.buscarRecetaPorCodigo(code);
-        if (r == null) return;
+        if (r == null) return false;
 
-        // Fechas
         try {
             String f = (labelFechaActualPresc != null && labelFechaActualPresc.getText()!=null)
                     ? labelFechaActualPresc.getText().trim() : "";
             if (!f.isEmpty()) r.setFecha_confeccion(LocalDate.parse(f, formatoFecha));
         } catch (Exception ignored) {}
-
         try {
             String rt = (labelFechaRetiroPresc != null && labelFechaRetiroPresc.getText()!=null)
                     ? labelFechaRetiroPresc.getText().trim() : "";
-            if (rt.isEmpty() || "(sin fecha)".equalsIgnoreCase(rt)) {
-                r.setFecha_retiro(null);
-            } else {
-                r.setFecha_retiro(LocalDate.parse(rt, formatoFecha));
-            }
+            r.setFecha_retiro(rt.isEmpty() || "(sin fecha)".equalsIgnoreCase(rt) ? null
+                    : LocalDate.parse(rt, formatoFecha));
         } catch (Exception ignored) {}
 
-        // Paciente
         if (pacienteSeleccionado != null) {
-            try {
-                r.agregarPacienteporId(controlador.obtenerListaPacientes(), pacienteSeleccionado.getId());
-            } catch (Exception ignored) {}
+            try { r.agregarPacienteporId(controlador.obtenerListaPacientes(), pacienteSeleccionado.getId()); }
+            catch (Exception ignored) {}
         }
 
-        // Indicaciones desde la tabla
         java.util.List<Indicacion> nuevas = new java.util.ArrayList<>();
         for (int i = 0; i < modeloTablaRecetas.getRowCount(); i++) {
             int cod  = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 0)));
             int cant = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 3)));
             String ind = String.valueOf(modeloTablaRecetas.getValueAt(i, 4));
             int dias = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 5)));
-
             Medicamento m = controlador.buscarMedicamentoPorCodigo(cod);
             if (m != null) nuevas.add(new Indicacion(m, cant, ind, dias));
         }
@@ -2145,24 +2148,31 @@ public class MenuVista extends JFrame {
         try {
             r.agregarIndicaciones(nuevas);
             controlador.actualizarReceta(r);
+            if (avisar) {
+                JOptionPane.showMessageDialog(this, "Receta modificada.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            }
+            return true;
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "No se pudo actualizar la receta: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
     }
 
+    private void persistirRecetaSiExisteEnFormulario() {
+        persistirRecetaSiExisteEnFormulario(false);
+    }
+
+
 
     private String leerCodigoPrescripcion() {
-        if (tfCodPresc != null && tfCodPresc.getText() != null && !tfCodPresc.getText().trim().isEmpty())
-            return tfCodPresc.getText().trim();
-        if (tfRecetas != null && tfRecetas.getText() != null && !tfRecetas.getText().trim().isEmpty())
-            return tfRecetas.getText().trim();
-        return "";
+        return (tfCodPresc != null && tfCodPresc.getText() != null)
+                ? tfCodPresc.getText().trim()
+                : "";
     }
 
     private void escribirCodigoPrescripcion(String codigo) {
         if (tfCodPresc != null) tfCodPresc.setText(codigo != null ? codigo : "");
-        if (tfRecetas  != null) tfRecetas.setText(codigo != null ? codigo : "");
     }
 
     private void cargarRecetaInicialEnPrescripcion() {
@@ -2171,7 +2181,6 @@ public class MenuVista extends JFrame {
         java.util.List<Receta> recetas = controlador.obtenerListaRecetas();
         if (recetas == null || recetas.isEmpty()) return;
 
-        // Tomar la más reciente por fecha de confección (desc).
         Receta r = recetas.stream()
                 .filter(java.util.Objects::nonNull)
                 .sorted(java.util.Comparator.comparing(
@@ -2183,11 +2192,13 @@ public class MenuVista extends JFrame {
 
         if (r != null) {
             pintarRecetaEnUI(r);
+            escribirCodigoPrescripcion("");
         }
     }
 
-    /** Vuelca la receta en labels/campos y en la tabla de Prescripción. */
+
     private void pintarRecetaEnUI(Receta r) {
+        this.recetaEnPantalla = r;
         if (r == null || modeloTablaRecetas == null) return;
 
         // Limpiar y cargar indicaciones
@@ -2227,7 +2238,6 @@ public class MenuVista extends JFrame {
             );
         }
 
-        // Paciente
         pacienteSeleccionado = r.getPaciente();
         if (labelNomPaciente != null) {
             if (pacienteSeleccionado != null && pacienteSeleccionado.getNombre() != null) {
@@ -2237,9 +2247,63 @@ public class MenuVista extends JFrame {
             }
         }
 
-        // Sincroniza los campos de código (tfCodPresc / tfRecetas)
         escribirCodigoPrescripcion(r.getCodigo());
     }
+
+    private boolean recetaTieneMedicamento(Receta r, int codigoMed) {
+        if (r == null) return false;
+        java.util.List<Indicacion> inds = r.obtenerListaIndicaciones();
+        if (inds == null) return false;
+        for (Indicacion in : inds) {
+            Medicamento m = (in != null) ? in.getMedicamento() : null;
+            if (m != null && m.getCodigo() == codigoMed) return true;
+        }
+        return false;
+    }
+
+    private void mostrarFilaEnCampos(int modelRow) {
+        if (recetaEnPantalla == null) return;
+
+        LocalDateAdapter lda = new LocalDateAdapter();
+        String fechaConfStr;
+        String fechaRetStr = "(sin fecha)";
+
+        try {
+            LocalDate fc = recetaEnPantalla.getFecha_confeccion();
+            fechaConfStr = (fc != null) ? lda.marshal(fc) : lda.marshal(LocalDate.now());
+        } catch (Exception ex) {
+            LocalDate fc = recetaEnPantalla.getFecha_confeccion();
+            fechaConfStr = (fc != null) ? fc.format(formatoFecha) : LocalDate.now().format(formatoFecha);
+        }
+
+        try {
+            LocalDate fr = recetaEnPantalla.getFecha_retiro();
+            if (fr != null) fechaRetStr = lda.marshal(fr);
+        } catch (Exception ex) {
+            LocalDate fr = recetaEnPantalla.getFecha_retiro();
+            if (fr != null) fechaRetStr = fr.format(formatoFecha);
+        }
+
+        if (tfCodPresc != null) {
+            String cod = recetaEnPantalla.getCodigo();
+            tfCodPresc.setText(cod != null ? cod : "");
+        }
+
+        if (labelFechaActualPresc != null) labelFechaActualPresc.setText(fechaConfStr);
+        if (labelFechaRetiroPresc != null) labelFechaRetiroPresc.setText(fechaRetStr);
+
+        pacienteSeleccionado = recetaEnPantalla.getPaciente();
+        if (labelNomPaciente != null) {
+            if (pacienteSeleccionado != null) {
+                labelNomPaciente.setText(
+                        pacienteSeleccionado.getNombre() + " (ID " + pacienteSeleccionado.getId() + ")"
+                );
+            } else {
+                labelNomPaciente.setText("(sin paciente seleccionado)");
+            }
+        }
+    }
+
 
 
     // ------------------------------------------------------------------------------------------
