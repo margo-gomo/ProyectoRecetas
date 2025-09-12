@@ -2018,6 +2018,7 @@ public class MenuVista extends JFrame {
 
         try {
             controlador.agregarReceta(receta);
+            recetaEnPantalla = receta;
             escribirCodigoPrescripcion(receta.getCodigo());
 
 
@@ -2045,7 +2046,11 @@ public class MenuVista extends JFrame {
     private void limpiarPrescripcionUI() {
         if (tablaPrescripcion != null) tablaPrescripcion.clearSelection();
 
+        if (modeloTablaRecetas != null) modeloTablaRecetas.setRowCount(0);
+
+        // reset de estado
         pacienteSeleccionado = null;
+        recetaEnPantalla = null;
 
         if (labelNomPaciente != null) labelNomPaciente.setText("(sin paciente seleccionado)");
         if (labelFechaActualPresc != null) labelFechaActualPresc.setText(LocalDate.now().format(formatoFecha));
@@ -2054,9 +2059,14 @@ public class MenuVista extends JFrame {
     }
 
 
+
     private void descartarRecetaActual() {
         String codigo = leerCodigoPrescripcion();
-        if (!codigo.isEmpty()) {
+        if ((codigo == null || codigo.isEmpty()) && recetaEnPantalla != null && recetaEnPantalla.getCodigo() != null) {
+            codigo = recetaEnPantalla.getCodigo().trim();
+        }
+
+        if (codigo != null && !codigo.isEmpty()) {
             int ok = JOptionPane.showConfirmDialog(
                     this,
                     "¿Eliminar la receta " + codigo + "?",
@@ -2068,8 +2078,11 @@ public class MenuVista extends JFrame {
 
             try {
                 controlador.eliminarReceta(codigo);
+
                 eliminarRecetaDeTablaDespacho(codigo);
+
                 limpiarPrescripcionUI();
+
                 JOptionPane.showMessageDialog(this, "Receta eliminada.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "No se pudo eliminar: " + ex.getMessage(),
@@ -2078,7 +2091,6 @@ public class MenuVista extends JFrame {
             return;
         }
 
-        // Si no hay receta guardada aún, quitar solo la fila seleccionada de la tabla
         if (tablaPrescripcion == null || modeloTablaRecetas == null) return;
         int viewRow = tablaPrescripcion.getSelectedRow();
         if (viewRow < 0) {
@@ -2088,25 +2100,21 @@ public class MenuVista extends JFrame {
         }
         int modelRow = tablaPrescripcion.convertRowIndexToModel(viewRow);
 
-        int ok = JOptionPane.showConfirmDialog(
-                this,
-                "¿Quitar el medicamento seleccionado?",
-                "Confirmar",
-                JOptionPane.YES_NO_OPTION
-        );
+        int ok = JOptionPane.showConfirmDialog(this, "¿Quitar el medicamento seleccionado?", "Confirmar",
+                JOptionPane.YES_NO_OPTION);
         if (ok != JOptionPane.YES_OPTION) return;
 
         modeloTablaRecetas.removeRow(modelRow);
         persistirRecetaSiExisteEnFormulario();
     }
 
+
     private void eliminarRecetaDeTablaDespacho(String codigo) {
         if (tablaDespacho == null || !(tablaDespacho.getModel() instanceof DefaultTableModel)) return;
         DefaultTableModel md = (DefaultTableModel) tablaDespacho.getModel();
-        for (int i = 0; i < md.getRowCount(); i++) {
-            if (String.valueOf(md.getValueAt(i, 0)).equals(codigo)) {
+        for (int i = md.getRowCount() - 1; i >= 0; i--) {
+            if (codigo.equals(String.valueOf(md.getValueAt(i, 0)))) {
                 md.removeRow(i);
-                break;
             }
         }
     }
