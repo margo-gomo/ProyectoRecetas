@@ -39,6 +39,10 @@ public class Controlador {
         token= usuarios.devolverToken(id, clave);
         return token;
     }
+    public String devolverId(String id, String clave) throws SecurityException{
+        idUsuario=usuarios.devolverId(id, clave);
+        return idUsuario;
+    }
     public void init() {
         try {
             modeloMedico.cargar();
@@ -179,14 +183,14 @@ public class Controlador {
     public Indicacion eliminarIndicacion(int codigo) throws IllegalArgumentException, SecurityException{
         return modeloIndicacion.eliminar(codigo,token);
     }
-    public void iniciarProceso(String codigo) throws IllegalArgumentException{
-        modeloRecetas.iniciarProceso(codigo);
+    public void iniciarProceso(Receta receta) throws IllegalArgumentException{
+        modeloRecetas.iniciarProceso(receta,token,idUsuario);
     }
-    public void marcarLista(String codigo) throws IllegalArgumentException{
-        modeloRecetas.marcarLista(codigo);
+    public void marcarLista(Receta receta) throws IllegalArgumentException{
+        modeloRecetas.marcarLista(receta,token,idUsuario);
     }
-    public void entregar(String codigo) throws IllegalArgumentException{
-        modeloRecetas.entregar(codigo);
+    public void entregar(Receta receta) throws IllegalArgumentException{
+        modeloRecetas.entregar(receta,token,idUsuario);
     }
     public void cerrarAplicacion() {
         try {
@@ -257,6 +261,7 @@ public class Controlador {
     private login usuarios;
     @Setter
     private int token;
+    private String idUsuario;
     private Dashboard  dashboard;
     private Historicos historial;
 }

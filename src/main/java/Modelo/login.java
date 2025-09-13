@@ -34,5 +34,13 @@ public class login {
         }
         throw new SecurityException("Credenciales inválidas");
     }
+    public String devolverId(String id,String clave) throws SecurityException {
+        for (Usuario u : usuarios) {
+            if (u.getId().equals(id) && u.getClave().equals(clave)) {
+                return u.getId();
+            }
+        }
+        throw new SecurityException("Credenciales inválidas");
+    }
     private List<Usuario> usuarios;
 }

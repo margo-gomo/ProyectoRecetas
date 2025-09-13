@@ -26,6 +26,9 @@ public class Receta {
         fecha_retiro = null;
         estado = "NO finalizada";
         codigo="";
+        idFarmaceutaProceso="No procesada";
+        idFarmaceutaLista="No lista";
+        idFarmaceutaEntregar="No entregada";
     }
 
     public int cantidad(){ return indicaciones.size(); }
@@ -41,14 +44,6 @@ public class Receta {
         for(Indicacion indicacion : indicaciones)
             this.indicaciones.put(indicacion.getMedicamento().getCodigo(), indicacion);
         return obtenerListaIndicaciones();
-        /*
-        if(!indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
-            indicaciones.putIfAbsent(indicacion.getMedicamento().getCodigo(),indicacion);
-            System.out.printf("Indicacion agregado correctamente: '%s'%n", indicacion);
-        }
-        else
-            throw new IllegalArgumentException(String.valueOf(indicaciones.get(indicacion.getMedicamento().getCodigo())));
-        return indicacion;*/
     }
 
     public List<Indicacion> actualizarIndicaciones(List<Indicacion> indicaciones) throws IllegalArgumentException {
@@ -56,13 +51,6 @@ public class Receta {
             throw new IllegalArgumentException(indicaciones.toString());
         this.indicaciones.clear();
         return agregarIndicaciones(indicaciones);
-        /*if(indicaciones.containsKey(indicacion.getMedicamento().getCodigo())){
-            indicaciones.put(indicacion.getMedicamento().getCodigo(),indicacion);
-            System.out.printf("Indicacion actualizada correctamente: '%s'%n", indicacion);
-        }
-        else
-            throw new IllegalArgumentException(String.valueOf(indicaciones.get(indicacion.getMedicamento().getCodigo())));
-        return indicacion;*/
     }
 
     public Indicacion eliminarIndicacion(Indicacion indicacion) throws IllegalArgumentException {
@@ -114,31 +102,45 @@ public class Receta {
                 .map(Indicacion::getMedicamento)
                 .collect(Collectors.toList());
     }
-    public void iniciarProceso() throws IllegalArgumentException {
+    public void iniciarProceso(String idFarmaceuta) throws IllegalArgumentException {
         if ("confeccionada".equalsIgnoreCase(estado)) {
-            if (!fechaDentroVentana(fecha_retiro))
+            if (!fechaDentroVentana(fecha_retiro)) {
                 estado = "proceso";
+                idFarmaceutaProceso=idFarmaceuta;
+            }
             else
-                throw new IllegalArgumentException(estado);
+                throw new IllegalArgumentException(String.valueOf(fecha_retiro));
         } else
-            throw new IllegalArgumentException(String.valueOf(fecha_retiro));
+            throw new IllegalArgumentException(estado);
     }
 
-    public void marcarLista() throws IllegalArgumentException {
-        if ("proceso".equalsIgnoreCase(estado))
-            estado = "lista";
+    public void marcarLista(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
+        if ("proceso".equalsIgnoreCase(estado)) {
+            if(!idFarmaceutaProceso.equals(idFarmaceuta)) {
+                estado = "lista";
+                idFarmaceutaLista=idFarmaceuta;
+            }
+            else
+                throw new SecurityException(idFarmaceuta);
+        }
         else
             throw new IllegalArgumentException(estado);
     }
 
-    public void entregar() throws IllegalArgumentException {
+    public void entregar(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("lista".equalsIgnoreCase(estado)) {
-            if (fechaDentroVentana(fecha_retiro))
-                estado = "entregada";
+            if (fechaDentroVentana(fecha_retiro)) {
+                if(!idFarmaceutaProceso.equals(idFarmaceuta)&&!idFarmaceutaLista.equals(idFarmaceuta)) {
+                    estado = "entregada";
+                    idFarmaceutaEntregar=idFarmaceuta;
+                }
+                else
+                    throw new SecurityException(idFarmaceuta);
+            }
             else
-                throw new IllegalArgumentException(estado);
+                throw new IllegalArgumentException(String.valueOf(fecha_retiro));
         } else
-            throw new IllegalArgumentException(String.valueOf(fecha_retiro));
+            throw new IllegalArgumentException(estado);
     }
 
 
@@ -179,4 +181,16 @@ public class Receta {
     @Getter
     @Setter
     private String estado;
+
+    @Getter
+    @Setter
+    private String idFarmaceutaProceso;
+
+    @Getter
+    @Setter
+    private String idFarmaceutaLista;
+
+    @Getter
+    @Setter
+    private String idFarmaceutaEntregar;
 }

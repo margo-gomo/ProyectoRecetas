@@ -52,25 +52,28 @@ public class GestorRecetas {
         return recetas.eliminar(codigo);
     }
 
-    public void iniciarProceso(String codigo) throws IllegalArgumentException{
-        Receta receta=recetas.buscarRecetaPorCodigo(codigo);
+    public void iniciarProceso(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if(receta==null)
-            throw new SecurityException(codigo);
-        receta.iniciarProceso();
+            throw new IllegalArgumentException(receta.getCodigo());
+        if(token!=2)
+            throw new SecurityException(String.valueOf(token));
+        receta.iniciarProceso(idFarmaceuta);
         recetas.actualizar(receta);
     }
-    public void marcarLista(String codigo) throws IllegalArgumentException{
-        Receta receta=recetas.buscarRecetaPorCodigo(codigo);
+    public void marcarLista(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if(receta==null)
-            throw new SecurityException(codigo);
-        receta.marcarLista();
+            throw new IllegalArgumentException(receta.getCodigo());
+        if (token!=2)
+            throw new SecurityException(String.valueOf(token));
+        receta.marcarLista(idFarmaceuta);
         recetas.actualizar(receta);
     }
-    public void entregar(String codigo) throws IllegalArgumentException{
-        Receta receta=recetas.buscarRecetaPorCodigo(codigo);
+    public void entregar(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if(receta==null)
-            throw new SecurityException(codigo);
-        receta.entregar();
+            throw new IllegalArgumentException(receta.getCodigo());
+        if (token!=2)
+            throw new SecurityException(String.valueOf(token));
+        receta.entregar(idFarmaceuta);
         recetas.actualizar(receta);
     }
 
