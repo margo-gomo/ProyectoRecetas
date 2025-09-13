@@ -197,7 +197,7 @@ public class MenuVista extends JFrame {
         configurarTablaDashboard();
         configurarTablaEstados();
         cargarDatosIniciales();
-        cargarRecetaInicialEnPrescripcion();
+        recargarTablaIndicacionesDesdeControlador();
 
 
         if (labelNomPaciente != null) {
@@ -1875,6 +1875,39 @@ public class MenuVista extends JFrame {
     // ------------------------------------- HELPERS: RECETA-------------------------------------
     // ------------------------------------------------------------------------------------------
 
+    private void recargarTablaIndicacionesDesdeControlador() {
+        if (modeloTablaRecetas == null || controlador == null) return;
+        modeloTablaRecetas.setRowCount(0);
+        java.util.List<Indicacion> lista = controlador.obtenerListaIndicaciones();
+        if (lista == null) return;
+        for (Indicacion in : lista) {
+            if (in == null || in.getMedicamento() == null) continue;
+            Medicamento m = in.getMedicamento();
+            String presentacion = (m.getDescripcion() != null) ? m.getDescripcion()
+                    : (m.getPresentacion() != null ? m.getPresentacion() : "");
+            modeloTablaRecetas.addRow(new Object[]{
+                    m.getCodigo(),
+                    m.getNombre(),
+                    presentacion,
+                    in.getCantidad(),
+                    in.getDescripcion() != null ? in.getDescripcion() : "",
+                    in.getDuracion()
+            });
+        }
+    }
+    private void limpiarIndicacionesDelModelo() {
+        if (controlador == null) return;
+        java.util.List<Indicacion> copia = new java.util.ArrayList<>(controlador.obtenerListaIndicaciones());
+        for (Indicacion in : copia) {
+            try {
+                if (in != null && in.getMedicamento() != null) {
+                    controlador.eliminarIndicacion(in.getMedicamento().getCodigo());
+                }
+            } catch (Exception ignored) {}
+        }
+    }
+
+
     private void abrirDialogMedicamentoYAgregar(Integer filaAActualizar) {
         DialogBuscarMedicamento dialog = new DialogBuscarMedicamento(controlador);
         dialog.setModal(true);
@@ -1908,30 +1941,29 @@ public class MenuVista extends JFrame {
         String presentacion = (med.getDescripcion() != null) ? med.getDescripcion() :
                 (med.getPresentacion() != null ? med.getPresentacion() : "");
 
-        if (filaAActualizar != null) {
-            // actualizar fila existente
-            modeloTablaRecetas.setValueAt(codigo,       filaAActualizar, 0);
-            modeloTablaRecetas.setValueAt(nombre,       filaAActualizar, 1);
-            modeloTablaRecetas.setValueAt(presentacion, filaAActualizar, 2);
-            modeloTablaRecetas.setValueAt(cantidad,     filaAActualizar, 3);
-            modeloTablaRecetas.setValueAt(indicaciones, filaAActualizar, 4);
-            modeloTablaRecetas.setValueAt(duracion,     filaAActualizar, 5);
-        } else {
-
-            Integer filaExistente = buscarFilaPorCodigoEnPrescripcion(codigo);
-            if (filaExistente != null) {
-                modeloTablaRecetas.setValueAt(nombre,       filaExistente, 1);
-                modeloTablaRecetas.setValueAt(presentacion, filaExistente, 2);
-                modeloTablaRecetas.setValueAt(cantidad,     filaExistente, 3);
-                modeloTablaRecetas.setValueAt(indicaciones, filaExistente, 4);
-                modeloTablaRecetas.setValueAt(duracion,     filaExistente, 5);
-            } else {
-                modeloTablaRecetas.addRow(new Object[]{
-                        codigo, nombre, presentacion, cantidad, indicaciones, duracion
-                });
-            }
+        Integer codigoOld = null;
+        if (filaAActualizar != null && filaAActualizar >= 0 && filaAActualizar < modeloTablaRecetas.getRowCount()) {
+            codigoOld = Integer.valueOf(String.valueOf(modeloTablaRecetas.getValueAt(filaAActualizar, 0)));
         }
-        persistirRecetaSiExisteEnFormulario(true);
+
+        try {
+            // Si se edita y el código cambió, elimina la antigua indicación
+            if (filaAActualizar != null && codigoOld != null && !codigoOld.equals(codigo)) {
+                try { controlador.eliminarIndicacion(codigoOld); } catch (Exception ignored) {}
+            }
+            // Reemplaza si ya existía la indicación de ese medicamento
+            try { controlador.eliminarIndicacion(codigo); } catch (Exception ignored) {}
+
+            Indicacion in = new Indicacion(med, cantidad, indicaciones, duracion);
+            controlador.agregarIndicacion(in);
+
+            // Refrescar la tabla desde el modelo
+            recargarTablaIndicacionesDesdeControlador();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo registrar la indicación: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     private Integer buscarFilaPorCodigoEnPrescripcion(int codigo) {
@@ -1955,10 +1987,12 @@ public class MenuVista extends JFrame {
             JOptionPane.showMessageDialog(this, "Seleccione un paciente antes de guardar la receta.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        if (modeloTablaRecetas.getRowCount() == 0) {
+        java.util.List<Indicacion> indicaciones = controlador.obtenerListaIndicaciones();
+        if (indicaciones == null || indicaciones.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Agregue al menos un medicamento a la receta.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
 
         LocalDate fechaConf;
         try {
@@ -1981,7 +2015,7 @@ public class MenuVista extends JFrame {
         }
 
 
-        for (int i = 0; i < modeloTablaRecetas.getRowCount(); i++) {
+        /*for (int i = 0; i < modeloTablaRecetas.getRowCount(); i++) {
             int codigo = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 0)));
             Integer cantidad = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 3)));
             String indic = String.valueOf(modeloTablaRecetas.getValueAt(i, 4));
@@ -1995,7 +2029,7 @@ public class MenuVista extends JFrame {
 
             Indicacion in = new Indicacion(med, cantidad, indic, dias);
             controlador.agregarIndicacion(in);
-        }
+        }*/
 
 
         String codigoIngresado = leerCodigoPrescripcion();
@@ -2015,10 +2049,14 @@ public class MenuVista extends JFrame {
             receta.setFecha_retiro(fechaRet);
             receta.agregarPacienteporId(controlador.obtenerListaPacientes(), pacienteSeleccionado.getId());
             receta.setCodigo(codigoIngresado);
-            receta.agregarIndicaciones(controlador.obtenerListaIndicaciones());
+            receta.agregarIndicaciones(new java.util.ArrayList<>(controlador.obtenerListaIndicaciones()));
             controlador.agregarReceta(receta);
-            recetaEnPantalla = receta;
-            escribirCodigoPrescripcion(receta.getCodigo());
+            // limpiar borrador e interfaz para la siguiente receta
+            limpiarIndicacionesDelModelo();
+            recargarTablaIndicacionesDesdeControlador();
+            recetaEnPantalla = null;
+            escribirCodigoPrescripcion("");
+
 
 
             if (tablaDespacho != null && tablaDespacho.getModel() instanceof DefaultTableModel) {
@@ -2047,6 +2085,9 @@ public class MenuVista extends JFrame {
 
         if (modeloTablaRecetas != null) modeloTablaRecetas.setRowCount(0);
 
+        // NUEVO: limpiar el borrador de indicaciones
+        limpiarIndicacionesDelModelo();
+
         // reset de estado
         pacienteSeleccionado = null;
         recetaEnPantalla = null;
@@ -2060,37 +2101,8 @@ public class MenuVista extends JFrame {
 
 
     private void descartarIndicacionActual() {
-        String codigo = leerCodigoPrescripcion();
-        if ((codigo == null || codigo.isEmpty()) && recetaEnPantalla != null && recetaEnPantalla.getCodigo() != null) {
-            codigo = recetaEnPantalla.getCodigo().trim();
-        }
-
-        if (codigo != null && !codigo.isEmpty()) {
-            int ok = JOptionPane.showConfirmDialog(
-                    this,
-                    "¿Eliminar la receta " + codigo + "?",
-                    "Confirmar borrado",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE
-            );
-            if (ok != JOptionPane.YES_OPTION) return;
-
-            try {
-                controlador.eliminarReceta(codigo);
-
-                eliminarRecetaDeTablaDespacho(codigo);
-
-                limpiarPrescripcionUI();
-
-                JOptionPane.showMessageDialog(this, "Receta eliminada.");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo eliminar: " + ex.getMessage(),
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
-            return;
-        }
-
         if (tablaPrescripcion == null || modeloTablaRecetas == null) return;
+
         int viewRow = tablaPrescripcion.getSelectedRow();
         if (viewRow < 0) {
             JOptionPane.showMessageDialog(this, "Seleccione un medicamento para descartar.",
@@ -2100,11 +2112,19 @@ public class MenuVista extends JFrame {
         int modelRow = tablaPrescripcion.convertRowIndexToModel(viewRow);
 
         int ok = JOptionPane.showConfirmDialog(this, "¿Quitar el medicamento seleccionado?", "Confirmar",
-                JOptionPane.YES_NO_OPTION);
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (ok != JOptionPane.YES_OPTION) return;
 
-        modeloTablaRecetas.removeRow(modelRow);
-        persistirRecetaSiExisteEnFormulario();
+        try {
+            Object codObj = modeloTablaRecetas.getValueAt(modelRow, 0);
+            if (codObj != null) {
+                int codMed = Integer.parseInt(String.valueOf(codObj));
+                controlador.eliminarIndicacion(codMed);
+            }
+        } catch (Exception ignored) {}
+
+        recargarTablaIndicacionesDesdeControlador();
+
     }
 
 

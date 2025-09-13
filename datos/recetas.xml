@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lista_recetas>
+    <receta>
+        <codigo>741</codigo>
+        <indicaciones>
+            <entry>
+                <key>0</key>
+                <value>
+                    <medicamento>
+                        <codigo>0</codigo>
+                        <nombre>Paracetamol</nombre>
+                        <descripcion>Jarabe</descripcion>
+                    </medicamento>
+                    <cantidad>1</cantidad>
+                    <descripcion>A</descripcion>
+                    <duracion-dias>1</duracion-dias>
+                </value>
+            </entry>
+            <entry>
+                <key>444</key>
+                <value>
+                    <medicamento>
+                        <codigo>444</codigo>
+                        <nombre>Acetaminofén</nombre>
+                        <descripcion>360 miligramos</descripcion>
+                    </medicamento>
+                    <cantidad>1</cantidad>
+                    <descripcion>B</descripcion>
+                    <duracion-dias>1</duracion-dias>
+                </value>
+            </entry>
+        </indicaciones>
+        <paciente fecha_nacimiento="24/06/2025">
+            <id>222</id>
+            <nombre>Kendall</nombre>
+            <teléfono>8888888</teléfono>
+        </paciente>
+        <fecha_confeccion>12/09/2025</fecha_confeccion>
+        <fecha_retiro>15/09/2025</fecha_retiro>
+        <estado>confeccionada</estado>
+    </receta>
+    <receta>
+        <codigo>852</codigo>
+        <indicaciones>
+            <entry>
+                <key>0</key>
+                <value>
+                    <medicamento>
+                        <codigo>0</codigo>
+                        <nombre>Paracetamol</nombre>
+                        <descripcion>Jarabe</descripcion>
+                    </medicamento>
+                    <cantidad>3</cantidad>
+                    <descripcion>B</descripcion>
+                    <duracion-dias>2</duracion-dias>
+                </value>
+            </entry>
+        </indicaciones>
+        <paciente fecha_nacimiento="17/09/2017">
+            <id>111</id>
+            <nombre>Pedro</nombre>
+            <teléfono>777777</teléfono>
+        </paciente>
+        <fecha_confeccion>12/09/2025</fecha_confeccion>
+        <fecha_retiro>15/09/2025</fecha_retiro>
+        <estado>confeccionada</estado>
+    </receta>
+</lista_recetas>
+
