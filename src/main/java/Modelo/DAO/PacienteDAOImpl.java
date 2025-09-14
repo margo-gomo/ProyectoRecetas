@@ -52,7 +52,7 @@ public class PacienteDAOImpl implements PacienteDAO {
             System.out.printf("Paciente agregado correctamente: '%s'%n", paciente);
         }
         else
-            throw new IllegalArgumentException("Ya existe un paciente con el mismo ID");
+            throw new IllegalArgumentException("Ya existe un paciente con ese mismo ID");
         return paciente;
     }
 

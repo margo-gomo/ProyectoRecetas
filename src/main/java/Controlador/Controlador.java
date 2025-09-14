@@ -11,6 +11,7 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -87,10 +88,21 @@ public class Controlador {
     public Medico buscarMedicoPorNombre(String nombre){
         return modeloMedico.buscarPorNombre(nombre);
     }
-    public Medico agregarMedico(Medico medico) throws IllegalArgumentException, SecurityException{
+    public Medico agregarMedico(String id,String nom,String esp) throws IllegalArgumentException, SecurityException{
+        Medico medico = new Medico();
+        if(id.isEmpty()||nom.isEmpty()||esp.isEmpty())
+            throw new IllegalArgumentException("Rellene todos los campos");
         return modeloMedico.agregar(medico,token);
     }
-    public Medico actualizarMedico(Medico medico) throws IllegalArgumentException, SecurityException{
+    public Medico actualizarMedico(String id,String nombre,String especialidad) throws IllegalArgumentException, SecurityException{
+        Medico medico = buscarMedicoPorId(id);
+        if(medico==null){
+            throw new IllegalArgumentException("No existe un médico con ID: "+id);
+        }
+        if (nombre.isEmpty()||especialidad.isEmpty())
+            throw new IllegalArgumentException("Rellene todos los campos");
+        medico.setNombre(nombre);
+        medico.setEspecialidad(especialidad);
         return modeloMedico.actualizar(medico,token);
     }
     public Medico eliminarMedico(String id) throws IllegalArgumentException, SecurityException{
@@ -105,10 +117,20 @@ public class Controlador {
     public Farmaceuta buscarFarmaceutaPorNombre(String nombre) {
         return modeloFarmaceuta.buscarPorNombre(nombre);
     }
-    public Farmaceuta agregarFarmaceuta(Farmaceuta farmaceuta)  throws IllegalArgumentException, SecurityException{
+    public Farmaceuta agregarFarmaceuta(String id,String nombre)  throws IllegalArgumentException, SecurityException{
+        Farmaceuta farmaceuta = new Farmaceuta();
+        if(id.isEmpty()||nombre.isEmpty())
+            throw new IllegalArgumentException("Rellene todos los campos");
         return modeloFarmaceuta.agregar(farmaceuta,token);
     }
-    public Farmaceuta actualizarFarmaceuta(Farmaceuta farmaceuta) throws IllegalArgumentException, SecurityException{
+    public Farmaceuta actualizarFarmaceuta(String id,String nombre) throws IllegalArgumentException, SecurityException{
+        Farmaceuta farmaceuta = buscarFarmaceutaPorId(id);
+        if(farmaceuta==null){
+            throw new IllegalArgumentException("No existe un farmaceuta con ID: "+id);
+        }
+        if (nombre.isEmpty()||nombre.isEmpty())
+            throw new IllegalArgumentException("Rellene todos los campos");
+        farmaceuta.setNombre(nombre);
         return modeloFarmaceuta.actualizar(farmaceuta,token);
     }
     public Farmaceuta eliminarFarmaceuta(String id) throws IllegalArgumentException, SecurityException{
@@ -123,10 +145,18 @@ public class Controlador {
     public Paciente buscarPacientePorNombre(String nombre){
         return modeloPaciente.buscarPorNombre(nombre);
     }
-    public Paciente agregarPaciente(Paciente paciente) throws IllegalArgumentException, SecurityException{
+    public Paciente agregarPaciente(int id, String nombre, int telefono,LocalDate fecha) throws IllegalArgumentException, SecurityException{
+        Paciente paciente = new Paciente();
+        if(id==-1||nombre.isEmpty()||telefono==-1||fecha==null)
+            throw new IllegalArgumentException("Rellene todos los campos");
         return modeloPaciente.agregar(paciente,token);
     }
-    public Paciente actualizarPaciente(Paciente paciente) throws IllegalArgumentException, SecurityException{
+    public Paciente actualizarPaciente(int id, String nombre, int telefono,LocalDate fecha) throws IllegalArgumentException, SecurityException{
+        Paciente paciente = buscarPacientePorId(id);
+        if(paciente==null)
+            throw new IllegalArgumentException("No existe un paciente con ID: "+id);
+        if (nombre.isEmpty()||telefono==-1||fecha==null)
+            throw new IllegalArgumentException("Rellene todos los campos");
         return modeloPaciente.actualizar(paciente,token);
     }
     public Paciente eliminarPaciente(int id) throws IllegalArgumentException, SecurityException{
@@ -141,10 +171,18 @@ public class Controlador {
     public Medicamento buscarMedicamentoPorDescripcion(String descripcion){
         return modeloMedicamento.buscarPorDescripcion(descripcion);
     }
-    public Medicamento agregarMedicamento(Medicamento medicamento) throws IllegalArgumentException, SecurityException{
+    public Medicamento agregarMedicamento(int codigo,String nombre,String descripcion) throws IllegalArgumentException, SecurityException{
+        Medicamento medicamento = new Medicamento();
+        if(codigo==-1||nombre.isEmpty()||descripcion.isEmpty())
+            throw new IllegalArgumentException("Rellene todos los campos");
         return modeloMedicamento.agregar(medicamento,token);
     }
-    public Medicamento actualizarMedicamento(Medicamento medicamento) throws IllegalArgumentException, SecurityException{
+    public Medicamento actualizarMedicamento(int codigo,String nombre,String descripcion) throws IllegalArgumentException, SecurityException{
+        Medicamento medicamento = buscarMedicamentoPorCodigo(codigo);
+        if(medicamento==null)
+            throw new IllegalArgumentException("No existe un medicamento con ID: "+codigo);
+        if (nombre.isEmpty()||descripcion.isEmpty())
+            throw new IllegalArgumentException("Rellene todos los campos");
         return modeloMedicamento.actualizar(medicamento,token);
     }
     public Medicamento eliminarMedicamento(int codigo) throws IllegalArgumentException, SecurityException{
@@ -191,6 +229,9 @@ public class Controlador {
     }
     public void entregar(Receta receta) throws IllegalArgumentException{
         modeloRecetas.entregar(receta,token,idUsuario);
+    }
+    public DateTimeFormatter getFormatoFecha() {
+        return DateTimeFormatter.ofPattern("dd/MM/yyyy");
     }
     public void cerrarAplicacion() {
         try {

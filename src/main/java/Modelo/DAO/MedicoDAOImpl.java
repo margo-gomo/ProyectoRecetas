@@ -52,7 +52,7 @@ public class MedicoDAOImpl implements MedicoDAO {
             System.out.printf("Medico agregado correctamente: '%s'%n", medico);
         }
         else
-            throw new IllegalArgumentException("Ya existe un médico con el mismo ID");
+            throw new IllegalArgumentException("Ya existe un médico con ese ID");
         return medico;
     }
 

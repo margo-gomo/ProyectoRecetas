@@ -52,7 +52,7 @@ public class FarmaceutaDAOImpl implements FarmaceutaDAO {
             System.out.printf("Farmaceuta agregado correctamente: '%s'%n", farmaceuta);
         }
         else
-            throw new IllegalArgumentException("Ya existe un farmaceuta con el mismo ID");
+            throw new IllegalArgumentException("Ya existe un farmaceuta con ese ID");
         return farmaceuta;
     }
 

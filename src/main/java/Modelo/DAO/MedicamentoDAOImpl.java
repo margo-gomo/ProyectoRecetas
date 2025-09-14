@@ -56,7 +56,7 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
             System.out.printf("Medicamento agregado correctamente: '%s'%n", medicamento);
         }
         else
-            throw new IllegalArgumentException("Ya existe un medicamento con el mismo codigo");
+            throw new IllegalArgumentException("Ya existe un medicamento con ese codigo");
         return medicamento;
     }
 

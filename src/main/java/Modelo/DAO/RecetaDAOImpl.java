@@ -50,7 +50,7 @@ public class RecetaDAOImpl implements RecetaDAO {
             System.out.printf("Receta agregada correctamente: '%s'%n", receta);
         }
         else
-            throw new IllegalArgumentException(receta.toString());
+            throw new IllegalArgumentException("Ya existe una receta con ese código");
         return receta;
     }
 
