@@ -165,6 +165,7 @@ public class MenuVista extends JFrame {
     private TableRowSorter<DefaultTableModel> sorterFarma;
     private TableRowSorter<DefaultTableModel> sorterPac;
     private TableRowSorter<DefaultTableModel> sorterMed;
+    private TableRowSorter<DefaultTableModel> sorterDesp;
     private Receta recetaEnPantalla;
 
     private Paciente pacienteSeleccionado;
@@ -181,12 +182,10 @@ public class MenuVista extends JFrame {
 
         setTitle("Sistema de Prescripción y Despacho de Recetas");
         setContentPane(panelPrincipal);
-        //Cose Operation
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1100, 700);
         setLocationRelativeTo(null);
 
-        // Inicialización base
         configurarTablaRecetas();
         aplicarEstilosGenerales();
         configurarTablaMedicos();
@@ -933,12 +932,8 @@ public class MenuVista extends JFrame {
             limpiarCamposMedicamento();
             if (tfBusquedaMedicamento != null) tfBusquedaMedicamento.setText("");
         });
-
     }
 
-    // ------------------------------------------------------------------------------------------
-    // ------------------------------- FINALIZAR VENTANA Y APLICACION --------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void finalizarVentana(java.awt.event.WindowEvent evt) {
         cerrarAplicacion();
@@ -947,15 +942,11 @@ public class MenuVista extends JFrame {
         controlador.cerrarAplicacion();
     }
 
-    // ------------------------------------------------------------------------------------------
-    // ------------------------------- ESTILOS DEL MENÚ PRINCIPAL -------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void aplicarEstilosGenerales() {
-        final Color PRIMARY = new Color(66, 133, 244);   // celeste principal
-        final Color SECOND = new Color(204, 228, 255);  // celeste claro
+        final Color PRIMARY = new Color(66, 133, 244);
+        final Color SECOND = new Color(204, 228, 255);
 
-        // Paneles y tabs
         JPanel[] paneles = {panelPrincipal, panelContenedor, controlPrescripcionPanel, RecetaMedicaPrescripcionPanel};
         for (JPanel p : paneles) if (p != null) p.setBackground(Color.WHITE);
         if (tabbedPanePrincipal != null) {
@@ -1463,10 +1454,29 @@ public class MenuVista extends JFrame {
                 @Override public boolean isCellEditable(int r, int c) { return false; }
             };
             tablaDespacho.setModel(modeloDespacho);
+            sorterDesp = new TableRowSorter<>((DefaultTableModel) tablaDespacho.getModel());
+            tablaDespacho.setRowSorter(sorterDesp);
         }
+
+        DefaultTableModel md = (DefaultTableModel) tablaDespacho.getModel();
+        for (Receta r : controlador.obtenerListaRecetas()) {
+            if (r == null) continue;
+            md.addRow(new Object[]{
+                    r.getCodigo(),
+                    (r.getPaciente() != null ? r.getPaciente().getId() : ""),
+                    (r.getFecha_confeccion() != null ? r.getFecha_confeccion().format(formatoFecha) : ""),
+                    (r.getFecha_retiro() != null ? r.getFecha_retiro().format(formatoFecha) : ""),
+                    r.getEstado()
+            });
+        }
+        conectarFiltroConCombo(
+                tfRecetasDespacho,
+                comboRecetaDespacho,
+                sorterDesp,
+                0,
+                java.util.Map.of("código", 0, "codigo", 0)
+        );
     }
-
-
 
     private void configurarTablaHistorico() {
         if (tabHistorico != null) {
@@ -1500,29 +1510,6 @@ public class MenuVista extends JFrame {
     // ------------------------------------------------------------------------------------------
     // ---------------------------------- FILTROS DE BÚSQUEDA -----------------------------------
     // ------------------------------------------------------------------------------------------
-
-    private void conectarFiltro(JTextField campo,
-                                TableRowSorter<DefaultTableModel> sorter,
-                                int... columnas) {
-        if (campo == null || sorter == null) return;
-
-        DocumentListener dl = new DocumentListener() {
-            private void filtra() {
-                String t = campo.getText();
-                if (t == null || t.trim().isEmpty()) {
-                    sorter.setRowFilter(null);
-                } else {
-                    RowFilter<DefaultTableModel, Object> rf =
-                            RowFilter.regexFilter("(?i)" + Pattern.quote(t.trim()), columnas);
-                    sorter.setRowFilter(rf);
-                }
-            }
-            @Override public void insertUpdate(DocumentEvent e) { filtra(); }
-            @Override public void removeUpdate(DocumentEvent e) { filtra(); }
-            @Override public void changedUpdate(DocumentEvent e) { filtra(); }
-        };
-        campo.getDocument().addDocumentListener(dl);
-    }
 
     private void conectarFiltroConCombo(JTextField campo,
                                         JComboBox<?> combo,
@@ -1947,17 +1934,14 @@ public class MenuVista extends JFrame {
         }
 
         try {
-            // Si se edita y el código cambió, elimina la antigua indicación
             if (filaAActualizar != null && codigoOld != null && !codigoOld.equals(codigo)) {
                 try { controlador.eliminarIndicacion(codigoOld); } catch (Exception ignored) {}
             }
-            // Reemplaza si ya existía la indicación de ese medicamento
             try { controlador.eliminarIndicacion(codigo); } catch (Exception ignored) {}
 
             Indicacion in = new Indicacion(med, cantidad, indicaciones, duracion);
             controlador.agregarIndicacion(in);
 
-            // Refrescar la tabla desde el modelo
             recargarTablaIndicacionesDesdeControlador();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "No se pudo registrar la indicación: " + ex.getMessage(),
@@ -2051,7 +2035,6 @@ public class MenuVista extends JFrame {
             receta.setCodigo(codigoIngresado);
             receta.agregarIndicaciones(new java.util.ArrayList<>(controlador.obtenerListaIndicaciones()));
             controlador.agregarReceta(receta);
-            // limpiar borrador e interfaz para la siguiente receta
             limpiarIndicacionesDelModelo();
             recargarTablaIndicacionesDesdeControlador();
             recetaEnPantalla = null;
@@ -2085,10 +2068,8 @@ public class MenuVista extends JFrame {
 
         if (modeloTablaRecetas != null) modeloTablaRecetas.setRowCount(0);
 
-        // NUEVO: limpiar el borrador de indicaciones
         limpiarIndicacionesDelModelo();
 
-        // reset de estado
         pacienteSeleccionado = null;
         recetaEnPantalla = null;
 
@@ -2292,32 +2273,27 @@ public class MenuVista extends JFrame {
         if (recetaEnPantalla == null) return;
 
         LocalDateAdapter lda = new LocalDateAdapter();
-        String fechaConfStr;
-        String fechaRetStr = "(sin fecha)";
-
-        try {
-            LocalDate fc = recetaEnPantalla.getFecha_confeccion();
-            fechaConfStr = (fc != null) ? lda.marshal(fc) : lda.marshal(LocalDate.now());
-        } catch (Exception ex) {
-            LocalDate fc = recetaEnPantalla.getFecha_confeccion();
-            fechaConfStr = (fc != null) ? fc.format(formatoFecha) : LocalDate.now().format(formatoFecha);
-        }
-
-        try {
-            LocalDate fr = recetaEnPantalla.getFecha_retiro();
-            if (fr != null) fechaRetStr = lda.marshal(fr);
-        } catch (Exception ex) {
-            LocalDate fr = recetaEnPantalla.getFecha_retiro();
-            if (fr != null) fechaRetStr = fr.format(formatoFecha);
-        }
 
         if (tfCodPresc != null) {
             String cod = recetaEnPantalla.getCodigo();
             tfCodPresc.setText(cod != null ? cod : "");
         }
 
-        if (labelFechaActualPresc != null) labelFechaActualPresc.setText(fechaConfStr);
-        if (labelFechaRetiroPresc != null) labelFechaRetiroPresc.setText(fechaRetStr);
+        try {
+            LocalDate fc = recetaEnPantalla.getFecha_confeccion();
+            String fechaConfStr = (fc != null) ? lda.marshal(fc) : lda.marshal(LocalDate.now());
+            if (labelFechaActualPresc != null) labelFechaActualPresc.setText(fechaConfStr);
+        } catch (Exception ex) {
+            if (labelFechaActualPresc != null) labelFechaActualPresc.setText(LocalDate.now().format(formatoFecha));
+        }
+
+        try {
+            LocalDate fr = recetaEnPantalla.getFecha_retiro();
+            String fechaRetStr = (fr != null) ? lda.marshal(fr) : "(sin fecha)";
+            if (labelFechaRetiroPresc != null) labelFechaRetiroPresc.setText(fechaRetStr);
+        } catch (Exception ex) {
+            if (labelFechaRetiroPresc != null) labelFechaRetiroPresc.setText("(sin fecha)");
+        }
 
         pacienteSeleccionado = recetaEnPantalla.getPaciente();
         if (labelNomPaciente != null) {
