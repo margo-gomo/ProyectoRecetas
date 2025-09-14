@@ -152,8 +152,8 @@ public class MenuVista extends JFrame {
     private JLabel labelNomPaciente;
     private JLabel labelFechaActualPresc;
     private JLabel labelFechaRetiroPresc;
-    private JComboBox comboReceta;
-    private JTextField tfRecetas;
+    private JComboBox comboRecetaDespacho;
+    private JTextField tfRecetasDespacho;
     private JTextField tfCodPresc;
     private JComboBox comboBox2;
 
