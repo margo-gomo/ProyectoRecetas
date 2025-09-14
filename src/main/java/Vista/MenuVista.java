@@ -2081,12 +2081,12 @@ public class MenuVista extends JFrame {
     }
 
     private void limpiarPrescripcionUI() {
-        if (tablaPrescripcion != null) tablaPrescripcion.clearSelection();
+        //if (tablaPrescripcion != null) tablaPrescripcion.clearSelection();
 
-        if (modeloTablaRecetas != null) modeloTablaRecetas.setRowCount(0);
+        //if (modeloTablaRecetas != null) modeloTablaRecetas.setRowCount(0);
 
         // NUEVO: limpiar el borrador de indicaciones
-        limpiarIndicacionesDelModelo();
+        //limpiarIndicacionesDelModelo();
 
         // reset de estado
         pacienteSeleccionado = null;

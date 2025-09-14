@@ -43,6 +43,47 @@
         <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
     </receta>
     <receta>
+        <codigo>1234</codigo>
+        <indicaciones>
+            <entry>
+                <key>0</key>
+                <value>
+                    <medicamento>
+                        <codigo>0</codigo>
+                        <nombre>Paracetamol</nombre>
+                        <descripcion>Jarabe</descripcion>
+                    </medicamento>
+                    <cantidad>1</cantidad>
+                    <descripcion></descripcion>
+                    <duracion-dias>1</duracion-dias>
+                </value>
+            </entry>
+            <entry>
+                <key>444</key>
+                <value>
+                    <medicamento>
+                        <codigo>444</codigo>
+                        <nombre>Acetaminofén</nombre>
+                        <descripcion>360 miligramos</descripcion>
+                    </medicamento>
+                    <cantidad>1</cantidad>
+                    <descripcion></descripcion>
+                    <duracion-dias>1</duracion-dias>
+                </value>
+            </entry>
+        </indicaciones>
+        <paciente fecha_nacimiento="24/06/2025">
+            <id>222</id>
+            <nombre>Kendall</nombre>
+            <teléfono>8888888</teléfono>
+        </paciente>
+        <fecha_confeccion>13/09/2025</fecha_confeccion>
+        <estado>confeccionada</estado>
+        <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
+        <idFarmaceutaLista>No lista</idFarmaceutaLista>
+        <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
+    </receta>
+    <receta>
         <codigo>9735</codigo>
         <indicaciones>
             <entry>
