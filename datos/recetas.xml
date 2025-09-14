@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<lista_recetas>
+    <receta>
+        <codigo>777</codigo>
+        <indicaciones>
+            <entry>
+                <key>444</key>
+                <value>
+                    <medicamento>
+                        <codigo>444</codigo>
+                        <nombre>Acetaminofén</nombre>
+                        <descripcion>360 miligramos</descripcion>
+                    </medicamento>
+                    <cantidad>1</cantidad>
+                    <descripcion>Mañana y tarde</descripcion>
+                    <duracion-dias>1</duracion-dias>
+                </value>
+            </entry>
+        </indicaciones>
+        <paciente fecha_nacimiento="17/09/2017">
+            <id>111</id>
+            <nombre>Pedro</nombre>
+            <teléfono>777777</teléfono>
+        </paciente>
+        <fecha_confeccion>13/09/2025</fecha_confeccion>
+        <fecha_retiro>21/09/2025</fecha_retiro>
+        <estado>confeccionada</estado>
+        <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
+        <idFarmaceutaLista>No lista</idFarmaceutaLista>
+        <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
+    </receta>
+</lista_recetas>
+
