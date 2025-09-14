@@ -104,43 +104,43 @@ public class Receta {
     }
     public void iniciarProceso(String idFarmaceuta) throws IllegalArgumentException {
         if ("confeccionada".equalsIgnoreCase(estado)) {
-            if (!fechaDentroVentana(fecha_retiro)) {
+            if (fechaDentroVentana(fecha_retiro)) {
                 estado = "proceso";
                 idFarmaceutaProceso=idFarmaceuta;
             }
             else
-                throw new IllegalArgumentException(String.valueOf(fecha_retiro));
+                throw new IllegalArgumentException("La receta está fuera de la ventana de 3 días");
         } else
-            throw new IllegalArgumentException(estado);
+            throw new IllegalArgumentException("La receta no está solamente confeccionada");
     }
 
     public void marcarLista(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("proceso".equalsIgnoreCase(estado)) {
-            if(!idFarmaceutaProceso.equals(idFarmaceuta)) {
+            estado = "lista";
+            idFarmaceutaLista=idFarmaceuta;
+            /*if(!idFarmaceutaProceso.equals(idFarmaceuta)) {
                 estado = "lista";
                 idFarmaceutaLista=idFarmaceuta;
             }
             else
-                throw new SecurityException(idFarmaceuta);
+                throw new SecurityException("No puedes marcar como lista a una receta a la que iniciaste el poceso.");*/
         }
         else
-            throw new IllegalArgumentException(estado);
+            throw new IllegalArgumentException("La receta que no está en proceso.");
     }
 
     public void entregar(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("lista".equalsIgnoreCase(estado)) {
-            if (fechaDentroVentana(fecha_retiro)) {
-                if(!idFarmaceutaProceso.equals(idFarmaceuta)&&!idFarmaceutaLista.equals(idFarmaceuta)) {
+                estado = "entregada";
+                idFarmaceutaEntregar=idFarmaceuta;
+                /*if(!idFarmaceutaProceso.equals(idFarmaceuta)&&!idFarmaceutaLista.equals(idFarmaceuta)) {
                     estado = "entregada";
                     idFarmaceutaEntregar=idFarmaceuta;
                 }
                 else
-                    throw new SecurityException(idFarmaceuta);
-            }
-            else
-                throw new IllegalArgumentException(String.valueOf(fecha_retiro));
+                    throw new SecurityException(idFarmaceuta);*/
         } else
-            throw new IllegalArgumentException(estado);
+            throw new IllegalArgumentException("La receta no está lista");
     }
 
 
