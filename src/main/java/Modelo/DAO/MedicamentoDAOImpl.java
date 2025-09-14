@@ -56,7 +56,7 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
             System.out.printf("Medicamento agregado correctamente: '%s'%n", medicamento);
         }
         else
-            throw new IllegalArgumentException(String.valueOf(medicamento.getCodigo()));
+            throw new IllegalArgumentException("Ya existe un medicamento con el mismo codigo");
         return medicamento;
     }
 
@@ -67,7 +67,7 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
             System.out.printf("Medicamento actualizado correctamente: '%s'%n", medicamento);
         }
         else
-            throw new IllegalArgumentException(String.valueOf(medicamento.getCodigo()));
+            throw new IllegalArgumentException("No existe un medicamento con ese codigo");
         return medicamento;
     }
 
@@ -77,7 +77,7 @@ public class MedicamentoDAOImpl implements MedicamentoDAO {
         if(medicamento!=null)
             System.out.printf("Medicamento eliminado correctamente: '%s'%n", medicamento);
         else
-            throw new IllegalArgumentException(String.valueOf(codigo));
+            throw new IllegalArgumentException("No existe un medicamento con ese codigo");
         return medicamento;
     }
 

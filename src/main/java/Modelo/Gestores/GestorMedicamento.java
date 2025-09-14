@@ -43,19 +43,19 @@ public class GestorMedicamento {
 
     public Medicamento agregar(Medicamento medicamento,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return medicamentos.agregar(medicamento);
     }
 
     public Medicamento actualizar(Medicamento medicamento,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return medicamentos.actualizar(medicamento);
     }
 
     public Medicamento eliminar(int codigo,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return  medicamentos.eliminar(codigo);
     }
 

@@ -39,19 +39,19 @@ public class GestorFarmaceuta {
 
     public Farmaceuta agregar(Farmaceuta farmaceuta,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
-            throw new SecurityException();
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return farmaceutas.agregar(farmaceuta);
     }
 
     public Farmaceuta actualizar(Farmaceuta farmaceuta,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
-            throw new SecurityException();
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return farmaceutas.actualizar(farmaceuta);
     }
 
     public Farmaceuta eliminar(String id,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
-            throw new SecurityException();
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return  farmaceutas.eliminar(id);
     }
     public Farmaceuta cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar){

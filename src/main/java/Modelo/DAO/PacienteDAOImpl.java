@@ -52,7 +52,7 @@ public class PacienteDAOImpl implements PacienteDAO {
             System.out.printf("Paciente agregado correctamente: '%s'%n", paciente);
         }
         else
-            throw new IllegalArgumentException(String.valueOf(paciente.getId()));
+            throw new IllegalArgumentException("Ya existe un paciente con el mismo ID");
         return paciente;
     }
 
@@ -63,7 +63,7 @@ public class PacienteDAOImpl implements PacienteDAO {
             System.out.printf("Paciente actualizado correctamente: '%s'%n", paciente);
         }
         else
-            throw new IllegalArgumentException(String.valueOf(paciente.getId()));
+            throw new IllegalArgumentException("No existe un paciente con ese ID");
         return paciente;
     }
 
@@ -73,7 +73,7 @@ public class PacienteDAOImpl implements PacienteDAO {
         if(paciente!=null)
             System.out.printf("Paciente eliminado correctamente: '%s'%n", paciente);
         else
-            throw new IllegalArgumentException(String.valueOf(id));
+            throw new IllegalArgumentException("No existe un paciente con ese ID");
         return paciente;
     }
     

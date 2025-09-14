@@ -19,17 +19,17 @@ public class GestorIndicacion {
     }
     public Indicacion agregar(Indicacion indicacion,int token) throws IllegalArgumentException,SecurityException {
         if(token!=1)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return indicaciones.agregar(indicacion);
     }
     public Indicacion actualizar(Indicacion indicacion,int token)throws IllegalArgumentException,SecurityException {
         if(token!=1)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return indicaciones.actualizar(indicacion);
     }
     public Indicacion eliminar(int codigo,int token)throws IllegalArgumentException,SecurityException {
         if(token!=1)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return indicaciones.eliminar(codigo);
     }
     public final IndicacionDAO indicaciones;

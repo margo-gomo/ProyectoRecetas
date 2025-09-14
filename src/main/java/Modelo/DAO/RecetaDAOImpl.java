@@ -61,7 +61,7 @@ public class RecetaDAOImpl implements RecetaDAO {
             System.out.printf("Receta actualizada correctamente: '%s'%n", receta);
         }
         else
-            throw new IllegalArgumentException(receta.toString());
+            throw new IllegalArgumentException("No existe una receta con ese ID");
         return receta;
     }
 
@@ -71,7 +71,7 @@ public class RecetaDAOImpl implements RecetaDAO {
         if(receta != null)
             System.out.printf("Receta eliminada correctamente: '%s'%n", receta);
         else
-            throw new IllegalArgumentException(codigo);
+            throw new IllegalArgumentException("No existe una receta con ese ID");
         return receta;
     }
 

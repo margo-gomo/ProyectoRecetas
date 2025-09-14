@@ -52,7 +52,7 @@ public class MedicoDAOImpl implements MedicoDAO {
             System.out.printf("Medico agregado correctamente: '%s'%n", medico);
         }
         else
-            throw new IllegalArgumentException(medico.getId());
+            throw new IllegalArgumentException("Ya existe un médico con el mismo ID");
         return medico;
     }
 
@@ -63,7 +63,7 @@ public class MedicoDAOImpl implements MedicoDAO {
             System.out.printf("Medico actualizado correctamente: '%s'%n", medico);
         }
         else
-            throw new IllegalArgumentException(medico.getId());
+            throw new IllegalArgumentException("No existe un médico con ese ID");
         return medico;
     }
 
@@ -73,7 +73,7 @@ public class MedicoDAOImpl implements MedicoDAO {
         if(medico!=null)
             System.out.printf("Medico eliminado correctamente: '%s'%n", medico);
         else
-            throw new IllegalArgumentException(id);
+            throw new IllegalArgumentException("No existe un médico con ese ID");
         return medico;
     }
 

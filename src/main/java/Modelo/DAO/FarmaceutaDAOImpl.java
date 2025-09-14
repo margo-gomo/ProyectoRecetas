@@ -52,7 +52,7 @@ public class FarmaceutaDAOImpl implements FarmaceutaDAO {
             System.out.printf("Farmaceuta agregado correctamente: '%s'%n", farmaceuta);
         }
         else
-            throw new IllegalArgumentException(farmaceuta.getId());
+            throw new IllegalArgumentException("Ya existe un farmaceuta con el mismo ID");
         return farmaceuta;
     }
 
@@ -63,7 +63,7 @@ public class FarmaceutaDAOImpl implements FarmaceutaDAO {
             System.out.printf("Farmaceuta actualizado correctamente: '%s'%n", farmaceuta);
         }
         else
-            throw new IllegalArgumentException(farmaceuta.getId());
+            throw new IllegalArgumentException("No existe un farmaceuta con ese ID");
         return farmaceuta;
     }
 
@@ -73,7 +73,7 @@ public class FarmaceutaDAOImpl implements FarmaceutaDAO {
         if(farmaceuta!=null)
             System.out.printf("Farmaceuta eliminado correctamente: '%s'%n", farmaceuta);
         else
-            throw new IllegalArgumentException(id);
+            throw new IllegalArgumentException("No existe un farmaceuta con ese ID");
         return farmaceuta;
     }
 

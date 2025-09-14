@@ -32,7 +32,7 @@ public class IndicacionDAOImpl implements IndicacionDAO {
             System.out.printf("Indicacion agregado correctamente: '%s'%n", indicacion);
         }
         else
-            throw new IllegalArgumentException(String.valueOf(indicaciones.get(indicacion.getMedicamento().getCodigo())));
+            throw new IllegalArgumentException("Ya se añadió ese medicamento");
         return indicacion;
     }
 
@@ -43,7 +43,7 @@ public class IndicacionDAOImpl implements IndicacionDAO {
             System.out.printf("Indicacion actualizada correctamente: '%s'%n", indicacion);
         }
         else
-            throw new IllegalArgumentException(String.valueOf(indicaciones.get(indicacion.getMedicamento().getCodigo())));
+            throw new IllegalArgumentException("No hay un medicamento con ese codigo");
         return indicacion;
     }
 
@@ -53,7 +53,7 @@ public class IndicacionDAOImpl implements IndicacionDAO {
         if(indicacion!=null)
             System.out.printf("Indicacion eliminada correctamente: '%s'%n", indicacion);
         else
-            throw new IllegalArgumentException(String.valueOf(codigo));
+            throw new IllegalArgumentException("No hay un medicamento con ese codigo");
         return indicacion;
     }
     private final Map<Integer, Indicacion> indicaciones;

@@ -36,19 +36,19 @@ public class GestorRecetas {
     }
     public Receta agregar(Receta receta,int token) throws IllegalArgumentException,SecurityException {
         if(token!=1)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return  recetas.agregar(receta);
     }
 
     public Receta actualizar(Receta recetaPorActualizar,int token) throws IllegalArgumentException,SecurityException {
         if(token!=1&&token!=2)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return recetas.actualizar(recetaPorActualizar);
     }
 
     public Receta eliminar(String codigo,int token) throws IllegalArgumentException,SecurityException {
         if(token!=1)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return recetas.eliminar(codigo);
     }
 
@@ -56,7 +56,7 @@ public class GestorRecetas {
         if(receta==null)
             throw new IllegalArgumentException(receta.getCodigo());
         if(token!=2)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         receta.iniciarProceso(idFarmaceuta);
         recetas.actualizar(receta);
     }
@@ -64,7 +64,7 @@ public class GestorRecetas {
         if(receta==null)
             throw new IllegalArgumentException(receta.getCodigo());
         if (token!=2)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         receta.marcarLista(idFarmaceuta);
         recetas.actualizar(receta);
     }
@@ -72,7 +72,7 @@ public class GestorRecetas {
         if(receta==null)
             throw new IllegalArgumentException(receta.getCodigo());
         if (token!=2)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         receta.entregar(idFarmaceuta);
         recetas.actualizar(receta);
     }

@@ -38,19 +38,19 @@ public class GestorPaciente {
 
     public Paciente agregar(Paciente paciente,int token) throws IllegalArgumentException,SecurityException { // (antes: aregarPaciente)
         if(token!=0)
-            throw new SecurityException();
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return pacientes.agregar(paciente);
     }
 
     public Paciente actualizar(Paciente paciente,int token) throws IllegalArgumentException,SecurityException { // (antes: pacienteporactualizar)
         if(token!=0)
-            throw new SecurityException();
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return pacientes.actualizar(paciente);
     }
 
     public Paciente eliminar(int id,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
-            throw new SecurityException();
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return  pacientes.eliminar(id);
     }
 

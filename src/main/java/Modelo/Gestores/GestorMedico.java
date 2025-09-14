@@ -44,20 +44,20 @@ public class GestorMedico {
     // Agrega un médico si el ID no está repetido
     public Medico agregar(Medico medico,int token) throws IllegalArgumentException,SecurityException { // (antes: aregarMedico)
         if(token!=0)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return medicos.agregar(medico);
     }
 
     // Reemplaza los datos de un médico existente (match por ID)
     public Medico actualizar(Medico medico,int token) throws IllegalArgumentException,SecurityException { // (antes: pacienteporactualizar)
         if(token!=0)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return medicos.actualizar(medico);
     }
     // Elimina un médico por ID
     public Medico eliminar(String id,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
-            throw new SecurityException(String.valueOf(token));
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
         return  medicos.eliminar(id);
     }
     // Cambia la clave de un medico existente (match por ID)
