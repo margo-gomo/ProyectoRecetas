@@ -932,6 +932,61 @@ public class MenuVista extends JFrame {
             limpiarCamposMedicamento();
             if (tfBusquedaMedicamento != null) tfBusquedaMedicamento.setText("");
         });
+
+        if (iniciarProcesoButton != null) {
+            iniciarProcesoButton.addActionListener(e -> {
+                int fila = tablaDespacho.getSelectedRow();
+                if (fila < 0) {
+                    JOptionPane.showMessageDialog(this, "Seleccione una receta en la tabla de despacho.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                int modelRow = tablaDespacho.convertRowIndexToModel(fila);
+                String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
+                Receta r = controlador.buscarRecetaPorCodigo(codigo);
+                if (r != null) {
+                    r.setEstado("En proceso");
+                    controlador.actualizarReceta(r);
+                    tablaDespacho.setValueAt("En proceso", modelRow, 4);
+                }
+            });
+        }
+
+        if (marcarListaButton != null) {
+            marcarListaButton.addActionListener(e -> {
+                int fila = tablaDespacho.getSelectedRow();
+                if (fila < 0) {
+                    JOptionPane.showMessageDialog(this, "Seleccione una receta en la tabla de despacho.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                int modelRow = tablaDespacho.convertRowIndexToModel(fila);
+                String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
+                Receta r = controlador.buscarRecetaPorCodigo(codigo);
+                if (r != null) {
+                    r.setEstado("Lista");
+                    controlador.actualizarReceta(r);
+                    tablaDespacho.setValueAt("Lista", modelRow, 4);
+                }
+            });
+        }
+
+        if (entregarButton != null) {
+            entregarButton.addActionListener(e -> {
+                int fila = tablaDespacho.getSelectedRow();
+                if (fila < 0) {
+                    JOptionPane.showMessageDialog(this, "Seleccione una receta en la tabla de despacho.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                int modelRow = tablaDespacho.convertRowIndexToModel(fila);
+                String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
+                Receta r = controlador.buscarRecetaPorCodigo(codigo);
+                if (r != null) {
+                    r.setEstado("Entregada");
+                    controlador.actualizarReceta(r);
+                    tablaDespacho.setValueAt("Entregada", modelRow, 4);
+                }
+            });
+        }
+
     }
 
 

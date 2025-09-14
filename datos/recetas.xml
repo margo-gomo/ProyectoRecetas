@@ -37,7 +37,7 @@
         </paciente>
         <fecha_confeccion>13/09/2025</fecha_confeccion>
         <fecha_retiro>13/09/2025</fecha_retiro>
-        <estado>confeccionada</estado>
+        <estado>Entregada</estado>
         <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
         <idFarmaceutaLista>No lista</idFarmaceutaLista>
         <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
