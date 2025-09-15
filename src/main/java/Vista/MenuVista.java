@@ -175,11 +175,9 @@ public class MenuVista extends JFrame {
     // ------------------------------------- CONSTRUCTOR ----------------------------------------
     // ------------------------------------------------------------------------------------------
 
-    public MenuVista() {
-        this.controlador = new Controlador();
+    public MenuVista(Controlador contr) {
+        controlador = contr;
         controlador.setToken(1);
-        controlador.init();
-
 
         setTitle("Sistema de Prescripción y Despacho de Recetas");
         setContentPane(panelPrincipal);
@@ -297,19 +295,43 @@ public class MenuVista extends JFrame {
         // ----- GENERAR REPORTES (PDF) -----
         if (generarReporteMedicosButton != null) {
             generarReporteMedicosButton.addActionListener(e ->
-                    exportarTablaAPdf(tabloMedicos, "Reporte de Médicos"));
+            {
+                try {
+                    controlador.exportarMedicos();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
         if (generarFarma != null) {
             generarFarma.addActionListener(e ->
-                    exportarTablaAPdf(tablaFarma, "Reporte de Farmacéutas"));
+            {
+                try {
+                    controlador.exportarFarmaceutas();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
         if (generarPaciente != null) {
             generarPaciente.addActionListener(e ->
-                    exportarTablaAPdf(tablaPac, "Reporte de Pacientes"));
+            {
+                try {
+                    controlador.exportarPacientes();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
         if (generarMedicamento != null) {
             generarMedicamento.addActionListener(e ->
-                    exportarTablaAPdf(tablaMed, "Reporte de Medicamentos"));
+            {
+                try {
+                    controlador.exportarMedicamentos();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
 
         // Guardar Prescripción
@@ -999,179 +1021,6 @@ public class MenuVista extends JFrame {
     // --------------------------------- GENERACIÓN DE PDFS -------------------------------------
     // ------------------------------------------------------------------------------------------
 
-    private void exportarTablaAPdf(JTable tabla, String titulo) {
-        if (tabla == null) {
-            JOptionPane.showMessageDialog(this, "No hay tabla para exportar.", "Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        if (tabla.getModel().getRowCount() == 0) {
-            JOptionPane.showMessageDialog(this, "No hay datos para exportar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("Guardar " + titulo);
-        String sugerido = titulo.toLowerCase().replace(" ", "_")
-                + "_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")) + ".pdf";
-        fc.setSelectedFile(new File(sugerido));
-
-        int res = fc.showSaveDialog(this);
-        if (res != JFileChooser.APPROVE_OPTION) return;
-
-        File destino = fc.getSelectedFile();
-        try {
-            escribirTablaEnPdf(tabla, titulo, destino);
-            JOptionPane.showMessageDialog(this, "Reporte guardado en:\n" + destino.getAbsolutePath(),
-                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo generar el PDF:\n" + ex.getMessage(),
-                    "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void escribirTablaEnPdf(JTable tabla, String titulo, File destino) throws IOException {
-        try (PDDocument doc = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.LETTER);
-            doc.addPage(page);
-
-            float margin = 36f;
-            PDRectangle media = page.getMediaBox();
-            float pageWidth = media.getWidth();
-            float pageHeight = media.getHeight();
-
-            PDFont fontTitle = PDType1Font.HELVETICA_BOLD;
-            PDFont fontHeader = PDType1Font.HELVETICA_BOLD;
-            PDFont fontCell = PDType1Font.HELVETICA;
-
-            float fsTitle = 16f;
-            float fsHeader = 11f;
-            float fsCell = 10f;
-
-            float y = pageHeight - margin;
-
-            PDPageContentStream cs = new PDPageContentStream(doc, page);
-
-            // Título
-            cs.beginText();
-            cs.setFont(fontTitle, fsTitle);
-            cs.newLineAtOffset(margin, y);
-            cs.showText(titulo);
-            cs.endText();
-            y -= 22f;
-
-            // Fecha
-            cs.beginText();
-            cs.setFont(fontCell, 10f);
-            cs.newLineAtOffset(margin, y);
-            cs.showText("Generado: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-            cs.endText();
-            y -= 16f;
-
-            // Tabla
-            int cols = tabla.getColumnCount();
-            float tableWidth = pageWidth - (2 * margin);
-            float colWidth = tableWidth / cols;
-            float rowHeight = 18f;
-            float cellPadding = 2f;
-
-            if (y - rowHeight < margin) {
-                cs.close();
-                page = new PDPage(PDRectangle.LETTER);
-                doc.addPage(page);
-                cs = new PDPageContentStream(doc, page);
-                y = page.getMediaBox().getHeight() - margin;
-            }
-            cs.setFont(fontHeader, fsHeader);
-            float x = margin;
-            for (int c = 0; c < cols; c++) {
-                String header = tabla.getColumnName(c);
-                drawTextFitted(cs, header, fontHeader, fsHeader, x + cellPadding, y - 12f, colWidth - (2 * cellPadding));
-                x += colWidth;
-            }
-            cs.moveTo(margin, y - rowHeight);
-            cs.lineTo(margin + tableWidth, y - rowHeight);
-            cs.stroke();
-            y -= rowHeight;
-
-            // Filas
-            cs.setFont(fontCell, fsCell);
-            for (int r = 0; r < tabla.getRowCount(); r++) {
-                if (y - rowHeight < margin) {
-                    cs.close();
-                    page = new PDPage(PDRectangle.LETTER);
-                    doc.addPage(page);
-                    cs = new PDPageContentStream(doc, page);
-                    y = page.getMediaBox().getHeight() - margin;
-
-                    // Redibuja header en nueva página
-                    cs.setFont(fontHeader, fsHeader);
-                    x = margin;
-                    for (int c = 0; c < cols; c++) {
-                        String header = tabla.getColumnName(c);
-                        drawTextFitted(cs, header, fontHeader, fsHeader, x + cellPadding, y - 12f, colWidth - (2 * cellPadding));
-                        x += colWidth;
-                    }
-                    cs.moveTo(margin, y - rowHeight);
-                    cs.lineTo(margin + tableWidth, y - rowHeight);
-                    cs.stroke();
-                    y -= rowHeight;
-                    cs.setFont(fontCell, fsCell);
-                }
-
-                x = margin;
-                for (int c = 0; c < cols; c++) {
-                    Object val = tabla.getValueAt(r, c);
-                    String text = (val == null) ? "" : String.valueOf(val);
-                    drawTextFitted(cs, text, fontCell, fsCell, x + cellPadding, y - 12f, colWidth - (2 * cellPadding));
-                    x += colWidth;
-                }
-                // línea horizontal de la fila
-                cs.moveTo(margin, y - rowHeight);
-                cs.lineTo(margin + tableWidth, y - rowHeight);
-                cs.stroke();
-
-                y -= rowHeight;
-            }
-
-            cs.close();
-            doc.save(destino);
-        }
-    }
-
-    private void drawTextFitted(PDPageContentStream cs, PDFont font, float fontSize,
-                                float x, float y, float maxWidth, String text) throws IOException {
-        String fitted = fitToWidth(font, fontSize, text, maxWidth);
-        cs.beginText();
-        cs.setFont(font, fontSize);
-        cs.newLineAtOffset(x, y);
-        cs.showText(fitted);
-        cs.endText();
-    }
-
-    private void drawTextFitted(PDPageContentStream cs, String text, PDFont font, float fontSize,
-                                float x, float y, float maxWidth) throws IOException {
-        drawTextFitted(cs, font, fontSize, x, y, maxWidth, text);
-    }
-
-    private String fitToWidth(PDFont font, float fontSize, String text, float maxWidth) throws IOException {
-        if (text == null) return "";
-        StringBuilder out = new StringBuilder();
-        float width = 0f;
-        for (int i = 0; i < text.length(); i++) {
-            String ch = text.substring(i, i + 1);
-            float w = (font.getStringWidth(ch) / 1000f) * fontSize;
-            if (width + w > maxWidth) {
-                if (out.length() > 3) {
-                    out.setLength(out.length() - 3);
-                }
-                out.append("...");
-                return out.toString();
-            }
-            out.append(ch);
-            width += w;
-        }
-        return out.toString();
-    }
 
     // ------------------------------------------------------------------------------------------
     // --------------------------------- CONFIGURACIÓN DE TABLAS --------------------------------
@@ -2244,12 +2093,12 @@ public class MenuVista extends JFrame {
     // ------------------------------------------ MAIN ------------------------------------------
     // ------------------------------------------------------------------------------------------
 
-    public static void main(String[] args) {
+    public void init() {
         try {
             FlatLightLaf.setup();
         } catch (Exception ex) {
             System.err.println("Error iniciando FlatLaf: " + ex.getMessage());
         }
-        SwingUtilities.invokeLater(() -> new MenuVista().setVisible(true));
+        SwingUtilities.invokeLater(() -> new MenuVista(controlador).setVisible(true));
     }
 }

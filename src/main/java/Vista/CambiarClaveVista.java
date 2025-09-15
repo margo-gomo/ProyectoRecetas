@@ -200,7 +200,7 @@ public class CambiarClaveVista extends JFrame {
     // ------------------------------------------ MAIN ------------------------------------------
     // ------------------------------------------------------------------------------------------
 
-    public static void main(String[] args) {
+    public void init(String[] args) {
         try { FlatLightLaf.setup(); } catch (Exception ignored) {}
         SwingUtilities.invokeLater(() -> new CambiarClaveVista().setVisible(true));
     }
