@@ -21,39 +21,40 @@ public class Dashboard {
     public void agregarMedicameno(Medicamento medicamento){
         medicamentosSeleccionados.add(medicamento);
     }
+
     public Map<YearMonth, Integer> medicamentosPorMes(
             List<Receta> recetas,
-            LocalDate startDate, LocalDate endDate) {
+            LocalDate startDate, LocalDate endDate,
+            String nombreMedicamento) {
 
         Map<YearMonth, Integer> estadisticas = new TreeMap<>();
-        if (recetas == null || medicamentosSeleccionados == null || startDate == null || endDate == null) {
+        if (recetas == null || startDate == null || endDate == null) {
             return estadisticas;
         }
 
-        // Prepara un set de códigos para lookup O(1)
-        Set<Integer> codigos = new HashSet<>();
-        for (Medicamento m : medicamentosSeleccionados) {
-            if (m != null) codigos.add(m.getCodigo());
-        }
-
-        // Itera recetas
         for (Receta receta : recetas) {
             LocalDate fc = receta.getFecha_confeccion();
             if (fc == null) continue;
             if (fc.isBefore(startDate) || fc.isAfter(endDate)) continue;
 
-            YearMonth ym = YearMonth.from(fc);
+            boolean contiene = (nombreMedicamento == null || nombreMedicamento.isEmpty());
             int totalReceta = 0;
+
             for (Indicacion ind : receta.obtenerListaIndicaciones()) {
                 if (ind == null || ind.getMedicamento() == null) continue;
-                if (codigos.contains(ind.getMedicamento().getCodigo())) {
+
+                String nombre = ind.getMedicamento().getNombre();
+                if (contiene || (nombre != null && nombre.equalsIgnoreCase(nombreMedicamento))) {
                     totalReceta += ind.getCantidad();
                 }
             }
-            estadisticas.put(ym, estadisticas.getOrDefault(ym, 0) + totalReceta);
+
+            if (totalReceta > 0 || contiene) {
+                YearMonth ym = YearMonth.from(fc);
+                estadisticas.put(ym, estadisticas.getOrDefault(ym, 0) + totalReceta);
+            }
         }
 
-        // Asegurar que todos los YearMonth del rango existan (llenar con 0)
         YearMonth startYM = YearMonth.from(startDate);
         YearMonth endYM = YearMonth.from(endDate);
         YearMonth cur = startYM;
@@ -65,13 +66,31 @@ public class Dashboard {
         return estadisticas;
     }
 
+    public Map<String, Long> recetasPorEstado(
+            List<Receta> recetas,
+            LocalDate startDate,
+            LocalDate endDate,
+            String nombreMedicamento) {
 
-    public Map<String, Long> recetasPorEstado(List<Receta> recetas) {
-        if (recetas == null) return Collections.emptyMap();
+        if (recetas == null || startDate == null || endDate == null) {
+            return Collections.emptyMap();
+        }
+
         return recetas.stream()
-                .filter(Objects::nonNull)
+                .filter(r -> r != null && r.getFecha_confeccion() != null)
+                .filter(r -> !r.getFecha_confeccion().isBefore(startDate) &&
+                        !r.getFecha_confeccion().isAfter(endDate))
+                .filter(r -> {
+                    if (nombreMedicamento == null || nombreMedicamento.isEmpty()) {
+                        return true;
+                    }
+                    return r.obtenerListaIndicaciones().stream()
+                            .anyMatch(ind -> ind != null && ind.getMedicamento() != null &&
+                                    nombreMedicamento.equalsIgnoreCase(ind.getMedicamento().getNombre()));
+                })
                 .collect(Collectors.groupingBy(Receta::getEstado, Collectors.counting()));
     }
+
     @Getter
     private List<Medicamento> medicamentosSeleccionados;
 }

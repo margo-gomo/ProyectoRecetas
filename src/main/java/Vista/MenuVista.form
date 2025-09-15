@@ -1433,7 +1433,7 @@
                     <properties/>
                     <border type="none" title="Datos"/>
                     <children>
-                      <component id="4bcca" class="javax.swing.JFormattedTextField" binding="formattedTextField1" default-binding="true">
+                      <component id="4bcca" class="javax.swing.JFormattedTextField" binding="formattedTextFieldDesdeDash">
                         <constraints>
                           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="150" height="-1"/>
@@ -1441,7 +1441,7 @@
                         </constraints>
                         <properties/>
                       </component>
-                      <component id="c0fa4" class="javax.swing.JFormattedTextField" binding="formattedTextField2" default-binding="true">
+                      <component id="c0fa4" class="javax.swing.JFormattedTextField" binding="formattedTextFieldHastaDash">
                         <constraints>
                           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="150" height="-1"/>
@@ -1494,7 +1494,7 @@
                             <properties/>
                             <border type="none"/>
                             <children>
-                              <component id="a31ae" class="javax.swing.JTable" binding="tablaDashboard">
+                              <component id="a31ae" class="javax.swing.JTable" binding="tablaMesAnioDashboard">
                                 <constraints/>
                                 <properties/>
                               </component>
@@ -1502,7 +1502,7 @@
                           </scrollpane>
                         </children>
                       </grid>
-                      <component id="3d1c9" class="javax.swing.JButton" binding="elegirFechaButton3" default-binding="true">
+                      <component id="3d1c9" class="javax.swing.JButton" binding="elegirFechaDesdeButtonDash">
                         <constraints>
                           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -1510,7 +1510,7 @@
                           <text value="Elegir fecha"/>
                         </properties>
                       </component>
-                      <component id="40d3a" class="javax.swing.JButton" binding="elegirFechaButton4" default-binding="true">
+                      <component id="40d3a" class="javax.swing.JButton" binding="elegirFechaHastaButtonDash">
                         <constraints>
                           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -1525,7 +1525,7 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="ea762" class="javax.swing.JTable" binding="tablaEstados">
+                          <component id="ea762" class="javax.swing.JTable" binding="tablaEstadosDashboard">
                             <constraints/>
                             <properties/>
                           </component>
@@ -1541,7 +1541,7 @@
                     <properties/>
                     <border type="none" title="Medicamentos"/>
                     <children>
-                      <grid id="51b79" binding="panelLineas" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="51b79" binding="panelLineasDashboard" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -1560,7 +1560,7 @@
                     <properties/>
                     <border type="none" title="Recetas"/>
                     <children>
-                      <grid id="3073b" binding="panelPastel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="3073b" binding="panelPastelDashboard" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -1579,7 +1579,7 @@
                     <properties/>
                     <border type="none" title="Acciones"/>
                     <children>
-                      <component id="6cef" class="javax.swing.JButton" binding="refrescarButton" default-binding="true">
+                      <component id="6cef" class="javax.swing.JButton" binding="refrescarButtonDashboard">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -1587,7 +1587,7 @@
                           <text value="Refrescar"/>
                         </properties>
                       </component>
-                      <component id="74dac" class="javax.swing.JButton" binding="limpiarButton1" default-binding="true">
+                      <component id="74dac" class="javax.swing.JButton" binding="limpiarButtonDashboard">
                         <constraints>
                           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>

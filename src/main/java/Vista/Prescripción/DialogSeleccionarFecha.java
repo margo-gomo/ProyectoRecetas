@@ -20,12 +20,11 @@ public class DialogSeleccionarFecha extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
     private JButton hoyButton;
-    private JButton button2; // botón que abre JCalendar
+    private JButton button2;
     private JFormattedTextField formattedTextField1;
 
     private final LocalDateAdapter adapter = new LocalDateAdapter();
 
-    // Estado de confirmación y valor elegido
     private LocalDate fechaSeleccionada = null;
     private boolean confirmado = false;
 
@@ -65,7 +64,6 @@ public class DialogSeleccionarFecha extends JDialog {
             });
         }
 
-        // Cancel -> descarta cambios (confirmado = false)
         if (buttonCancel != null) {
             buttonCancel.addActionListener(e -> {
                 confirmado = false;
@@ -74,7 +72,6 @@ public class DialogSeleccionarFecha extends JDialog {
             });
         }
 
-        // Hoy -> escribe la fecha de hoy en el campo
         if (hoyButton != null) {
             hoyButton.addActionListener(e -> {
                 try {
@@ -86,7 +83,6 @@ public class DialogSeleccionarFecha extends JDialog {
             });
         }
 
-        // Calendario -> abre JCalendar y vuelca selección al campo
         if (button2 != null) {
             button2.addActionListener(new ActionListener() {
                 @Override

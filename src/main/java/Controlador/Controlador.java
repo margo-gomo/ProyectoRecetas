@@ -340,11 +340,11 @@ public class Controlador {
     public void agregarMedicamentoDashboard(String nombre){
         dashboard.agregarMedicameno(modeloMedicamento.buscarPorNombre(nombre));
     }
-    public Map<YearMonth, Integer> DashboardMedicamentosPorMes(LocalDate startDate, LocalDate endDate){
-        return dashboard.medicamentosPorMes(modeloRecetas.obtenerListaRecetas(), startDate, endDate);
+    public Map<YearMonth, Integer> DashboardMedicamentosPorMes(LocalDate startDate, LocalDate endDate, String nombreMedicamento){
+        return dashboard.medicamentosPorMes(modeloRecetas.obtenerListaRecetas(), startDate, endDate, nombreMedicamento);
     }
-    public Map<String, Long> DashboardRecetasPorEstado(){
-        return dashboard.recetasPorEstado(modeloRecetas.obtenerListaRecetas());
+    public Map<String, Long> DashboardRecetasPorEstado(LocalDate desde, LocalDate hasta, String nombreMedicamento) {
+        return dashboard.recetasPorEstado(modeloRecetas.obtenerListaRecetas(), desde, hasta, nombreMedicamento);
     }
     public Receta buscarRecetaHistorial(String codigo){
         return historial.buscarPorCodigo(buscarRecetaPorCodigo(codigo));
@@ -465,10 +465,7 @@ public class Controlador {
         float x = margin;
 
         for (int i = 0; i < cabeceras.length; i++) {
-            contentStream.beginText();
-            contentStream.newLineAtOffset(x, textY);
-            contentStream.showText(cabeceras[i]);
-            contentStream.endText();
+            escribirTextoEnCelda(contentStream, cabeceras[i], x, textY, colWidths[i], 10, PDType1Font.HELVETICA_BOLD);
             x += colWidths[i];
         }
 
@@ -477,23 +474,23 @@ public class Controlador {
 
         for (String[] fila : filas) {
             x = margin;
-            for (int i = 0; i < fila.length; i++) {
-                String valor = fila[i] != null ? fila[i] : "";
-                contentStream.beginText();
-                contentStream.newLineAtOffset(x, textY);
-                contentStream.showText(valor);
-                contentStream.endText();
-                x += colWidths[i];
-            }
-            textY -= 15;
+            float alturaFila = calcularAlturaFila(fila, colWidths, 9, PDType1Font.HELVETICA);
 
-            if (textY < margin) {
+
+            if (textY - alturaFila < margin) {
                 contentStream.close();
                 page = new PDPage(PDRectangle.A4);
                 document.addPage(page);
                 contentStream = new PDPageContentStream(document, page);
                 textY = yStart;
             }
+
+            for (int i = 0; i < fila.length; i++) {
+                escribirTextoEnCelda(contentStream, fila[i], x, textY, colWidths[i], 9, PDType1Font.HELVETICA);
+                x += colWidths[i];
+            }
+
+            textY -= alturaFila + 5;
         }
 
         contentStream.close();
@@ -509,6 +506,64 @@ public class Controlador {
         }
 
         document.close();
+    }
+
+    private void escribirTextoEnCelda(PDPageContentStream contentStream, String texto,
+                                      float x, float y, float colWidth,
+                                      int fontSize, PDType1Font font) throws IOException {
+        if (texto == null) texto = "";
+        float leading = 1.2f * fontSize;
+        java.util.List<String> lineas = dividirTextoPorAncho(texto, colWidth, font, fontSize);
+
+        float textY = y;
+        for (String linea : lineas) {
+            contentStream.beginText();
+            contentStream.setFont(font, fontSize);
+            contentStream.newLineAtOffset(x + 2, textY);
+            contentStream.showText(linea);
+            contentStream.endText();
+            textY -= leading;
+        }
+    }
+
+    private float calcularAlturaFila(String[] fila, float[] colWidths,
+                                     int fontSize, PDType1Font font) throws IOException {
+        float maxAltura = 0;
+        for (int i = 0; i < fila.length; i++) {
+            String texto = fila[i] != null ? fila[i] : "";
+            java.util.List<String> lineas = dividirTextoPorAncho(texto, colWidths[i], font, fontSize);
+            float altura = lineas.size() * (1.2f * fontSize);
+            if (altura > maxAltura) maxAltura = altura;
+        }
+        return maxAltura;
+    }
+
+    private java.util.List<String> dividirTextoPorAncho(String texto, float colWidth,
+                                                        PDType1Font font, int fontSize) throws IOException {
+        java.util.List<String> lineas = new java.util.ArrayList<>();
+        if (texto == null) return lineas;
+
+        String[] palabras = texto.split(" ");
+        StringBuilder linea = new StringBuilder();
+
+        for (String palabra : palabras) {
+            String tmp = linea.length() == 0 ? palabra : linea + " " + palabra;
+            float anchoTmp = font.getStringWidth(tmp) / 1000 * fontSize;
+            if (anchoTmp > colWidth - 4) {
+                if (linea.length() > 0) {
+                    lineas.add(linea.toString());
+                    linea = new StringBuilder(palabra);
+                } else {
+                    lineas.add(palabra);
+                    linea = new StringBuilder();
+                }
+            } else {
+                linea = new StringBuilder(tmp);
+            }
+        }
+
+        if (linea.length() > 0) lineas.add(linea.toString());
+        return lineas;
     }
 
     private GestorAdministrador modeloAdministrador;
