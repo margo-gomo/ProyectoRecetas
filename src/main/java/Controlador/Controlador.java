@@ -44,6 +44,9 @@ public class Controlador {
         idUsuario=usuarios.devolverId(id, clave);
         return idUsuario;
     }
+    public String cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException, SecurityException{
+        return usuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
+    }
     public void init() {
         try {
             modeloMedico.cargar();

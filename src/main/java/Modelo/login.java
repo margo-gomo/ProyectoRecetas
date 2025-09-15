@@ -42,5 +42,18 @@ public class login {
         }
         throw new SecurityException("Credenciales inválidas");
     }
+    public String cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException, SecurityException{
+        for (Usuario u : usuarios) {
+            if (u.getId().equals(id) && u.getClave().equals(claveActual)) {
+                if(!claveNueva.equals(claveConfirmar))
+                    throw new IllegalArgumentException("La clave por confirmar no coincide con la clave nueva propuesta.");
+                else {
+                    u.setClave(claveNueva);
+                    return claveConfirmar;
+                }
+            }
+        }
+        throw new SecurityException("No existe un usuario con esas credenciales");
+    }
     private List<Usuario> usuarios;
 }
