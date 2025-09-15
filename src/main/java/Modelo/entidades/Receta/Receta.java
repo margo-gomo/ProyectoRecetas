@@ -62,37 +62,6 @@ public class Receta {
         return indicacion;
     }
 
-    public Paciente agregarPacienteporId(List<Paciente> pacientes, int id) throws IllegalArgumentException {
-        if(pacientes.isEmpty())
-            throw new IllegalArgumentException(String.valueOf(pacientes));
-        for(Paciente p: pacientes){
-            if(p.getId()==id){
-                paciente=p;
-                System.out.printf("Paciente agregado correctamente: '%s'%n", paciente);
-            }
-        }
-        if(paciente.getId()!=id)
-            throw new IllegalArgumentException(String.valueOf(pacientes));
-        return paciente;
-    }
-
-    public Paciente agregarPacientePorNombre(List<Paciente> pacientes, String nombre) throws IllegalArgumentException {
-        if(pacientes.isEmpty())
-            throw new IllegalArgumentException(String.valueOf(pacientes));
-        String needle = nombre.toLowerCase();
-        for(Paciente p: pacientes){
-            String n = p.getNombre();
-            if (n != null && n.toLowerCase().contains(needle)){
-                paciente=p;
-                System.out.printf("Paciente agregado correctamente: '%s'%n", paciente);
-            }
-        }
-        String n = paciente.getNombre();
-        if(!n.toLowerCase().contains(needle))
-            throw new IllegalArgumentException(String.valueOf(pacientes));
-        return paciente;
-    }
-
     public void estadoConfeccionado() {
         estado = "confeccionada";
     }
@@ -166,6 +135,8 @@ public class Receta {
     private final Map<Integer, Indicacion> indicaciones;
 
     @Getter
+    @Setter
+    @XmlElement
     private Paciente paciente;
 
     @Getter

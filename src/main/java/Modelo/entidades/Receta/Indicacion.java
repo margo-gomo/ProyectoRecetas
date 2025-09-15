@@ -33,6 +33,7 @@ public class Indicacion {
         return hash;
     }
     @Getter
+    @Setter
     @XmlElement
     private Medicamento medicamento;
     @Getter

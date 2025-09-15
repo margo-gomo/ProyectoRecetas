@@ -202,14 +202,24 @@ public class Controlador {
     public Receta buscarReceta(int idPaciente, LocalDate fechaConfeccion){
         return modeloRecetas.buscarReceta(idPaciente, fechaConfeccion);
     }
-    public Receta agregarReceta(Receta receta) throws IllegalArgumentException, SecurityException{
+    public Receta agregarReceta(String codigo,List<Indicacion>indicaciones,int id,LocalDate fecha_confeccion,LocalDate fecha_retiro) throws IllegalArgumentException, SecurityException{
+        Receta receta = new Receta();
+        receta.setCodigo(codigo);
+        receta.agregarIndicaciones(indicaciones);
+        receta.setPaciente(buscarPacientePorId(id));
+        receta.setFecha_confeccion(fecha_confeccion);
+        receta.setFecha_retiro(fecha_retiro);
         return modeloRecetas.agregar(receta,token);
     }
-    public Receta actualizarReceta(Receta receta) throws IllegalArgumentException, SecurityException{
+    public Receta actualizarReceta(String codigo,List<Indicacion>indicaciones,int id,LocalDate fecha_confeccion,LocalDate fecha_retiro) throws IllegalArgumentException, SecurityException{
+        Receta receta = buscarRecetaPorCodigo(codigo);
+        if(receta==null)
+            throw new IllegalArgumentException("No existe un receta con código: "+codigo);
+        receta.actualizarIndicaciones(indicaciones);
+        receta.setPaciente(buscarPacientePorId(id));
+        receta.setFecha_confeccion(fecha_confeccion);
+        receta.setFecha_retiro(fecha_retiro);
         return modeloRecetas.actualizar(receta,token);
-    }
-    public Receta eliminarReceta(String codigo) throws IllegalArgumentException, SecurityException{
-        return modeloRecetas.eliminar(codigo,token);
     }
     public List<Indicacion> obtenerListaIndicaciones(){
         return modeloIndicacion.obtenerListaIndicaciones();
@@ -217,22 +227,42 @@ public class Controlador {
     public Indicacion buscarIndicacion(int codigo){
         return modeloIndicacion.buscarIndicacion(codigo);
     }
-    public Indicacion agregarIndicacion(Indicacion indicacion) throws IllegalArgumentException, SecurityException{
+    public Indicacion agregarIndicacion(Medicamento medicamento,int cantidad,String ind, int duracion) throws IllegalArgumentException, SecurityException{
+        Indicacion indicacion=new Indicacion();
+        indicacion.setMedicamento(medicamento);
+        indicacion.setCantidad(cantidad);
+        indicacion.setDescripcion(ind);
+        indicacion.setDuracion(duracion);
         return modeloIndicacion.agregar(indicacion,token);
     }
-    public Indicacion actualizarIndicacion(Indicacion indicacion)throws IllegalArgumentException, SecurityException{
+    public Indicacion actualizarIndicacion(Medicamento medicamento,int cantidad,String ind, int duracion)throws IllegalArgumentException, SecurityException{
+        Indicacion indicacion=buscarIndicacion(medicamento.getCodigo());
+        if(medicamento==null)
+            throw new IllegalArgumentException("No existe un medicamento con codigo: "+medicamento.getCodigo()+" en la receta");
+        indicacion.setCantidad(cantidad);
+        indicacion.setDescripcion(ind);
+        indicacion.setDuracion(duracion);
         return modeloIndicacion.actualizar(indicacion,token);
     }
     public Indicacion eliminarIndicacion(int codigo) throws IllegalArgumentException, SecurityException{
         return modeloIndicacion.eliminar(codigo,token);
     }
-    public void iniciarProceso(Receta receta) throws IllegalArgumentException{
+    public void iniciarProceso(String codigo) throws IllegalArgumentException{
+        Receta receta = buscarRecetaPorCodigo(codigo);
+        if(receta==null)
+            throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
         modeloRecetas.iniciarProceso(receta,token,idUsuario);
     }
-    public void marcarLista(Receta receta) throws IllegalArgumentException{
+    public void marcarLista(String codigo) throws IllegalArgumentException{
+        Receta receta = buscarRecetaPorCodigo(codigo);
+        if(receta==null)
+            throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
         modeloRecetas.marcarLista(receta,token,idUsuario);
     }
-    public void entregar(Receta receta) throws IllegalArgumentException{
+    public void entregar(String codigo) throws IllegalArgumentException{
+        Receta receta = buscarRecetaPorCodigo(codigo);
+        if(receta==null)
+            throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
         modeloRecetas.entregar(receta,token,idUsuario);
     }
     public DateTimeFormatter getFormatoFecha() {

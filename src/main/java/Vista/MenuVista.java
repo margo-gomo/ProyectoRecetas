@@ -794,7 +794,7 @@ public class MenuVista extends JFrame {
             limpiarCamposMedicamento();
             if (tfBusquedaMedicamento != null) tfBusquedaMedicamento.setText("");
         });
-
+        // ------------------------ LISTENER: DESPACHO -----------------------------------
         if (iniciarProcesoButton != null) {
             iniciarProcesoButton.addActionListener(e -> {
                 int fila = tablaDespacho.getSelectedRow();
@@ -804,11 +804,12 @@ public class MenuVista extends JFrame {
                 }
                 int modelRow = tablaDespacho.convertRowIndexToModel(fila);
                 String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
-                Receta r = controlador.buscarRecetaPorCodigo(codigo);
-                if (r != null) {
-                    r.setEstado("En proceso");
-                    controlador.actualizarReceta(r);
-                    tablaDespacho.setValueAt("En proceso", modelRow, 4);
+                try{
+                    controlador.iniciarProceso(codigo);
+                }catch (IllegalArgumentException ex){
+                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }catch (SecurityException ex){
+                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
@@ -822,11 +823,12 @@ public class MenuVista extends JFrame {
                 }
                 int modelRow = tablaDespacho.convertRowIndexToModel(fila);
                 String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
-                Receta r = controlador.buscarRecetaPorCodigo(codigo);
-                if (r != null) {
-                    r.setEstado("Lista");
-                    controlador.actualizarReceta(r);
-                    tablaDespacho.setValueAt("Lista", modelRow, 4);
+                try{
+                    controlador.iniciarProceso(codigo);
+                }catch (IllegalArgumentException ex){
+                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }catch (SecurityException ex){
+                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
@@ -840,11 +842,12 @@ public class MenuVista extends JFrame {
                 }
                 int modelRow = tablaDespacho.convertRowIndexToModel(fila);
                 String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
-                Receta r = controlador.buscarRecetaPorCodigo(codigo);
-                if (r != null) {
-                    r.setEstado("Entregada");
-                    controlador.actualizarReceta(r);
-                    tablaDespacho.setValueAt("Entregada", modelRow, 4);
+                try{
+                    controlador.iniciarProceso(codigo);
+                }catch (IllegalArgumentException ex){
+                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }catch (SecurityException ex){
+                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
@@ -1856,8 +1859,7 @@ public class MenuVista extends JFrame {
             }
             try { controlador.eliminarIndicacion(codigo); } catch (Exception ignored) {}
 
-            Indicacion in = new Indicacion(med, cantidad, indicaciones, duracion);
-            controlador.agregarIndicacion(in);
+            controlador.agregarIndicacion(med, cantidad, indicaciones, duracion);
 
             recargarTablaIndicacionesDesdeControlador();
         } catch (Exception ex) {
@@ -1915,24 +1917,6 @@ public class MenuVista extends JFrame {
             return;
         }
 
-
-        /*for (int i = 0; i < modeloTablaRecetas.getRowCount(); i++) {
-            int codigo = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 0)));
-            Integer cantidad = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 3)));
-            String indic = String.valueOf(modeloTablaRecetas.getValueAt(i, 4));
-            Integer dias = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 5)));
-
-            Medicamento med = controlador.buscarMedicamentoPorCodigo(codigo);
-            if (med == null) {
-                JOptionPane.showMessageDialog(this, "El medicamento con código " + codigo + " ya no existe.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            Indicacion in = new Indicacion(med, cantidad, indic, dias);
-            controlador.agregarIndicacion(in);
-        }*/
-
-
         String codigoIngresado = leerCodigoPrescripcion();
         if (codigoIngresado.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Ingrese el código de la receta.", "Validación", JOptionPane.WARNING_MESSAGE);
@@ -1945,19 +1929,11 @@ public class MenuVista extends JFrame {
         }
 
         try {
-            Receta receta = new Receta();
-            receta.setFecha_confeccion(fechaConf);
-            receta.setFecha_retiro(fechaRet);
-            receta.agregarPacienteporId(controlador.obtenerListaPacientes(), pacienteSeleccionado.getId());
-            receta.setCodigo(codigoIngresado);
-            receta.agregarIndicaciones(new java.util.ArrayList<>(controlador.obtenerListaIndicaciones()));
-            controlador.agregarReceta(receta);
+            Receta receta = controlador.agregarReceta(codigoIngresado,controlador.obtenerListaIndicaciones(),pacienteSeleccionado.getId(),fechaConf,fechaRet);
             limpiarIndicacionesDelModelo();
             recargarTablaIndicacionesDesdeControlador();
             recetaEnPantalla = null;
             escribirCodigoPrescripcion("");
-
-
 
             if (tablaDespacho != null && tablaDespacho.getModel() instanceof DefaultTableModel) {
                 DefaultTableModel md = (DefaultTableModel) tablaDespacho.getModel();
@@ -2026,7 +2002,7 @@ public class MenuVista extends JFrame {
     }
 
 
-    private void eliminarRecetaDeTablaDespacho(String codigo) {
+    /*private void eliminarRecetaDeTablaDespacho(String codigo) {
         if (tablaDespacho == null || !(tablaDespacho.getModel() instanceof DefaultTableModel)) return;
         DefaultTableModel md = (DefaultTableModel) tablaDespacho.getModel();
         for (int i = md.getRowCount() - 1; i >= 0; i--) {
@@ -2034,45 +2010,42 @@ public class MenuVista extends JFrame {
                 md.removeRow(i);
             }
         }
-    }
+    }*/
 
     private boolean persistirRecetaSiExisteEnFormulario(boolean avisar) {
         String code = leerCodigoPrescripcion();
+        LocalDate fechaConf = null;
+        LocalDate fechaRetiro = null;
         if (code.isEmpty()) return false;
-
-        Receta r = controlador.buscarRecetaPorCodigo(code);
-        if (r == null) return false;
 
         try {
             String f = (labelFechaActualPresc != null && labelFechaActualPresc.getText()!=null)
                     ? labelFechaActualPresc.getText().trim() : "";
-            if (!f.isEmpty()) r.setFecha_confeccion(LocalDate.parse(f, formatoFecha));
+            if (!f.isEmpty()) fechaConf = LocalDate.parse(f, formatoFecha);
         } catch (Exception ignored) {}
         try {
             String rt = (labelFechaRetiroPresc != null && labelFechaRetiroPresc.getText()!=null)
                     ? labelFechaRetiroPresc.getText().trim() : "";
-            r.setFecha_retiro(rt.isEmpty() || "(sin fecha)".equalsIgnoreCase(rt) ? null
+
+            fechaRetiro=(rt.isEmpty() || "(sin fecha)".equalsIgnoreCase(rt) ? null
                     : LocalDate.parse(rt, formatoFecha));
         } catch (Exception ignored) {}
 
-        if (pacienteSeleccionado != null) {
-            try { r.agregarPacienteporId(controlador.obtenerListaPacientes(), pacienteSeleccionado.getId()); }
-            catch (Exception ignored) {}
-        }
-
-        java.util.List<Indicacion> nuevas = new java.util.ArrayList<>();
         for (int i = 0; i < modeloTablaRecetas.getRowCount(); i++) {
             int cod  = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 0)));
             int cant = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 3)));
             String ind = String.valueOf(modeloTablaRecetas.getValueAt(i, 4));
             int dias = Integer.parseInt(String.valueOf(modeloTablaRecetas.getValueAt(i, 5)));
             Medicamento m = controlador.buscarMedicamentoPorCodigo(cod);
-            if (m != null) nuevas.add(new Indicacion(m, cant, ind, dias));
+            try{
+                controlador.actualizarIndicacion(m,cant,ind,dias);
+            }catch(IllegalArgumentException ex){
+                JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
         try {
-            r.agregarIndicaciones(nuevas);
-            controlador.actualizarReceta(r);
+            controlador.actualizarReceta(code,controlador.obtenerListaIndicaciones(),pacienteSeleccionado.getId(),fechaConf,fechaRetiro);
             if (avisar) {
                 JOptionPane.showMessageDialog(this, "Receta modificada.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             }
