@@ -174,7 +174,6 @@ public class MenuVista extends JFrame {
 
     public MenuVista(Controlador contr) {
         controlador = contr;
-        controlador.setToken(1);
 
         setTitle("Sistema de Prescripción y Despacho de Recetas");
         setContentPane(panelPrincipal);
@@ -2347,8 +2346,6 @@ public class MenuVista extends JFrame {
 
             try {
                 int token = controlador.devolverToken(id, clave);
-                controlador.setToken(token);
-
                 aplicarPermisos(token);
                 loginDialog.dispose();
 
