@@ -343,163 +343,158 @@ public class Controlador {
     }
 
     // ---------------- EXPORTACIÓN A PDF DESDE CONTROLADOR ----------------
-    /**
-     * Exporta la lista de médicos a PDF. Usa un JFileChooser para seleccionar destino.
-     */
-    public void exportarMedicos() throws IOException {
-        List<Medico> lista = modeloMedico.obtenerListaMedicos();
-        if (lista.isEmpty()) {
-            throw new IllegalStateException("No hay datos de médicos para exportar.");
-        }
-        JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("Guardar Reporte de Médicos");
-        String nombreDef = "reporte_medicos_" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")) + ".pdf";
-        fc.setSelectedFile(new File(nombreDef));
-        int res = fc.showSaveDialog(null);
-        if (res != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-        File destino = fc.getSelectedFile();
-        try (PDDocument doc = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.LETTER);
-            doc.addPage(page);
-            try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-                cs.beginText();
-                cs.setFont(PDType1Font.HELVETICA_BOLD, 14);
-                cs.newLineAtOffset(50, 750);
-                cs.showText("Reporte de Médicos");
-                cs.endText();
 
-                float y = 730;
-                cs.setFont(PDType1Font.HELVETICA, 12);
-                for (Medico m : lista) {
-                    if (y < 50) break; // evitar overflow de página
-                    cs.beginText();
-                    cs.newLineAtOffset(50, y);
-                    cs.showText(m.getId() + " - " + m.getNombre() + " - " + m.getEspecialidad());
-                    cs.endText();
-                    y -= 20;
-                }
-            }
-            doc.save(destino);
+    public void exportarHistorico(java.util.List<Receta> recetas) throws Exception {
+        String[] cabeceras = {"Código", "ID Paciente", "Paciente", "Medicamentos", "Fecha Confección", "Fecha Retiro", "Estado"};
+        java.util.List<String[]> filas = new java.util.ArrayList<>();
+
+        for (Receta r : recetas) {
+            String medicamentos = r.obtenerListaIndicaciones().stream()
+                    .map(in -> in.getMedicamento() != null ? in.getMedicamento().getNombre() : "")
+                    .reduce((a, b) -> a + ", " + b).orElse("");
+
+            filas.add(new String[]{
+                    r.getCodigo(),
+                    (r.getPaciente() != null ? String.valueOf(r.getPaciente().getId()) : ""),
+                    (r.getPaciente() != null ? r.getPaciente().getNombre() : ""),
+                    medicamentos,
+                    (r.getFecha_confeccion() != null ? r.getFecha_confeccion().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : ""),
+                    (r.getFecha_retiro() != null ? r.getFecha_retiro().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : ""),
+                    (r.getEstado() != null ? r.getEstado().toString() : "")
+            });
         }
+
+        exportarTablaPDF("Histórico de Recetas", cabeceras, filas, "historico_recetas.pdf");
     }
 
-    public void exportarFarmaceutas() throws IOException {
-        List<Farmaceuta> lista = modeloFarmaceuta.obtenerListaFarmaceutas();
-        if (lista.isEmpty()) {
-            throw new IllegalStateException("No hay datos de farmacéutas para exportar.");
+    public void exportarMedicos() throws Exception {
+        String[] cabeceras = {"ID", "Nombre", "Especialidad"};
+        java.util.List<String[]> filas = new java.util.ArrayList<>();
+
+        for (Medico m : obtenerListaMedicos()) {
+            filas.add(new String[]{ m.getId(), m.getNombre(), m.getEspecialidad() });
         }
-        JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("Guardar Reporte de Farmacéutas");
-        String nombreDef = "reporte_farmacautas_" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")) + ".pdf";
-        fc.setSelectedFile(new File(nombreDef));
-        int res = fc.showSaveDialog(null);
-        if (res != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-        File destino = fc.getSelectedFile();
-        try (PDDocument doc = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.LETTER);
-            doc.addPage(page);
-            try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-                cs.beginText();
-                cs.setFont(PDType1Font.HELVETICA_BOLD, 14);
-                cs.newLineAtOffset(50, 750);
-                cs.showText("Reporte de Farmacéutas");
-                cs.endText();
-                float y = 730;
-                cs.setFont(PDType1Font.HELVETICA, 12);
-                for (Farmaceuta f : lista) {
-                    if (y < 50) break;
-                    cs.beginText();
-                    cs.newLineAtOffset(50, y);
-                    cs.showText(f.getId() + " - " + f.getNombre());
-                    cs.endText();
-                    y -= 20;
-                }
-            }
-            doc.save(destino);
-        }
+
+        exportarTablaPDF("Listado de Médicos", cabeceras, filas, "medicos.pdf");
     }
 
-    public void exportarPacientes() throws IOException {
-        List<Paciente> lista = modeloPaciente.obtenerListaPacientes();
-        if (lista.isEmpty()) {
-            throw new IllegalStateException("No hay datos de pacientes para exportar.");
+    public void exportarFarmaceutas() throws Exception {
+        String[] cabeceras = {"ID", "Nombre"};
+        java.util.List<String[]> filas = new java.util.ArrayList<>();
+
+        for (Farmaceuta f : obtenerListaFarmaceutas()) {
+            filas.add(new String[]{ f.getId(), f.getNombre() });
         }
-        JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("Guardar Reporte de Pacientes");
-        String nombreDef = "reporte_pacientes_" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")) + ".pdf";
-        fc.setSelectedFile(new File(nombreDef));
-        int res = fc.showSaveDialog(null);
-        if (res != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-        File destino = fc.getSelectedFile();
-        try (PDDocument doc = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.LETTER);
-            doc.addPage(page);
-            try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-                cs.beginText();
-                cs.setFont(PDType1Font.HELVETICA_BOLD, 14);
-                cs.newLineAtOffset(50, 750);
-                cs.showText("Reporte de Pacientes");
-                cs.endText();
-                float y = 730;
-                cs.setFont(PDType1Font.HELVETICA, 12);
-                for (Paciente p : lista) {
-                    if (y < 50) break;
-                    cs.beginText();
-                    cs.newLineAtOffset(50, y);
-                    cs.showText(p.getId() + " - " + p.getNombre()
-                            + " - " + p.getFecha_nacimiento().toString()
-                            + " - Tel: " + p.getTelefono());
-                    cs.endText();
-                    y -= 20;
-                }
-            }
-            doc.save(destino);
-        }
+
+        exportarTablaPDF("Listado de Farmacéutas", cabeceras, filas, "farmaceutas.pdf");
     }
 
-    public void exportarMedicamentos() throws IOException {
-        List<Medicamento> lista = modeloMedicamento.obtenerListaMedicamentos();
-        if (lista.isEmpty()) {
-            throw new IllegalStateException("No hay datos de medicamentos para exportar.");
+    public void exportarPacientes() throws Exception {
+        String[] cabeceras = {"ID", "Nombre", "Fecha Nacimiento", "Teléfono"};
+        java.util.List<String[]> filas = new java.util.ArrayList<>();
+
+        for (Paciente p : obtenerListaPacientes()) {
+            String fecha = (p.getFecha_nacimiento() != null) ? p.getFecha_nacimiento().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "";
+            filas.add(new String[]{ String.valueOf(p.getId()), p.getNombre(), fecha, String.valueOf(p.getTelefono()) });
         }
-        JFileChooser fc = new JFileChooser();
-        fc.setDialogTitle("Guardar Reporte de Medicamentos");
-        String nombreDef = "reporte_medicamentos_" + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")) + ".pdf";
-        fc.setSelectedFile(new File(nombreDef));
-        int res = fc.showSaveDialog(null);
-        if (res != JFileChooser.APPROVE_OPTION) {
-            return;
+
+        exportarTablaPDF("Listado de Pacientes", cabeceras, filas, "pacientes.pdf");
+    }
+
+    public void exportarMedicamentos() throws Exception {
+        String[] cabeceras = {"Código", "Nombre", "Descripción"};
+        java.util.List<String[]> filas = new java.util.ArrayList<>();
+
+        for (Medicamento m : obtenerListaMedicamentos()) {
+            filas.add(new String[]{ String.valueOf(m.getCodigo()), m.getNombre(), m.getDescripcion() });
         }
-        File destino = fc.getSelectedFile();
-        try (PDDocument doc = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.LETTER);
-            doc.addPage(page);
-            try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-                cs.beginText();
-                cs.setFont(PDType1Font.HELVETICA_BOLD, 14);
-                cs.newLineAtOffset(50, 750);
-                cs.showText("Reporte de Medicamentos");
-                cs.endText();
-                float y = 730;
-                cs.setFont(PDType1Font.HELVETICA, 12);
-                for (Medicamento m : lista) {
-                    if (y < 50) break;
-                    cs.beginText();
-                    cs.newLineAtOffset(50, y);
-                    cs.showText(m.getCodigo() + " - " + m.getNombre()
-                            + " - " + m.getDescripcion());
-                    cs.endText();
-                    y -= 20;
-                }
+
+        exportarTablaPDF("Listado de Medicamentos", cabeceras, filas, "medicamentos.pdf");
+    }
+
+    private void exportarTablaPDF(String titulo, String[] cabeceras, java.util.List<String[]> filas, String nombreSugerido) throws Exception {
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage(PDRectangle.A4);
+        document.addPage(page);
+
+        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+        float margin = 50;
+        float yStart = page.getMediaBox().getHeight() - margin;
+        float tableWidth = page.getMediaBox().getWidth() - 2 * margin;
+        float yPosition = yStart - 40;
+
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
+        contentStream.beginText();
+        contentStream.newLineAtOffset(margin, yStart);
+        contentStream.showText(titulo);
+        contentStream.endText();
+
+        float[] proporciones = new float[cabeceras.length];
+        for (int i = 0; i < cabeceras.length; i++) {
+            proporciones[i] = 1f;
+        }
+        if (cabeceras.length == 7) {
+            proporciones = new float[]{1f, 1f, 1.5f, 3f, 1.5f, 1.5f, 1f};
+        }
+
+        float totalProporciones = 0;
+        for (float p : proporciones) totalProporciones += p;
+
+        float[] colWidths = new float[cabeceras.length];
+        for (int i = 0; i < cabeceras.length; i++) {
+            colWidths[i] = (proporciones[i] / totalProporciones) * tableWidth;
+        }
+
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
+        float textY = yPosition;
+        float x = margin;
+
+        for (int i = 0; i < cabeceras.length; i++) {
+            contentStream.beginText();
+            contentStream.newLineAtOffset(x, textY);
+            contentStream.showText(cabeceras[i]);
+            contentStream.endText();
+            x += colWidths[i];
+        }
+
+        contentStream.setFont(PDType1Font.HELVETICA, 9);
+        textY -= 20;
+
+        for (String[] fila : filas) {
+            x = margin;
+            for (int i = 0; i < fila.length; i++) {
+                String valor = fila[i] != null ? fila[i] : "";
+                contentStream.beginText();
+                contentStream.newLineAtOffset(x, textY);
+                contentStream.showText(valor);
+                contentStream.endText();
+                x += colWidths[i];
             }
-            doc.save(destino);
+            textY -= 15;
+
+            if (textY < margin) {
+                contentStream.close();
+                page = new PDPage(PDRectangle.A4);
+                document.addPage(page);
+                contentStream = new PDPageContentStream(document, page);
+                textY = yStart;
+            }
         }
+
+        contentStream.close();
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar reporte como...");
+        fileChooser.setSelectedFile(new File(nombreSugerido));
+
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            document.save(fileToSave.getAbsolutePath());
+        }
+
+        document.close();
     }
 
     private GestorAdministrador modeloAdministrador;

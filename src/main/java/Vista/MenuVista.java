@@ -284,43 +284,63 @@ public class MenuVista extends JFrame {
         }
 
         // ----- GENERAR REPORTES (PDF) -----
+
         if (generarReporteMedicosButton != null) {
-            generarReporteMedicosButton.addActionListener(e ->
-            {
+            generarReporteMedicosButton.addActionListener(e -> {
                 try {
                     controlador.exportarMedicos();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Reporte de médicos generado correctamente.",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al generar reporte de médicos: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
+
         if (generarFarma != null) {
-            generarFarma.addActionListener(e ->
-            {
+            generarFarma.addActionListener(e -> {
                 try {
                     controlador.exportarFarmaceutas();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Reporte de farmacéutas generado correctamente.",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al generar reporte de farmacéutas: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
+
         if (generarPaciente != null) {
-            generarPaciente.addActionListener(e ->
-            {
+            generarPaciente.addActionListener(e -> {
                 try {
                     controlador.exportarPacientes();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Reporte de pacientes generado correctamente.",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al generar reporte de pacientes: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
+
         if (generarMedicamento != null) {
-            generarMedicamento.addActionListener(e ->
-            {
+            generarMedicamento.addActionListener(e -> {
                 try {
                     controlador.exportarMedicamentos();
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Reporte de medicamentos generado correctamente.",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al generar reporte de medicamentos: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
@@ -335,7 +355,7 @@ public class MenuVista extends JFrame {
             limpiarprescBtn.addActionListener(e -> limpiarPrescripcionUI());
         }
 
-        // DESCARTAR (borrar fila seleccionada o receta completa si ya fue guardada)
+        // DESCARTAR
         if (descartarMedicamentoPresc != null) {
             descartarMedicamentoPresc.addActionListener(e -> descartarIndicacionActual());
         }
@@ -865,6 +885,29 @@ public class MenuVista extends JFrame {
             });
         }
 
+        if (limpiarHistoricoBtn != null) {
+            limpiarHistoricoBtn.addActionListener(e -> {
+                if (tfHistorico != null) tfHistorico.setText("");
+                if (sorterHistorico != null) sorterHistorico.setRowFilter(null);
+                if (tablaHistorico != null) tablaHistorico.clearSelection();
+            });
+        }
+
+        if (exportarHistoricoBtn != null) {
+            exportarHistoricoBtn.addActionListener(e -> {
+                try {
+                    controlador.exportarHistorico(controlador.obtenerListaRecetas());
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Histórico exportado correctamente a PDF.",
+                            "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al exportar histórico: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            });
+        }
+
     }
 
 
@@ -1025,6 +1068,7 @@ public class MenuVista extends JFrame {
                     .reduce((a,b) -> a + ", " + b).orElse("");
 
             model.addRow(new Object[]{
+                    r.getCodigo(),
                     (r.getPaciente() != null ? r.getPaciente().getId() : ""),
                     nombrePaciente,
                     medicamentos,
@@ -1260,13 +1304,26 @@ public class MenuVista extends JFrame {
         );
     }
 
+    private TableRowSorter<DefaultTableModel> sorterHistorico;
+
     private void configurarTablaHistorico() {
         if (tablaHistorico != null) {
-            String[] columnasHistorico = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección", "Fecha de Retiro", "Estado"};
+            String[] columnasHistorico = {"Código Receta", "ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección", "Fecha de Retiro", "Estado"};
             DefaultTableModel modeloHistorico = new DefaultTableModel(columnasHistorico, 0) {
                 @Override public boolean isCellEditable(int row, int column) { return false; }
             };
             tablaHistorico.setModel(modeloHistorico);
+
+            sorterHistorico = new TableRowSorter<>(modeloHistorico);
+            tablaHistorico.setRowSorter(sorterHistorico);
+
+            conectarFiltroConCombo(
+                    tfHistorico,
+                    comboCodigoHist,
+                    sorterHistorico,
+                    0,
+                    java.util.Map.of("código", 0, "codigo", 0)
+            );
         }
     }
 
