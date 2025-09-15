@@ -11,5 +11,4 @@ public interface FarmaceutaDAO {
     public Farmaceuta agregar(Farmaceuta farmaceuta) throws IllegalArgumentException;
     public Farmaceuta actualizar(Farmaceuta farmaceuta) throws IllegalArgumentException;
     public Farmaceuta eliminar(String id) throws IllegalArgumentException;
-    public Farmaceuta cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar) throws IllegalArgumentException;
 }

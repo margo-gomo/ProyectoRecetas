@@ -42,14 +42,16 @@ public class login {
         }
         throw new SecurityException("Credenciales inválidas");
     }
-    public String cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException, SecurityException{
+        public int cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException, SecurityException{
         for (Usuario u : usuarios) {
             if (u.getId().equals(id) && u.getClave().equals(claveActual)) {
                 if(!claveNueva.equals(claveConfirmar))
                     throw new IllegalArgumentException("La clave por confirmar no coincide con la clave nueva propuesta.");
+                if(claveNueva.isEmpty()||claveConfirmar.isEmpty())
+                    throw new IllegalArgumentException("Rellene todos los camppos");
                 else {
                     u.setClave(claveNueva);
-                    return claveConfirmar;
+                    return u.getToken();
                 }
             }
         }

@@ -11,5 +11,4 @@ public interface MedicoDAO {
     public Medico agregar(Medico medico) throws IllegalArgumentException;
     public Medico actualizar(Medico medico) throws IllegalArgumentException;
     public Medico eliminar(String id) throws IllegalArgumentException;
-    public Medico cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar) throws IllegalArgumentException;
 }

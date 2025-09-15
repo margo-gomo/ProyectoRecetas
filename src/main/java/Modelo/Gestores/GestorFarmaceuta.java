@@ -54,9 +54,6 @@ public class GestorFarmaceuta {
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         return  farmaceutas.eliminar(id);
     }
-    public Farmaceuta cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar){
-        return  farmaceutas.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
-    }
 
     // String legible de la lista (debug/impresión)
     @Override

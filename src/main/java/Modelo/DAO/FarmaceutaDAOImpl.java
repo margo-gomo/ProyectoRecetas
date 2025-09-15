@@ -77,30 +77,6 @@ public class FarmaceutaDAOImpl implements FarmaceutaDAO {
         return farmaceuta;
     }
 
-    @Override
-    public Farmaceuta cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar) throws IllegalArgumentException {
-        Farmaceuta farmaceuta=farmaceutas.get(id);
-        if(farmaceuta!=null){
-            if(farmaceuta.getClave().equals(claveActual)){
-                if(claveNueva.equals(claveConfirmar)){
-                    farmaceuta.setClave(claveConfirmar);
-                    if(farmaceuta.getClave()!=null) {
-                        actualizar(farmaceuta);
-                        System.out.printf("Clave cambiada correctamente: '%s'%n", claveConfirmar);
-                    }
-                    else
-                        throw new IllegalArgumentException(claveNueva);
-                }
-                else
-                    throw new IllegalArgumentException(claveConfirmar);
-            }
-            else
-                throw new IllegalArgumentException(claveActual);
-        }
-        else
-            throw new IllegalArgumentException(id);
-        return farmaceuta;
-    }
     public void cargar (InputStream in) throws JAXBException {
         FarmaceutaDAOX far=(FarmaceutaDAOX) XMLUtils.loadFromXML(in, FarmaceutaDAOX.class);
         farmaceutas.clear();

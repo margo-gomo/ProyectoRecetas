@@ -60,10 +60,6 @@ public class GestorMedico {
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         return  medicos.eliminar(id);
     }
-    // Cambia la clave de un medico existente (match por ID)
-    public Medico cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar){
-        return  medicos.cambiarClave(id,claveActual,claveNueva,claveConfirmar);
-    }
 
     // String legible de la lista (debug/impresión)
     @Override
