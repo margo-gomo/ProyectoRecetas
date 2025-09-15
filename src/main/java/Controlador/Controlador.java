@@ -53,10 +53,13 @@ public class Controlador {
         return idUsuario;
     }
     public void cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException, SecurityException{
-        if(usuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar)==1)
+        int tipo = usuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
+
+        if (tipo == 1) {
             buscarMedicoPorId(id).setClave(claveNueva);
-        if(usuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar)==2)
+        } else if (tipo == 2) {
             buscarFarmaceutaPorId(id).setClave(claveNueva);
+        }
     }
     public void init() {
         try{
@@ -352,8 +355,9 @@ public class Controlador {
     public Receta buscarRecetaHistorial(int idPaciente, LocalDate fechaConfeccion){
         return historial.buscarPorPacienteFecha(buscarReceta(idPaciente, fechaConfeccion));
     }
-    public List<Indicacion>mostrarIndicaciones(){
-        return historial.mostrarIndicaciones();
+    public List<Indicacion>mostrarIndicaciones(String codigo){
+        Receta receta=buscarRecetaHistorial(codigo);
+        return historial.mostrarIndicaciones(receta);
     }
 
     // ---------------- EXPORTACIÓN A PDF DESDE CONTROLADOR ----------------

@@ -2370,7 +2370,41 @@ public class MenuVista extends JFrame {
                         JOptionPane.ERROR_MESSAGE);
             }
         });
+        loginVista.setOnCambiarContrasena(e -> {
+            // 'loginDialog' ya existe y es modal: lo usamos como owner para el dialogo hijo
+            CambiarClaveVista cambiarVista = new CambiarClaveVista();
+            final JDialog cambiarDialog = cambiarVista.createDialog(loginDialog);
 
+            // Wirear los listeners usando el controlador
+            cambiarVista.setOnAceptar(ev -> {
+                String id = cambiarVista.getUsuarioId();
+                String actual = new String(cambiarVista.getClaveActual());
+                String nueva = new String(cambiarVista.getClaveNueva());
+                String confirmar = new String(cambiarVista.getClaveConfirmacion());
+
+                try {
+                    controlador.cambiarClave(id, actual, nueva, confirmar);
+                    JOptionPane.showMessageDialog(cambiarDialog,
+                            "Contraseña cambiada con éxito",
+                            "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    cambiarDialog.dispose();
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(cambiarDialog,
+                            ex.getMessage(),
+                            "Error de validación",
+                            JOptionPane.WARNING_MESSAGE);
+                } catch (SecurityException ex) {
+                    JOptionPane.showMessageDialog(cambiarDialog,
+                            "Error de seguridad: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            });
+
+            cambiarVista.setOnCancelar(ev -> cambiarDialog.dispose());
+            cambiarDialog.setVisible(true);
+        });
         loginDialog.setVisible(true);
     }
     public void aplicarPermisos(int token) {

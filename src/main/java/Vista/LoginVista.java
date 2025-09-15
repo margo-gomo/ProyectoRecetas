@@ -192,13 +192,4 @@ public class LoginVista extends JFrame {
     public void setOnLimpiar(ActionListener l) {
         if (limpiarButton != null) limpiarButton.addActionListener(l);
     }
-
-    // ------------------------------------------------------------------------------------------
-    // ------------------------------------------ MAIN ------------------------------------------
-    // ------------------------------------------------------------------------------------------
-
-    public void init(String[] args) {
-        try { FlatLightLaf.setup(); } catch (Exception ignored) {}
-        SwingUtilities.invokeLater(() -> new LoginVista().setVisible(true));
-    }
 }
