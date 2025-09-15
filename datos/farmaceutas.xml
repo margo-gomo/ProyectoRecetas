@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_farmaceutas>
     <farmaceuta>
-        <id>88</id>
-        <nombre>Mario</nombre>
-        <token>0</token>
+        <id>1</id>
+        <nombre>Laura Martínez</nombre>
+        <token>2</token>
     </farmaceuta>
     <farmaceuta>
-        <id>77</id>
-        <nombre>Juan</nombre>
-        <token>0</token>
+        <id>2</id>
+        <nombre>José Ramírez</nombre>
+        <token>2</token>
     </farmaceuta>
 </lista_farmaceutas>
 

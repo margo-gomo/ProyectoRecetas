@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_medicos>
-    <medico especialidad="Psicología">
-        <nombre>María</nombre>
-        <clave>2</clave>
-        <id>2</id>
+    <medico especialidad="Medicina General">
+        <nombre>Dr. Juan Pérez</nombre>
+        <clave>111</clave>
+        <id>1</id>
         <token>1</token>
     </medico>
-    <medico especialidad="Psicopatía">
-        <nombre>Kenny</nombre>
-        <clave>3</clave>
-        <id>3</id>
+    <medico especialidad="Pediatría">
+        <nombre>Dra. Sofía Herrera</nombre>
+        <clave>222</clave>
+        <id>2</id>
         <token>1</token>
     </medico>
 </lista_medicos>

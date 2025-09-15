@@ -1,72 +1,59 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_recetas>
     <receta>
-        <codigo>9091</codigo>
+        <codigo>1002</codigo>
         <indicaciones>
             <entry>
-                <key>444</key>
+                <key>2</key>
                 <value>
                     <medicamento>
-                        <codigo>444</codigo>
-                        <nombre>Acetaminofén</nombre>
-                        <descripcion>360 miligramos</descripcion>
+                        <codigo>2</codigo>
+                        <nombre>Amoxicilina</nombre>
+                        <descripcion>250 mg cápsulas</descripcion>
                     </medicamento>
-                    <cantidad>1</cantidad>
-                    <descripcion>Aaa</descripcion>
-                    <duracion-dias>1</duracion-dias>
+                    <cantidad>15</cantidad>
+                    <descripcion>Tomar 1 cada 12 horas</descripcion>
+                    <duracion-dias>7</duracion-dias>
                 </value>
             </entry>
         </indicaciones>
-        <paciente fecha_nacimiento="17/09/2017">
-            <id>111</id>
-            <nombre>Pedro</nombre>
-            <teléfono>777777</teléfono>
+        <paciente fecha_nacimiento="20/10/1990">
+            <id>2</id>
+            <nombre>Lucía Fernández</nombre>
+            <teléfono>600200200</teléfono>
         </paciente>
-        <fecha_confeccion>15/09/2025</fecha_confeccion>
-        <fecha_retiro>18/09/2026</fecha_retiro>
-        <estado>confeccionada</estado>
-        <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
-        <idFarmaceutaLista>No lista</idFarmaceutaLista>
-        <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
+        <fecha_confeccion>05/09/2025</fecha_confeccion>
+        <fecha_retiro>07/09/2025</fecha_retiro>
+        <estado>Entregada</estado>
+        <idFarmaceutaProceso>1</idFarmaceutaProceso>
+        <idFarmaceutaLista>1</idFarmaceutaLista>
+        <idFarmaceutaEntregar>2</idFarmaceutaEntregar>
     </receta>
     <receta>
-        <codigo>777</codigo>
+        <codigo>1001</codigo>
         <indicaciones>
             <entry>
-                <key>0</key>
+                <key>1</key>
                 <value>
                     <medicamento>
-                        <codigo>0</codigo>
+                        <codigo>1</codigo>
                         <nombre>Paracetamol</nombre>
-                        <descripcion>Jarabe</descripcion>
+                        <descripcion>500 mg comprimidos</descripcion>
                     </medicamento>
-                    <cantidad>1</cantidad>
-                    <descripcion>b</descripcion>
-                    <duracion-dias>1</duracion-dias>
-                </value>
-            </entry>
-            <entry>
-                <key>444</key>
-                <value>
-                    <medicamento>
-                        <codigo>444</codigo>
-                        <nombre>Acetaminofén</nombre>
-                        <descripcion>360 miligramos</descripcion>
-                    </medicamento>
-                    <cantidad>1</cantidad>
-                    <descripcion>a</descripcion>
-                    <duracion-dias>1</duracion-dias>
+                    <cantidad>10</cantidad>
+                    <descripcion>Tomar 1 cada 8 horas</descripcion>
+                    <duracion-dias>5</duracion-dias>
                 </value>
             </entry>
         </indicaciones>
-        <paciente fecha_nacimiento="24/06/2025">
-            <id>222</id>
-            <nombre>Kendall</nombre>
-            <teléfono>8888888</teléfono>
+        <paciente fecha_nacimiento="15/05/2015">
+            <id>1</id>
+            <nombre>Marcos Díaz</nombre>
+            <teléfono>600100100</teléfono>
         </paciente>
-        <fecha_confeccion>13/09/2025</fecha_confeccion>
-        <fecha_retiro>13/09/2025</fecha_retiro>
-        <estado>Entregada</estado>
+        <fecha_confeccion>10/09/2025</fecha_confeccion>
+        <fecha_retiro>12/09/2025</fecha_retiro>
+        <estado>Confeccionada</estado>
         <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
         <idFarmaceutaLista>No lista</idFarmaceutaLista>
         <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>

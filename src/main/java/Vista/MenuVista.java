@@ -25,9 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
@@ -2107,13 +2105,12 @@ public class MenuVista extends JFrame {
             }
         }
     }
-    // ------------------------------------------------------------------------------------------
     // --------------------------------- HELPERS DASHBOARD --------------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void refrescarDashboard() {
         if (controlador == null) return;
 
+        // ---------------- FECHAS ----------------
         LocalDate desde = null, hasta = null;
         try {
             if (formattedTextFieldDesdeDash != null && !formattedTextFieldDesdeDash.getText().trim().isEmpty()) {
@@ -2126,27 +2123,36 @@ public class MenuVista extends JFrame {
             JOptionPane.showMessageDialog(this, "Formato de fecha inválido. Usa dd/MM/yyyy", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        if (desde == null || hasta == null) return;
 
+        // ---------------- MEDICAMENTO ----------------
         String medSeleccionado = null;
         if (comboBox1 != null && comboBox1.getSelectedItem() != null) {
             medSeleccionado = comboBox1.getSelectedItem().toString();
         }
 
-        // ---------------- TABLA MESES ----------------
-        Map<YearMonth, Integer> acumuladoMeses = new java.util.HashMap<>();
+        // =========================================================================
+        // TABLA MESES + GRÁFICO DE LÍNEAS
+        // =========================================================================
+        Map<String, Map<YearMonth, Integer>> datosPorMedicamento = new HashMap<>();
 
-        if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
+        if ("Todos".equals(medSeleccionado)) {
             for (int i = 1; i < comboBox1.getItemCount(); i++) {
                 String med = comboBox1.getItemAt(i).toString();
                 Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, med);
-                for (Map.Entry<YearMonth, Integer> entry : datos.entrySet()) {
-                    acumuladoMeses.merge(entry.getKey(), entry.getValue(), Integer::sum);
-                }
+                datosPorMedicamento.put(med, datos);
             }
         } else if (medSeleccionado != null) {
-            acumuladoMeses = controlador.DashboardMedicamentosPorMes(desde, hasta, medSeleccionado);
+            Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, medSeleccionado);
+            datosPorMedicamento.put(medSeleccionado, datos);
         }
 
+        Map<YearMonth, Integer> acumuladoMeses = new TreeMap<>();
+        for (Map<YearMonth, Integer> datos : datosPorMedicamento.values()) {
+            for (Map.Entry<YearMonth, Integer> entry : datos.entrySet()) {
+                acumuladoMeses.merge(entry.getKey(), entry.getValue(), Integer::sum);
+            }
+        }
         if (tablaMesAnioDashboard != null) {
             DefaultTableModel model = (DefaultTableModel) tablaMesAnioDashboard.getModel();
             model.setRowCount(0);
@@ -2155,49 +2161,14 @@ public class MenuVista extends JFrame {
             }
         }
 
-        // ---------------- TABLA ESTADOS ----------------
-        Map<String, Long> acumuladoEstados = new java.util.HashMap<>();
-
-        if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
-            for (int i = 1; i < comboBox1.getItemCount(); i++) {
-                String med = comboBox1.getItemAt(i).toString();
-                Map<String, Long> datos = controlador.DashboardRecetasPorEstado(desde, hasta, med);
-                for (Map.Entry<String, Long> entry : datos.entrySet()) {
-                    acumuladoEstados.merge(entry.getKey(), entry.getValue(), Long::sum);
-                }
-            }
-        } else if (medSeleccionado != null) {
-            acumuladoEstados = controlador.DashboardRecetasPorEstado(desde, hasta, medSeleccionado);
-        }
-
-        if (tablaEstadosDashboard != null) {
-            DefaultTableModel model = (DefaultTableModel) tablaEstadosDashboard.getModel();
-            model.setRowCount(0);
-            for (Map.Entry<String, Long> entry : acumuladoEstados.entrySet()) {
-                model.addRow(new Object[]{entry.getKey(), entry.getValue()});
-            }
-        }
-
-
-        // ---------------- GRÁFICO DE LÍNEAS ----------------
         if (panelLineasDashboard != null) {
             panelLineasDashboard.removeAll();
 
             DefaultCategoryDataset datasetLineas = new DefaultCategoryDataset();
-
-            if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
-                // 🔹 recorrer todos
-                for (int i = 1; i < comboBox1.getItemCount(); i++) { // desde 1 para saltar "Todos"
-                    String med = comboBox1.getItemAt(i).toString();
-                    Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, med);
-                    for (Map.Entry<YearMonth, Integer> entry : datos.entrySet()) {
-                        datasetLineas.addValue(entry.getValue(), med, entry.getKey().toString());
-                    }
-                }
-            } else if (medSeleccionado != null) {
-                Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, medSeleccionado);
-                for (Map.Entry<YearMonth, Integer> entry : datos.entrySet()) {
-                    datasetLineas.addValue(entry.getValue(), medSeleccionado, entry.getKey().toString());
+            for (Map.Entry<String, Map<YearMonth, Integer>> medEntry : datosPorMedicamento.entrySet()) {
+                String medicamento = medEntry.getKey();
+                for (Map.Entry<YearMonth, Integer> entry : medEntry.getValue().entrySet()) {
+                    datasetLineas.addValue(entry.getValue(), medicamento, entry.getKey().toString());
                 }
             }
 
@@ -2220,30 +2191,53 @@ public class MenuVista extends JFrame {
             panelLineasDashboard.validate();
         }
 
-        // ---------------- GRÁFICO DE PASTEL ----------------
+        Map<String, Long> acumuladoEstados = new HashMap<>();
+
+        if ("Todos".equals(medSeleccionado)) {
+            for (int i = 1; i < comboBox1.getItemCount(); i++) {
+                String med = comboBox1.getItemAt(i).toString();
+                Map<String, Long> datos = controlador.DashboardRecetasPorEstado(desde, hasta, med);
+                for (Map.Entry<String, Long> entry : datos.entrySet()) {
+                    acumuladoEstados.merge(entry.getKey(), entry.getValue(), Long::sum);
+                }
+            }
+        } else if (medSeleccionado != null) {
+            Map<String, Long> datos = controlador.DashboardRecetasPorEstado(desde, hasta, medSeleccionado);
+            for (Map.Entry<String, Long> entry : datos.entrySet()) {
+                acumuladoEstados.merge(entry.getKey(), entry.getValue(), Long::sum);
+            }
+        }
+
+        if (tablaEstadosDashboard != null) {
+            DefaultTableModel model = (DefaultTableModel) tablaEstadosDashboard.getModel();
+            model.setRowCount(0);
+            for (Map.Entry<String, Long> entry : acumuladoEstados.entrySet()) {
+                model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+            }
+        }
+
         if (panelPastelDashboard != null) {
             panelPastelDashboard.removeAll();
 
-            org.jfree.data.general.DefaultPieDataset<String> datasetPastel = new org.jfree.data.general.DefaultPieDataset<>();
+            DefaultPieDataset<String> datasetPastel = new DefaultPieDataset<>();
             for (Map.Entry<String, Long> entry : acumuladoEstados.entrySet()) {
                 datasetPastel.setValue(entry.getKey(), entry.getValue());
             }
 
-            org.jfree.chart.JFreeChart chartPastel = org.jfree.chart.ChartFactory.createPieChart(
+            JFreeChart chartPastel = ChartFactory.createPieChart(
                     "Recetas",
                     datasetPastel,
                     true, true, false);
 
-            org.jfree.chart.ChartPanel chartPanelPastel = new org.jfree.chart.ChartPanel(chartPastel);
+            ChartPanel chartPanelPastel = new ChartPanel(chartPastel);
             chartPanelPastel.setPreferredSize(new Dimension(panelPastelDashboard.getWidth(), panelPastelDashboard.getHeight()));
 
             panelPastelDashboard.setLayout(new BorderLayout());
             panelPastelDashboard.add(chartPanelPastel, BorderLayout.CENTER);
             panelPastelDashboard.validate();
         }
-
-        JOptionPane.showMessageDialog(this, "Dashboard actualizado.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
+
 
     private void limpiarDashboardUI() {
         if (formattedTextFieldDesdeDash != null) formattedTextFieldDesdeDash.setText("");

@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <administradores>
     <administrador>
-        <nombre>María</nombre>
-        <clave>193</clave>
-        <id>121</id>
+        <nombre>Ana Torres</nombre>
+        <clave>123</clave>
+        <id>1</id>
         <token>0</token>
     </administrador>
     <administrador>
-        <nombre>Kenny</nombre>
-        <clave>193</clave>
-        <id>122</id>
-        <token>0</token>
-    </administrador>
-    <administrador>
-        <nombre>Josué</nombre>
-        <clave>193</clave>
-        <id>120</id>
+        <nombre>Carlos Gómez</nombre>
+        <clave>123</clave>
+        <id>2</id>
         <token>0</token>
     </administrador>
 </administradores>

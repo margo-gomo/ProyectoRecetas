@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_medicamentos>
     <medicamento>
-        <codigo>0</codigo>
+        <codigo>1</codigo>
         <nombre>Paracetamol</nombre>
-        <descripcion>Jarabe</descripcion>
+        <descripcion>500 mg comprimidos</descripcion>
     </medicamento>
     <medicamento>
-        <codigo>444</codigo>
-        <nombre>Acetaminofén</nombre>
-        <descripcion>360 miligramos</descripcion>
+        <codigo>2</codigo>
+        <nombre>Amoxicilina</nombre>
+        <descripcion>250 mg cápsulas</descripcion>
     </medicamento>
 </lista_medicamentos>
 

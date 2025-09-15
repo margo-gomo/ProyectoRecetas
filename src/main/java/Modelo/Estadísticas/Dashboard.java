@@ -42,25 +42,16 @@ public class Dashboard {
 
             for (Indicacion ind : receta.obtenerListaIndicaciones()) {
                 if (ind == null || ind.getMedicamento() == null) continue;
-
                 String nombre = ind.getMedicamento().getNombre();
                 if (contiene || (nombre != null && nombre.equalsIgnoreCase(nombreMedicamento))) {
                     totalReceta += ind.getCantidad();
                 }
             }
 
-            if (totalReceta > 0 || contiene) {
+            if (totalReceta > 0) {
                 YearMonth ym = YearMonth.from(fc);
                 estadisticas.put(ym, estadisticas.getOrDefault(ym, 0) + totalReceta);
             }
-        }
-
-        YearMonth startYM = YearMonth.from(startDate);
-        YearMonth endYM = YearMonth.from(endDate);
-        YearMonth cur = startYM;
-        while (!cur.isAfter(endYM)) {
-            estadisticas.putIfAbsent(cur, 0);
-            cur = cur.plusMonths(1);
         }
 
         return estadisticas;
