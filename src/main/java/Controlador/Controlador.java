@@ -59,6 +59,12 @@ public class Controlador {
             buscarFarmaceutaPorId(id).setClave(claveNueva);
     }
     public void init() {
+        try{
+            modeloAdministrador.cargar();
+        }catch(JAXBException | FileNotFoundException ex){
+            System.err.printf("Ocurrió un error al cargar los datos: '%s'%n",
+                    ex.getMessage());
+        }
         try {
             modeloMedico.cargar();
         } catch (JAXBException | FileNotFoundException ex) {
@@ -105,6 +111,7 @@ public class Controlador {
     public Medico agregarMedico(String id,String nom,String esp) throws IllegalArgumentException, SecurityException{
         Medico medico = new Medico();
         medico.setId(id);
+        medico.setClave(id);
         medico.setNombre(nom);
         medico.setEspecialidad(esp);
         return modeloMedico.agregar(medico,token);
@@ -133,6 +140,7 @@ public class Controlador {
     public Farmaceuta agregarFarmaceuta(String id,String nombre)  throws IllegalArgumentException, SecurityException{
         Farmaceuta farmaceuta = new Farmaceuta();
         farmaceuta.setId(id);
+        farmaceuta.setClave(id);
         farmaceuta.setNombre(nombre);
         return modeloFarmaceuta.agregar(farmaceuta,token);
     }
@@ -283,6 +291,12 @@ public class Controlador {
         return DateTimeFormatter.ofPattern("dd/MM/yyyy");
     }
     public void cerrarAplicacion() {
+        try{
+            modeloAdministrador.guardar();
+        } catch (JAXBException | FileNotFoundException ex) {
+            System.err.printf("Ocurrió un error al cargar los datos: '%s'%n",
+                    ex.getMessage());
+        }
         try {
             modeloMedico.guardar();
         } catch (JAXBException | FileNotFoundException ex) {

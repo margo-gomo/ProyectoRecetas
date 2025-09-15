@@ -2159,6 +2159,80 @@ public class MenuVista extends JFrame {
     // ------------------------------------------------------------------------------------------
     // ------------------------------------------ MAIN ------------------------------------------
     // ------------------------------------------------------------------------------------------
+    private void mostrarLogin() {
+        LoginVista loginVista = new LoginVista();
+        JDialog loginDialog = loginVista.createDialog(this);
+
+        // 🚨 Evitar que el cierre por defecto solo lo esconda
+        loginDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+        // 🚪 Interceptar el evento de cierre
+        loginDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                cerrarAplicacion(); // 🔒 seguridad: si cierran login, se cierra todo
+            }
+        });
+
+        loginVista.setOnIngresar(e -> {
+            String id = loginVista.getUsuarioId();
+            String clave = new String(loginVista.getClave());
+
+            try {
+                int token = controlador.devolverToken(id, clave);
+                controlador.setToken(token);
+
+                aplicarPermisos(token);  // habilitar/deshabilitar pestañas
+                loginDialog.dispose();
+
+                JOptionPane.showMessageDialog(this,
+                        "Bienvenido ",
+                        "Login correcto",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+            } catch (SecurityException ex) {
+                JOptionPane.showMessageDialog(loginDialog,
+                        "Usuario o contraseña incorrectos",
+                        "Error de login",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        loginDialog.setVisible(true);
+    }
+    public void aplicarPermisos(int token) {
+        if (tabbedPanePrincipal == null) return;
+
+        switch (token) {
+            case 0: // Admin
+                for (int i = 0; i < tabbedPanePrincipal.getTabCount(); i++) {
+                    tabbedPanePrincipal.setEnabledAt(i, true);
+                }
+                break;
+            case 1: // Médico
+                for (int i = 0; i < tabbedPanePrincipal.getTabCount(); i++) {
+                    tabbedPanePrincipal.setEnabledAt(i, false);
+                }
+                tabbedPanePrincipal.setEnabledAt(0, true);
+                tabbedPanePrincipal.setEnabledAt(6, true);
+                tabbedPanePrincipal.setEnabledAt(7, true);
+                tabbedPanePrincipal.setEnabledAt(8, true);
+                break;
+            case 2: // Farmacéuta
+                for (int i = 0; i < tabbedPanePrincipal.getTabCount(); i++) {
+                    tabbedPanePrincipal.setEnabledAt(i, false);
+                }
+                tabbedPanePrincipal.setEnabledAt(3, true);
+                tabbedPanePrincipal.setEnabledAt(6, true);
+                tabbedPanePrincipal.setEnabledAt(7, true);
+                tabbedPanePrincipal.setEnabledAt(8, true);
+                break;
+            default:
+                for (int i = 0; i < tabbedPanePrincipal.getTabCount(); i++) {
+                    tabbedPanePrincipal.setEnabledAt(i, false);
+                }
+        }
+    }
 
     public void init() {
         try {
@@ -2166,6 +2240,9 @@ public class MenuVista extends JFrame {
         } catch (Exception ex) {
             System.err.println("Error iniciando FlatLaf: " + ex.getMessage());
         }
-        SwingUtilities.invokeLater(() -> new MenuVista(controlador).setVisible(true));
+        SwingUtilities.invokeLater(() -> {
+            this.setVisible(true);
+            mostrarLogin(); // <<--- aquí lanzamos el login al inicio
+        });
     }
 }

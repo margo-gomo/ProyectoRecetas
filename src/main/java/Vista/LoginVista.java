@@ -48,6 +48,20 @@ public class LoginVista extends JFrame {
             });
         }
     }
+    public JDialog createDialog(Frame owner) {
+        JDialog dialog = new JDialog(owner, "Ingreso al Sistema", true); // modal
+        dialog.setContentPane(panel1);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(getSize());
+        dialog.setResizable(false);
+        dialog.setLocationRelativeTo(owner);
+
+        if (dialog.getRootPane() != null && ingresarButton != null) {
+            dialog.getRootPane().setDefaultButton(ingresarButton);
+        }
+
+        return dialog;
+    }
 
     // ------------------------------------------------------------------------------------------
     // ------------------------------- ESTILOS / LOOK & FEEL ------------------------------------

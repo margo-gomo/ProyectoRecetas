@@ -2,6 +2,8 @@ package org.example;
 
 import Controlador.Controlador;
 import Vista.MenuVista;
+import com.formdev.flatlaf.FlatLightLaf;
+
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -44,6 +46,7 @@ public class Main {
 
         Controlador controlador = new Controlador();
         controlador.init();
+        FlatLightLaf.setup();
         MenuVista vistaPrincipal = new MenuVista(controlador);
         vistaPrincipal.init();
     }

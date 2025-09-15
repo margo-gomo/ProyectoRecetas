@@ -56,15 +56,15 @@ public class AdministradorDAOImpl implements AdministradorDAO {
     }
 
     public void cargar (InputStream in) throws JAXBException {
-        AdministradorDAOX med=(AdministradorDAOX) XMLUtils.loadFromXML(in, AdministradorDAOX.class);
+        AdministradorDAOX adm=(AdministradorDAOX) XMLUtils.loadFromXML(in, AdministradorDAOX.class);
         administradores.clear();
-        for(Administrador m : med.administrador)
-            administradores.putIfAbsent(m.getId(),m);
+        for(Administrador a : adm.administrador)
+            administradores.putIfAbsent(a.getId(),a);
     }
     public void guardar (OutputStream out) throws JAXBException {
-        AdministradorDAOX med=new AdministradorDAOX(administradores);
+        AdministradorDAOX adm=new AdministradorDAOX (administradores);
         try(PrintWriter printwriter=new PrintWriter(out)){
-            printwriter.println(XMLUtils.toXMLString(med));
+            printwriter.println(XMLUtils.toXMLString(adm));
         }
     }
     private final Map<String,Administrador> administradores;
