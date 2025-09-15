@@ -29,16 +29,7 @@ import java.util.HashSet;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
-import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 
 public class MenuVista extends JFrame {
@@ -80,18 +71,18 @@ public class MenuVista extends JFrame {
     private JButton refrescarButton;
     private JButton limpiarButton1;
     private JTextField textField7;
-    private JTextField textField8;
+    private JTextField tfHistorico;
     private JButton buscarButton;
     private JButton buscarButton1;
     private JFormattedTextField formattedTextField3;
     private JButton elegirFechaButton1;
     private JTextField textField9;
     private JButton elegirFechaButton2;
-    private JButton exportarButton;
+    private JButton exportarHistoricoBtn;
     private JButton verDetallesButton;
-    private JButton limpiarButton2;
+    private JButton limpiarHistoricoBtn;
     private JButton aplicarFiltrosButton;
-    private JTable tabHistorico;
+    private JTable tablaHistorico;
     private JTextField textField10;
     private JTextField textField11;
     private JTextField textField12;
@@ -156,7 +147,7 @@ public class MenuVista extends JFrame {
     private JComboBox comboRecetaDespacho;
     private JTextField tfRecetasDespacho;
     private JTextField tfCodPresc;
-    private JComboBox comboBox2;
+    private JComboBox comboCodigoHist;
 
     private DefaultTableModel modeloTablaRecetas;
     private Controlador controlador;
@@ -196,7 +187,7 @@ public class MenuVista extends JFrame {
         configurarTablaEstados();
         cargarDatosIniciales();
         recargarTablaIndicacionesDesdeControlador();
-
+        cargarHistoricoEnTabla();
 
         if (labelNomPaciente != null) {
             labelNomPaciente.setText("(sin paciente seleccionado)");
@@ -899,7 +890,7 @@ public class MenuVista extends JFrame {
         // Campos de texto
         JComponent[] camposTexto = {
                 tfBusquedaMedicon, tfBusquedaFarmaceutas, tfBusquedaMedicamento, tfBusquedaPaciente, textField5, textField6,
-                textField7, textField8, textField9, textField10, textField11, textField12,
+                textField7, tfHistorico, textField9, textField10, textField11, textField12,
                 tfTelefonoPaciente, formattedTextField1, formattedTextField2, formattedTextField3, tfFechaNacPaciente,
                 tfIdMedico, tfNombreMedico, tfEspMedico
         };
@@ -917,7 +908,7 @@ public class MenuVista extends JFrame {
                 guardarButton, guardarButton2,
                 guardarFarm, guardarPaciente, guardarMedicamento,
                 generarFarma, generarPaciente, generarMedicamento,
-                iniciarProcesoButton, aplicarFiltrosButton, exportarButton,
+                iniciarProcesoButton, aplicarFiltrosButton, exportarHistoricoBtn,
                 generarReporteMedicosButton, entregarButton, marcarListaButton
         };
 
@@ -925,7 +916,7 @@ public class MenuVista extends JFrame {
                 buscarPacienteButton, agregarMedicamentoButton, buscarRecetaButton,
                 buscarButton, buscarButton1, buscarButton2, buscarFarma, buscarPaciente, buscarMedicamento,
                 elegirFechaButton, elegirFechaButton1, elegirFechaButton2, elegirFechaButton3, elegirFechaButton4,
-                limpiarprescBtn, limpiarButton1, limpiarButton2, limpiarButton3, limpiarFarm, limpiarPaciente, limpiarMedicamento,
+                limpiarprescBtn, limpiarButton1, limpiarHistoricoBtn, limpiarButton3, limpiarFarm, limpiarPaciente, limpiarMedicamento,
                 descartarMedicamentoPresc, detallesButton, detallesButton1, verDetallesButton, refrescarButton,
                 modificarButton, modificarFarm, modificarPaciente, modificarMedicamento,
                 borrarButton, borrarFarm, borrarPaciente, borrarMedicamento,
@@ -940,7 +931,7 @@ public class MenuVista extends JFrame {
         addButtonsToSet(yaEstilados, secundarios);
         estilizarBotonesRestantes(panelPrincipal, yaEstilados, SECOND, PRIMARY);
 
-        JTable[] todasLasTablas = {tablaPrescripcion, tablaDashboard, tabHistorico, tabloMedicos, tablaDespacho, tablaFarma, tablaPac, tablaMed, tablaEstados };
+        JTable[] todasLasTablas = {tablaPrescripcion, tablaDashboard, tablaHistorico, tabloMedicos, tablaDespacho, tablaFarma, tablaPac, tablaMed, tablaEstados };
         for (JTable t : todasLasTablas) {
             if (t == null) continue;
             t.setFillsViewportHeight(true);
@@ -1017,10 +1008,32 @@ public class MenuVista extends JFrame {
         }
     }
 
-    // ------------------------------------------------------------------------------------------
-    // --------------------------------- GENERACIÓN DE PDFS -------------------------------------
-    // ------------------------------------------------------------------------------------------
+    private void cargarHistoricoEnTabla() {
+        if (tablaHistorico == null || controlador == null) return;
+        DefaultTableModel model = (DefaultTableModel) tablaHistorico.getModel();
+        model.setRowCount(0);
 
+        java.util.List<Receta> recetas = controlador.obtenerListaRecetas();
+        if (recetas == null) return;
+
+        for (Receta r : recetas) {
+            if (r == null) continue;
+            String nombrePaciente = (r.getPaciente() != null) ? r.getPaciente().getNombre() : "";
+            String medicamentos   = r.obtenerListaIndicaciones().stream()
+                    .map(in -> in.getMedicamento() != null ? in.getMedicamento().getNombre() : "")
+                    .filter(s -> !s.isEmpty())
+                    .reduce((a,b) -> a + ", " + b).orElse("");
+
+            model.addRow(new Object[]{
+                    (r.getPaciente() != null ? r.getPaciente().getId() : ""),
+                    nombrePaciente,
+                    medicamentos,
+                    (r.getFecha_confeccion() != null ? r.getFecha_confeccion().format(formatoFecha) : ""),
+                    (r.getFecha_retiro() != null ? r.getFecha_retiro().format(formatoFecha) : ""),
+                    r.getEstado()
+            });
+        }
+    }
 
     // ------------------------------------------------------------------------------------------
     // --------------------------------- CONFIGURACIÓN DE TABLAS --------------------------------
@@ -1248,12 +1261,12 @@ public class MenuVista extends JFrame {
     }
 
     private void configurarTablaHistorico() {
-        if (tabHistorico != null) {
+        if (tablaHistorico != null) {
             String[] columnasHistorico = {"ID Paciente", "Nombre Paciente", "Medicamentos", "Fecha Confección", "Fecha de Retiro", "Estado"};
             DefaultTableModel modeloHistorico = new DefaultTableModel(columnasHistorico, 0) {
                 @Override public boolean isCellEditable(int row, int column) { return false; }
             };
-            tabHistorico.setModel(modeloHistorico);
+            tablaHistorico.setModel(modeloHistorico);
         }
     }
 
@@ -1734,7 +1747,6 @@ public class MenuVista extends JFrame {
     }
 
     private void guardarRecetaDesdeUI() {
-        // Validaciones básicas
         if (pacienteSeleccionado == null) {
             JOptionPane.showMessageDialog(this, "Seleccione un paciente antes de guardar la receta.", "Validación", JOptionPane.WARNING_MESSAGE);
             return;
@@ -1794,6 +1806,8 @@ public class MenuVista extends JFrame {
                         receta.getEstado()
                 });
             }
+
+            cargarHistoricoEnTabla();
 
             JOptionPane.showMessageDialog(this, "Receta guardada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
@@ -2046,11 +2060,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-
-
-    // ------------------------------------------------------------------------------------------
     // ------------------------------------- HELPERS: ESTILO-------------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void estiloPrimario(JButton b, Color primary) {
         b.setFocusPainted(false);

@@ -1326,7 +1326,7 @@
                     <properties/>
                     <border type="none" title="Filtros"/>
                     <children>
-                      <component id="39c83" class="javax.swing.JTextField" binding="textField8" default-binding="true">
+                      <component id="39c83" class="javax.swing.JTextField" binding="tfHistorico">
                         <constraints>
                           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                             <preferred-size width="150" height="-1"/>
@@ -1342,7 +1342,7 @@
                           <text value="Filtrar por:"/>
                         </properties>
                       </component>
-                      <component id="6b811" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+                      <component id="6b811" class="javax.swing.JComboBox" binding="comboCodigoHist">
                         <constraints>
                           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -1376,7 +1376,7 @@
                         </properties>
                         <border type="none"/>
                         <children>
-                          <component id="97edc" class="javax.swing.JTable" binding="tabHistorico">
+                          <component id="97edc" class="javax.swing.JTable" binding="tablaHistorico">
                             <constraints/>
                             <properties/>
                           </component>
@@ -1392,7 +1392,7 @@
                     <properties/>
                     <border type="none" title="Acciones"/>
                     <children>
-                      <component id="ffa9b" class="javax.swing.JButton" binding="exportarButton" default-binding="true">
+                      <component id="ffa9b" class="javax.swing.JButton" binding="exportarHistoricoBtn">
                         <constraints>
                           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
@@ -1400,7 +1400,7 @@
                           <text value="Exportar"/>
                         </properties>
                       </component>
-                      <component id="cb684" class="javax.swing.JButton" binding="limpiarButton2" default-binding="true">
+                      <component id="cb684" class="javax.swing.JButton" binding="limpiarHistoricoBtn">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
