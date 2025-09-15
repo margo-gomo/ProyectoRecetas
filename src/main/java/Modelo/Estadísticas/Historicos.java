@@ -24,7 +24,8 @@ public class Historicos {
         else
             return null;
     }
-    public List<Indicacion>mostrarIndicaciones(){
+    public List<Indicacion>mostrarIndicaciones(Receta receta){
+        this.receta=receta;
         if(receta!=null)
             return receta.obtenerListaIndicaciones();
         else

@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CambiarClaveVista extends JFrame {
+public class CambiarClaveVista extends JDialog {
 
     // ------------------------------------------------------------------------------------------
     // -------------------------------- ATRIBUTOS DE LA VISTA -----------------------------------
@@ -48,7 +48,21 @@ public class CambiarClaveVista extends JFrame {
             cancelarButton.addActionListener(e -> dispose());
         }
     }
+    public JDialog createDialog(Window owner) {
+        JDialog dialog = new JDialog(owner, "Cambiar contraseña", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setContentPane(panel1);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.pack();
+        dialog.setResizable(false);
+        dialog.setLocationRelativeTo(owner);
 
+        // establecer el botón por defecto si existe
+        if (dialog.getRootPane() != null && aceptarButton != null) {
+            dialog.getRootPane().setDefaultButton(aceptarButton);
+        }
+
+        return dialog;
+    }
     // ------------------------------------------------------------------------------------------
     // ------------------------------- ESTILOS / LOOK & FEEL ------------------------------------
     // ------------------------------------------------------------------------------------------
@@ -194,14 +208,5 @@ public class CambiarClaveVista extends JFrame {
 
     public void setOnCancelar(ActionListener l) {
         if (cancelarButton != null) cancelarButton.addActionListener(l);
-    }
-
-    // ------------------------------------------------------------------------------------------
-    // ------------------------------------------ MAIN ------------------------------------------
-    // ------------------------------------------------------------------------------------------
-
-    public void init(String[] args) {
-        try { FlatLightLaf.setup(); } catch (Exception ignored) {}
-        SwingUtilities.invokeLater(() -> new CambiarClaveVista().setVisible(true));
     }
 }
