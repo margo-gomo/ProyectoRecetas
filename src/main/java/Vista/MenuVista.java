@@ -8,6 +8,7 @@ import Modelo.entidades.Medico;
 import Modelo.entidades.Paciente;
 import Controlador.Controlador;
 import Modelo.entidades.Medicamento;
+import Modelo.entidades.Farmaceuta;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import Adaptador.LocalDateAdapter;
@@ -154,7 +155,7 @@ public class MenuVista extends JFrame {
     private JLabel labelFechaActualPresc;
     private JLabel labelFechaRetiroPresc;
     private JComboBox comboReceta;
-    private JTextField tfRecetas;
+    private JTextField tfRecetasDespacho;
     private JTextField tfCodPresc;
     private JComboBox comboBox2;
 
@@ -176,7 +177,7 @@ public class MenuVista extends JFrame {
 
     public MenuVista() {
         this.controlador = new Controlador();
-        controlador.setToken(1);
+        controlador.setToken(0);
         controlador.init();
 
 
@@ -335,28 +336,13 @@ public class MenuVista extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     if (!validarCamposMedico()) return;
 
-                    if (controlador == null) {
-                        JOptionPane.showMessageDialog(MenuVista.this,
-                                "No se puede guardar.",
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
 
                     String id  = tfIdMedico.getText().trim();
                     String nom = tfNombreMedico.getText().trim();
                     String esp = tfEspMedico.getText().trim();
 
                     try {
-                        Medico existente = controlador.buscarMedicoPorId(id);
-                        if (existente != null) {
-                            JOptionPane.showMessageDialog(MenuVista.this,
-                                    "Ya existe un médico con ID: " + id,
-                                    "Duplicado", JOptionPane.WARNING_MESSAGE);
-                            return;
-                        }
-
-                        Medico nuevo = new Medico(nom, id, esp);
-                        Medico agregado = controlador.agregarMedico(nuevo);
+                        Medico agregado = controlador.agregarMedico(id,nom,esp);
                         agregarMedicoATabla(agregado);
                         limpiarCamposMedico();
 
@@ -378,12 +364,6 @@ public class MenuVista extends JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
 
-                    if (controlador == null) {
-                        JOptionPane.showMessageDialog(MenuVista.this,
-                                "No hay controlador inicializado.",
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
 
                     String id = obtenerIdDesdeFormularioOSel();
                     if (id.isEmpty()) {
@@ -394,23 +374,9 @@ public class MenuVista extends JFrame {
                     }
 
                     try {
-                        Medico existente = controlador.buscarMedicoPorId(id);
-                        if (existente == null) {
-                            JOptionPane.showMessageDialog(MenuVista.this,
-                                    "No existe un médico con ID: " + id,
-                                    "No encontrado", JOptionPane.WARNING_MESSAGE);
-                            return;
-                        }
-
                         String nom = (tfNombreMedico != null) ? tfNombreMedico.getText().trim() : "";
                         String esp = (tfEspMedico != null) ? tfEspMedico.getText().trim() : "";
-
-                        if (nom.isEmpty()) nom = existente.getNombre();
-                        if (esp.isEmpty()) esp = existente.getEspecialidad();
-
-                        Medico actualizado = new Medico(nom, id, esp);
-                        Medico resultado   = controlador.actualizarMedico(actualizado);
-
+                        Medico resultado   = controlador.actualizarMedico(id, nom,esp);
                         actualizarMedicoEnTabla(resultado);
 
                         limpiarCamposMedico();
@@ -434,12 +400,6 @@ public class MenuVista extends JFrame {
             borrarButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (controlador == null) {
-                        JOptionPane.showMessageDialog(MenuVista.this,
-                                "No hay controlador inicializado.",
-                                "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
 
                     String id = (tfIdMedico != null) ? tfIdMedico.getText().trim() : "";
                     if ((id == null || id.isEmpty()) && tabloMedicos != null && tabloMedicos.getSelectedRow() >= 0) {
@@ -466,15 +426,6 @@ public class MenuVista extends JFrame {
                     if (opc != JOptionPane.YES_OPTION) return;
 
                     try {
-                        // Verificar existencia
-                        Medico existente = controlador.buscarMedicoPorId(id);
-                        if (existente == null) {
-                            JOptionPane.showMessageDialog(MenuVista.this,
-                                    "No existe un médico con ID: " + id,
-                                    "No encontrado", JOptionPane.WARNING_MESSAGE);
-                            return;
-                        }
-
                         // Eliminar en modelo
                         controlador.eliminarMedico(id);
 
@@ -516,25 +467,12 @@ public class MenuVista extends JFrame {
         if (guardarFarm != null) {
             guardarFarm.addActionListener(e -> {
                 if (!validarCamposFarmaceuta()) return;
-                if (controlador == null) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "No se puede guardar.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
                 String id  = tfIdFarma.getText().trim();
                 String nom = tfNombreFarma.getText().trim();
 
                 try {
-                    if (controlador.buscarFarmaceutaPorId(id) != null) {
-                        JOptionPane.showMessageDialog(MenuVista.this, "Ya existe un farmacéuta con ID: " + id, "Duplicado", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    Modelo.entidades.Farmaceuta f = new Modelo.entidades.Farmaceuta();
-                    f.setId(id);
-                    f.setNombre(nom);
-
-                    Modelo.entidades.Farmaceuta agregado = controlador.agregarFarmaceuta(f);
+                    Farmaceuta agregado = controlador.agregarFarmaceuta(id,nom);
 
                     agregarFarmaceutaATabla(agregado);
                     limpiarCamposFarmaceuta();
@@ -550,10 +488,6 @@ public class MenuVista extends JFrame {
         // ------------------------- LISTENER: MODIFICAR FARMACÉUTA -------------------------
         if (modificarFarm != null) {
             modificarFarm.addActionListener(e -> {
-                if (controlador == null) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "No hay controlador inicializado.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
                 // 1) ID desde form o fila seleccionada
                 String id = (tfIdFarma != null) ? tfIdFarma.getText().trim() : "";
@@ -567,16 +501,9 @@ public class MenuVista extends JFrame {
                 }
 
                 try {
-                    Modelo.entidades.Farmaceuta existente = controlador.buscarFarmaceutaPorId(id);
-                    if (existente == null) {
-                        JOptionPane.showMessageDialog(MenuVista.this, "No existe un farmacéuta con ID: " + id, "No encontrado", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
 
                     String nom = (tfNombreFarma != null) ? tfNombreFarma.getText().trim() : "";
-                    if (!nom.isEmpty()) existente.setNombre(nom);
-
-                    Modelo.entidades.Farmaceuta actualizado = controlador.actualizarFarmaceuta(existente);
+                    Farmaceuta actualizado = controlador.actualizarFarmaceuta(id,nom);
                     actualizarFarmaceutaEnTabla(actualizado);
                     limpiarCamposFarmaceuta();
 
@@ -590,10 +517,6 @@ public class MenuVista extends JFrame {
         // ------------------------- LISTENER: BORRAR FARMACÉUTA -------------------------
         if (borrarFarm != null) {
             borrarFarm.addActionListener(e -> {
-                if (controlador == null) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "No hay controlador inicializado.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
                 String id = (tfIdFarma != null) ? tfIdFarma.getText().trim() : "";
                 if (id.isEmpty() && tablaFarma != null && tablaFarma.getSelectedRow() >= 0) {
@@ -615,11 +538,6 @@ public class MenuVista extends JFrame {
                 if (opc != JOptionPane.YES_OPTION) return;
 
                 try {
-                    if (controlador.buscarFarmaceutaPorId(id) == null) {
-                        JOptionPane.showMessageDialog(MenuVista.this, "No existe un farmacéuta con ID: " + id, "No encontrado", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
                     controlador.eliminarFarmaceuta(id);
                     eliminarFarmaceutaDeTablaPorId(id);
                     limpiarCamposFarmaceuta();
@@ -644,10 +562,6 @@ public class MenuVista extends JFrame {
         if (guardarPaciente != null) {
             guardarPaciente.addActionListener(e -> {
                 if (!validarCamposPacienteParaGuardar()) return;
-                if (controlador == null) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "No se puede guardar.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
                 int id, tel;
                 try {
@@ -660,21 +574,10 @@ public class MenuVista extends JFrame {
 
                 java.time.LocalDate fecha = leerFechaNacDelForm();
                 if (fecha == null) return; // si es obligatoria y está mal, se aborta
-
+                String nom = tfNombrePaciente.getText().trim();
                 try {
-                    if (controlador.buscarPacientePorId(id) != null) {
-                        JOptionPane.showMessageDialog(MenuVista.this, "Ya existe un paciente con ID: " + id, "Duplicado", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
 
-                    String nom = tfNombrePaciente.getText().trim();
-                    Modelo.entidades.Paciente p = new Modelo.entidades.Paciente();
-                    p.setId(id);
-                    p.setNombre(nom);
-                    p.setTelefono(tel);
-                    p.setFecha_nacimiento(fecha);
-
-                    Modelo.entidades.Paciente agregado = controlador.agregarPaciente(p);
+                    Paciente agregado = controlador.agregarPaciente(id,nom,tel,fecha);
 
                     agregarPacienteATabla(agregado);
                     limpiarCamposPaciente();
@@ -691,46 +594,23 @@ public class MenuVista extends JFrame {
         if (modificarPaciente != null) {
             modificarPaciente.addActionListener(e -> {
                 if (!validarIdPacientePresente()) return;
-                if (controlador == null) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "No hay controlador inicializado.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
-                int id;
+                int id,telSt;
                 try {
                     id = Integer.parseInt(tfIdPaciente.getText().trim());
+                    telSt = Integer.parseInt(tfTelefonoPaciente.getText().trim());
                 } catch (NumberFormatException exN) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "El ID del paciente debe ser numérico.", "Validación", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(MenuVista.this, "El ID y Teléfono del paciente debe ser numérico.", "Validación", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
                 try {
-                    Modelo.entidades.Paciente existente = controlador.buscarPacientePorId(id);
-                    if (existente == null) {
-                        JOptionPane.showMessageDialog(MenuVista.this, "No existe un paciente con ID: " + id, "No encontrado", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
 
                     String nom   = (tfNombrePaciente   != null) ? tfNombrePaciente.getText().trim()   : "";
-                    String telSt = (tfTelefonoPaciente != null) ? tfTelefonoPaciente.getText().trim() : "";
                     String fecSt = (tfFechaNacPaciente != null) ? tfFechaNacPaciente.getText().trim() : "";
+                    LocalDate fecha = leerFechaNacDelForm();
 
-                    if (!nom.isEmpty()) existente.setNombre(nom);
-                    if (!telSt.isEmpty()) {
-                        try { existente.setTelefono(Integer.parseInt(telSt)); }
-                        catch (NumberFormatException ex2) {
-                            JOptionPane.showMessageDialog(MenuVista.this, "El teléfono debe ser numérico.", "Validación", JOptionPane.WARNING_MESSAGE);
-                            tfTelefonoPaciente.requestFocus();
-                            return;
-                        }
-                    }
-                    if (!fecSt.isEmpty()) {
-                        java.time.LocalDate fecha = leerFechaNacDelForm();
-                        if (fecha == null) return;
-                        existente.setFecha_nacimiento(fecha);
-                    }
-
-                    Modelo.entidades.Paciente actualizado = controlador.actualizarPaciente(existente);
+                    Paciente actualizado = controlador.actualizarPaciente(id,nom,telSt,fecha);
                     actualizarPacienteEnTabla(actualizado);
                     limpiarCamposPaciente();
 
@@ -744,10 +624,6 @@ public class MenuVista extends JFrame {
         // --------------------------- LISTENER: BORRAR PACIENTE ---------------------------
         if (borrarPaciente != null) {
             borrarPaciente.addActionListener(e -> {
-                if (controlador == null) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "No hay controlador inicializado.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
                 String idStr = (tfIdPaciente != null) ? tfIdPaciente.getText().trim() : "";
                 if (idStr.isEmpty() && tablaPac != null && tablaPac.getSelectedRow() >= 0) {
@@ -771,11 +647,6 @@ public class MenuVista extends JFrame {
                 if (opc != JOptionPane.YES_OPTION) return;
 
                 try {
-                    if (controlador.buscarPacientePorId(id) == null) {
-                        JOptionPane.showMessageDialog(MenuVista.this, "No existe un paciente con ID: " + id, "No encontrado", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
                     controlador.eliminarPaciente(id);
                     eliminarPacienteDeTablaPorId(id);
                     limpiarCamposPaciente();
@@ -799,10 +670,6 @@ public class MenuVista extends JFrame {
 
         if (guardarMedicamento != null) {
             guardarMedicamento.addActionListener(e -> {
-                if (controlador == null) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "No se puede guardar.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
                 int codigo;
                 try { codigo = Integer.parseInt(tfCodigoMed.getText().trim()); }
@@ -814,17 +681,7 @@ public class MenuVista extends JFrame {
                 String des = tfDescMed.getText().trim();
 
                 try {
-                    if (controlador.buscarMedicamentoPorCodigo(codigo) != null) {
-                        JOptionPane.showMessageDialog(MenuVista.this, "Ya existe un medicamento con código: " + codigo, "Duplicado", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
-
-                    Modelo.entidades.Medicamento m = new Modelo.entidades.Medicamento();
-                    m.setCodigo(codigo);
-                    m.setNombre(nom);
-                    m.setDescripcion(des);
-
-                    Modelo.entidades.Medicamento agregado = controlador.agregarMedicamento(m);
+                    Medicamento agregado = controlador.agregarMedicamento(codigo,nom,des);
 
                     agregarMedicamentoATabla(agregado);
                     limpiarCamposMedicamento();
@@ -840,10 +697,6 @@ public class MenuVista extends JFrame {
         if (modificarMedicamento != null) {
             modificarMedicamento.addActionListener(e -> {
                 if (!validarCodigoMedicamentoPresente()) return;
-                if (controlador == null) {
-                    JOptionPane.showMessageDialog(MenuVista.this, "No hay controlador inicializado.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
 
                 int codigo;
                 try { codigo = Integer.parseInt(tfCodigoMed.getText().trim()); }
@@ -853,18 +706,11 @@ public class MenuVista extends JFrame {
                 }
 
                 try {
-                    Modelo.entidades.Medicamento existente = controlador.buscarMedicamentoPorCodigo(codigo);
-                    if (existente == null) {
-                        JOptionPane.showMessageDialog(MenuVista.this, "No existe un medicamento con código: " + codigo, "No encontrado", JOptionPane.WARNING_MESSAGE);
-                        return;
-                    }
 
                     String nom = (tfNombreMed != null) ? tfNombreMed.getText().trim() : "";
                     String des = (tfDescMed   != null) ? tfDescMed.getText().trim()   : "";
-                    if (!nom.isEmpty()) existente.setNombre(nom);
-                    if (!des.isEmpty()) existente.setDescripcion(des);
 
-                    Modelo.entidades.Medicamento actualizado = controlador.actualizarMedicamento(existente);
+                    Medicamento actualizado = controlador.actualizarMedicamento(codigo,nom,des);
                     actualizarMedicamentoEnTabla(actualizado);
                     limpiarCamposMedicamento();
 
@@ -1644,13 +1490,13 @@ public class MenuVista extends JFrame {
         return true;
     }
 
-    private void agregarFarmaceutaATabla(Modelo.entidades.Farmaceuta f) {
+    private void agregarFarmaceutaATabla(Farmaceuta f) {
         if (tablaFarma == null || f == null) return;
         DefaultTableModel model = (DefaultTableModel) tablaFarma.getModel();
         model.addRow(new Object[]{ f.getId(), f.getNombre() });
     }
 
-    private void actualizarFarmaceutaEnTabla(Modelo.entidades.Farmaceuta f) {
+    private void actualizarFarmaceutaEnTabla(Farmaceuta f) {
         if (tablaFarma == null || f == null) return;
         DefaultTableModel model = (DefaultTableModel) tablaFarma.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
@@ -1715,14 +1561,14 @@ public class MenuVista extends JFrame {
         return true;
     }
 
-    private void agregarPacienteATabla(Modelo.entidades.Paciente p) {
+    private void agregarPacienteATabla(Paciente p) {
         if (tablaPac == null || p == null) return;
         DefaultTableModel model = (DefaultTableModel) tablaPac.getModel();
         String fechaStr = p.getFecha_nacimiento() != null ? p.getFecha_nacimiento().format(formatoFecha) : "";
         model.addRow(new Object[]{ p.getId(), p.getNombre(), fechaStr, p.getTelefono() });
     }
 
-    private void actualizarPacienteEnTabla(Modelo.entidades.Paciente p) {
+    private void actualizarPacienteEnTabla(Paciente p) {
         if (tablaPac == null || p == null) return;
         DefaultTableModel model = (DefaultTableModel) tablaPac.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
@@ -1842,13 +1688,13 @@ public class MenuVista extends JFrame {
         return true;
     }
 
-    private void agregarMedicamentoATabla(Modelo.entidades.Medicamento m) {
+    private void agregarMedicamentoATabla(Medicamento m) {
         if (tablaMed == null || m == null) return;
         DefaultTableModel model = (DefaultTableModel) tablaMed.getModel();
         model.addRow(new Object[]{ m.getCodigo(), m.getNombre(), m.getDescripcion() });
     }
 
-    private void actualizarMedicamentoEnTabla(Modelo.entidades.Medicamento m) {
+    private void actualizarMedicamentoEnTabla(Medicamento m) {
         if (tablaMed == null || m == null) return;
         DefaultTableModel model = (DefaultTableModel) tablaMed.getModel();
         for (int i = 0; i < model.getRowCount(); i++) {

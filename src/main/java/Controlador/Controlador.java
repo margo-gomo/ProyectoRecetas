@@ -90,8 +90,9 @@ public class Controlador {
     }
     public Medico agregarMedico(String id,String nom,String esp) throws IllegalArgumentException, SecurityException{
         Medico medico = new Medico();
-        if(id.isEmpty()||nom.isEmpty()||esp.isEmpty())
-            throw new IllegalArgumentException("Rellene todos los campos");
+        medico.setId(id);
+        medico.setNombre(nom);
+        medico.setEspecialidad(esp);
         return modeloMedico.agregar(medico,token);
     }
     public Medico actualizarMedico(String id,String nombre,String especialidad) throws IllegalArgumentException, SecurityException{
@@ -99,8 +100,6 @@ public class Controlador {
         if(medico==null){
             throw new IllegalArgumentException("No existe un médico con ID: "+id);
         }
-        if (nombre.isEmpty()||especialidad.isEmpty())
-            throw new IllegalArgumentException("Rellene todos los campos");
         medico.setNombre(nombre);
         medico.setEspecialidad(especialidad);
         return modeloMedico.actualizar(medico,token);
@@ -119,8 +118,8 @@ public class Controlador {
     }
     public Farmaceuta agregarFarmaceuta(String id,String nombre)  throws IllegalArgumentException, SecurityException{
         Farmaceuta farmaceuta = new Farmaceuta();
-        if(id.isEmpty()||nombre.isEmpty())
-            throw new IllegalArgumentException("Rellene todos los campos");
+        farmaceuta.setId(id);
+        farmaceuta.setNombre(nombre);
         return modeloFarmaceuta.agregar(farmaceuta,token);
     }
     public Farmaceuta actualizarFarmaceuta(String id,String nombre) throws IllegalArgumentException, SecurityException{
@@ -128,7 +127,7 @@ public class Controlador {
         if(farmaceuta==null){
             throw new IllegalArgumentException("No existe un farmaceuta con ID: "+id);
         }
-        if (nombre.isEmpty()||nombre.isEmpty())
+        if (nombre.isEmpty())
             throw new IllegalArgumentException("Rellene todos los campos");
         farmaceuta.setNombre(nombre);
         return modeloFarmaceuta.actualizar(farmaceuta,token);
@@ -147,16 +146,19 @@ public class Controlador {
     }
     public Paciente agregarPaciente(int id, String nombre, int telefono,LocalDate fecha) throws IllegalArgumentException, SecurityException{
         Paciente paciente = new Paciente();
-        if(id==-1||nombre.isEmpty()||telefono==-1||fecha==null)
-            throw new IllegalArgumentException("Rellene todos los campos");
+        paciente.setId(id);
+        paciente.setNombre(nombre);
+        paciente.setTelefono(telefono);
+        paciente.setFecha_nacimiento(fecha);
         return modeloPaciente.agregar(paciente,token);
     }
     public Paciente actualizarPaciente(int id, String nombre, int telefono,LocalDate fecha) throws IllegalArgumentException, SecurityException{
         Paciente paciente = buscarPacientePorId(id);
         if(paciente==null)
             throw new IllegalArgumentException("No existe un paciente con ID: "+id);
-        if (nombre.isEmpty()||telefono==-1||fecha==null)
-            throw new IllegalArgumentException("Rellene todos los campos");
+        paciente.setNombre(nombre);
+        paciente.setTelefono(telefono);
+        paciente.setFecha_nacimiento(fecha);
         return modeloPaciente.actualizar(paciente,token);
     }
     public Paciente eliminarPaciente(int id) throws IllegalArgumentException, SecurityException{
@@ -173,8 +175,9 @@ public class Controlador {
     }
     public Medicamento agregarMedicamento(int codigo,String nombre,String descripcion) throws IllegalArgumentException, SecurityException{
         Medicamento medicamento = new Medicamento();
-        if(codigo==-1||nombre.isEmpty()||descripcion.isEmpty())
-            throw new IllegalArgumentException("Rellene todos los campos");
+        medicamento.setCodigo(codigo);
+        medicamento.setNombre(nombre);
+        medicamento.setDescripcion(descripcion);
         return modeloMedicamento.agregar(medicamento,token);
     }
     public Medicamento actualizarMedicamento(int codigo,String nombre,String descripcion) throws IllegalArgumentException, SecurityException{
@@ -183,6 +186,8 @@ public class Controlador {
             throw new IllegalArgumentException("No existe un medicamento con ID: "+codigo);
         if (nombre.isEmpty()||descripcion.isEmpty())
             throw new IllegalArgumentException("Rellene todos los campos");
+        medicamento.setNombre(nombre);
+        medicamento.setDescripcion(descripcion);
         return modeloMedicamento.actualizar(medicamento,token);
     }
     public Medicamento eliminarMedicamento(int codigo) throws IllegalArgumentException, SecurityException{
