@@ -198,15 +198,15 @@ public class MenuVista extends JFrame {
 
 
         if (tabbedPanePrincipal != null) {
-            tabbedPanePrincipal.setIconAt(8, FontIcon.of(FontAwesomeSolid.INFO_CIRCLE, 16, PRIMARY));    // Acerca de
-            tabbedPanePrincipal.setIconAt(0, FontIcon.of(FontAwesomeSolid.FILE_MEDICAL, 16, PRIMARY)); // Prescripción
-            tabbedPanePrincipal.setIconAt(1, FontIcon.of(FontAwesomeSolid.CHECK, 16, PRIMARY));        // Despacho
-            tabbedPanePrincipal.setIconAt(2, FontIcon.of(FontAwesomeSolid.USER_MD, 16, PRIMARY));      // Médicos
-            tabbedPanePrincipal.setIconAt(3, FontIcon.of(FontAwesomeSolid.PILLS, 16, PRIMARY));        // Farmacéutas
-            tabbedPanePrincipal.setIconAt(4, FontIcon.of(FontAwesomeSolid.USER, 16, PRIMARY));         // Pacientes
-            tabbedPanePrincipal.setIconAt(5, FontIcon.of(FontAwesomeSolid.CAPSULES, 16, PRIMARY));     // Medicamentos
-            tabbedPanePrincipal.setIconAt(6, FontIcon.of(FontAwesomeSolid.HISTORY, 16, PRIMARY));      // Histórico
-            tabbedPanePrincipal.setIconAt(7, FontIcon.of(FontAwesomeSolid.CHART_LINE, 16, PRIMARY));   // Dashboard
+            tabbedPanePrincipal.setIconAt(0, FontIcon.of(FontAwesomeSolid.INFO_CIRCLE, 16, PRIMARY));    // Acerca de
+            tabbedPanePrincipal.setIconAt(1, FontIcon.of(FontAwesomeSolid.FILE_MEDICAL, 16, PRIMARY)); // Prescripción
+            tabbedPanePrincipal.setIconAt(2, FontIcon.of(FontAwesomeSolid.CHECK, 16, PRIMARY));        // Despacho
+            tabbedPanePrincipal.setIconAt(3, FontIcon.of(FontAwesomeSolid.USER_MD, 16, PRIMARY));      // Médicos
+            tabbedPanePrincipal.setIconAt(4, FontIcon.of(FontAwesomeSolid.PILLS, 16, PRIMARY));        // Farmacéutas
+            tabbedPanePrincipal.setIconAt(5, FontIcon.of(FontAwesomeSolid.USER, 16, PRIMARY));         // Pacientes
+            tabbedPanePrincipal.setIconAt(6, FontIcon.of(FontAwesomeSolid.CAPSULES, 16, PRIMARY));     // Medicamentos
+            tabbedPanePrincipal.setIconAt(7, FontIcon.of(FontAwesomeSolid.HISTORY, 16, PRIMARY));      // Histórico
+            tabbedPanePrincipal.setIconAt(8, FontIcon.of(FontAwesomeSolid.CHART_LINE, 16, PRIMARY));   // Dashboard
         }
 
         if (labelNomPaciente != null) {
