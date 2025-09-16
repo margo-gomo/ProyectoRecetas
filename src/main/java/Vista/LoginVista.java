@@ -1,13 +1,13 @@
 package Vista;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import org.kordamp.ikonli.swing.FontIcon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.Set;
 
 public class LoginVista extends JFrame {
 
@@ -23,18 +23,22 @@ public class LoginVista extends JFrame {
     private JLabel idField;
     private JLabel claveField;
     private JButton limpiarButton;
+    private JLabel iconoLabel;
 
     // ------------------------------------------------------------------------------------------
     // ------------------------------------- CONSTRUCTOR ----------------------------------------
     // ------------------------------------------------------------------------------------------
 
     public LoginVista() {
+        try { FlatLightLaf.setup(); } catch (Exception ignored) {}
+
         setTitle("Ingreso al Sistema");
-        setContentPane(panel1);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(420, 420);
+        setSize(420, 500);
         setLocationRelativeTo(null);
 
+        inicializarLayout();
+        inicializarIcono();
         aplicarEstilosLogin();
 
         if (getRootPane() != null && ingresarButton != null)
@@ -48,6 +52,61 @@ public class LoginVista extends JFrame {
             });
         }
     }
+
+    private void inicializarLayout() {
+        panel1 = new JPanel(new BorderLayout(10, 10));
+        panel1.setBorder(new EmptyBorder(16, 20, 20, 20));
+        setContentPane(panel1);
+
+        JPanel panelCentro = new JPanel();
+        panelCentro.setLayout(new BoxLayout(panelCentro, BoxLayout.Y_AXIS));
+        panelCentro.setBackground(Color.WHITE);
+
+        idField = new JLabel("Usuario:");
+        idText = new JTextField(15);
+        claveField = new JLabel("Contraseña:");
+        claveText = new JPasswordField(15);
+
+        ingresarButton = new JButton("Ingresar");
+        cambiarContraseñaButton = new JButton("Cambiar Contraseña");
+        limpiarButton = new JButton("Limpiar");
+
+        JPanel panelCampos = new JPanel(new GridLayout(4, 1, 8, 8));
+        panelCampos.setBackground(Color.WHITE);
+        panelCampos.add(idField);
+        panelCampos.add(idText);
+        panelCampos.add(claveField);
+        panelCampos.add(claveText);
+
+        JPanel panelBotones = new JPanel(new GridLayout(3, 1, 10, 10));
+        panelBotones.setBackground(Color.WHITE);
+        panelBotones.add(ingresarButton);
+        panelBotones.add(cambiarContraseñaButton);
+        panelBotones.add(limpiarButton);
+
+        panelCentro.add(panelCampos);
+        panelCentro.add(Box.createVerticalStrut(15));
+        panelCentro.add(panelBotones);
+
+        panel1.add(panelCentro, BorderLayout.CENTER);
+    }
+
+    private void inicializarIcono() {
+        iconoLabel = new JLabel();
+        iconoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        // 👤 Ícono principal
+        FontIcon userIcon = FontIcon.of(FontAwesomeSolid.USER, 80, new Color(66, 133, 244));
+        iconoLabel.setIcon(userIcon);
+
+        JPanel panelIcono = new JPanel(new BorderLayout());
+        panelIcono.setBackground(Color.WHITE);
+        panelIcono.add(iconoLabel, BorderLayout.CENTER);
+        panelIcono.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        panel1.add(panelIcono, BorderLayout.NORTH);
+    }
+
     public JDialog createDialog(Frame owner) {
         JDialog dialog = new JDialog(owner, "Ingreso al Sistema", true); // modal
         dialog.setContentPane(panel1);
@@ -75,11 +134,7 @@ public class LoginVista extends JFrame {
         final Font  FNT_BTN = new Font("Segoe UI", Font.BOLD, 13);
         final Font  FNT_LBL = new Font("Segoe UI", Font.PLAIN, 12);
 
-        if (panel1 != null) {
-            panel1.setBackground(Color.WHITE);
-            ((JComponent) panel1).setBorder(new EmptyBorder(16, 20, 20, 20));
-            blanquearFondosRec(panel1);
-        }
+        panel1.setBackground(Color.WHITE);
 
         JLabel[] labels = { idField, claveField };
         for (JLabel l : labels) {
@@ -101,28 +156,21 @@ public class LoginVista extends JFrame {
             claveText.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
         }
 
-        if (ingresarButton != null) estiloPrimario(ingresarButton, PRIMARY, FNT_BTN);
-
-        JButton[] secundarios = { cambiarContraseñaButton, limpiarButton };
-        for (JButton b : secundarios) if (b != null) estiloSecundario(b, SECOND, PRIMARY, FNT_BTN);
-
-        Set<JButton> pintados = new HashSet<>();
-        if (ingresarButton != null) pintados.add(ingresarButton);
-        for (JButton b : secundarios) if (b != null) pintados.add(b);
-        estilizarBotonesRestantes(panel1, pintados, SECOND, PRIMARY, FNT_BTN);
+        // Íconos en los botones
+        if (ingresarButton != null) {
+            ingresarButton.setIcon(FontIcon.of(FontAwesomeSolid.SIGN_IN_ALT, 18, Color.WHITE));
+            estiloPrimario(ingresarButton, PRIMARY, FNT_BTN);
+        }
+        if (cambiarContraseñaButton != null) {
+            cambiarContraseñaButton.setIcon(FontIcon.of(FontAwesomeSolid.KEY, 18, PRIMARY));
+            estiloSecundario(cambiarContraseñaButton, SECOND, PRIMARY, FNT_BTN);
+        }
+        if (limpiarButton != null) {
+            limpiarButton.setIcon(FontIcon.of(FontAwesomeSolid.BROOM, 18, PRIMARY));
+            estiloSecundario(limpiarButton, SECOND, PRIMARY, FNT_BTN);
+        }
 
         igualarTamanoBotones(240, 36, ingresarButton, cambiarContraseñaButton, limpiarButton);
-    }
-
-    private void blanquearFondosRec(Container root) {
-        if (root == null) return;
-        for (Component c : root.getComponents()) {
-            if (c instanceof JPanel) {
-                c.setBackground(Color.WHITE);
-                ((JComponent) c).setOpaque(true);
-            }
-            if (c instanceof Container) blanquearFondosRec((Container) c);
-        }
     }
 
     private void estiloPrimario(JButton b, Color primary, Font fnt) {
@@ -133,7 +181,7 @@ public class LoginVista extends JFrame {
         b.setFont(fnt);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
         b.setRolloverEnabled(true);
-        b.putClientProperty("JButton.buttonType", "roundRect"); // permite hover FlatLaf
+        b.putClientProperty("JButton.buttonType", "roundRect");
     }
 
     private void estiloSecundario(JButton b, Color bg, Color fg, Font fnt) {
@@ -145,18 +193,6 @@ public class LoginVista extends JFrame {
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
         b.setRolloverEnabled(true);
         b.putClientProperty("JButton.buttonType", "roundRect");
-    }
-
-    private void estilizarBotonesRestantes(Container root, Set<JButton> ya, Color bg, Color fg, Font fnt) {
-        if (root == null) return;
-        for (Component c : root.getComponents()) {
-            if (c instanceof JButton) {
-                JButton b = (JButton) c;
-                if (!ya.contains(b)) estiloSecundario(b, bg, fg, fnt);
-            } else if (c instanceof Container) {
-                estilizarBotonesRestantes((Container) c, ya, bg, fg, fnt);
-            }
-        }
     }
 
     private void igualarTamanoBotones(int w, int h, JButton... btns) {
