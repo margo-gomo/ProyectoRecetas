@@ -65,7 +65,7 @@ public class GestorAdministrador {
         sb.append("\n]");
         return sb.toString();
     }
-    private static final String ARCHIVO_DATOS="datos/administradores.xml";
+    private static final String ARCHIVO_DATOS= "datos/administradores.xml";
     private final AdministradorDAO administradores;
 }
 

@@ -77,6 +77,6 @@ public class GestorPaciente {
         impl.guardar(new FileOutputStream(ARCHIVO_DATOS));
         System.out.println("Datos guardados correctamente.");
     }
-    private static final String ARCHIVO_DATOS="datos/pacientes.xml";
+    private static final String ARCHIVO_DATOS= "datos/pacientes.xml";
     private final PacienteDAO pacientes;
 }

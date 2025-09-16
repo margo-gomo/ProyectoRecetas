@@ -78,6 +78,6 @@ public class GestorFarmaceuta {
         impl.guardar(new FileOutputStream(ARCHIVO_DATOS));
         System.out.println("Datos guardados correctamente.");
     }
-    private static final String ARCHIVO_DATOS="datos/farmaceutas.xml";
+    private static final String ARCHIVO_DATOS= "datos/farmaceutas.xml";
     private final FarmaceutaDAO farmaceutas;
 }

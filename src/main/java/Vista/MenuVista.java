@@ -41,9 +41,6 @@ public class MenuVista extends JFrame {
 
     private static final Color PRIMARY = new Color(66, 133, 244);
     private static final Color SECOND  = new Color(204, 228, 255);
-    private static final Font FNT_TXT  = new Font("Segoe UI", Font.PLAIN, 13);
-    private static final Font FNT_BTN  = new Font("Segoe UI", Font.BOLD, 13);
-    private static final Font FNT_LBL  = new Font("Segoe UI", Font.PLAIN, 12);
 
     private JTabbedPane tabbedPanePrincipal;
     private JPanel panelPrincipal;
@@ -984,33 +981,59 @@ public class MenuVista extends JFrame {
             }
         }
 
-        JButton[] primarios = {
-                guardarButton, guardarButton2,
-                guardarFarm, guardarPaciente, guardarMedicamento,
-                generarFarma, generarPaciente, generarMedicamento,
-                iniciarProcesoButton, aplicarFiltrosButton, exportarHistoricoBtn,
-                generarReporteMedicosButton, entregarButton, marcarListaButton
-        };
+// ---------------- BOTONES CON ESTILO + ICONOS ----------------
 
-        JButton[] secundarios = {
-                buscarPacienteButton, agregarMedicamentoButton, buscarRecetaButton,
-                buscarButton, buscarButton1, buscarButton2, buscarFarma, buscarPaciente, buscarMedicamento,
-                elegirFechaButton, elegirFechaButton1, elegirFechaButton2, elegirFechaDesdeButtonDash, elegirFechaHastaButtonDash,
-                limpiarprescBtn, limpiarButtonDashboard, limpiarHistoricoBtn, limpiarButton3, limpiarFarm, limpiarPaciente, limpiarMedicamento,
-                descartarMedicamentoPresc, detallesButton, detallesButton1, verDetallesButton, refrescarButtonDashboard,
-                modificarButton, modificarFarm, modificarPaciente, modificarMedicamento,
-                borrarButton, borrarFarm, borrarPaciente, borrarMedicamento,
-                button3, button4, button5
-        };
+        aplicarIconoYEstilo(guardarButton, FontAwesomeSolid.SAVE, true);
+        aplicarIconoYEstilo(guardarButton2, FontAwesomeSolid.SAVE, true);
+        aplicarIconoYEstilo(guardarFarm, FontAwesomeSolid.SAVE, true);
+        aplicarIconoYEstilo(guardarPaciente, FontAwesomeSolid.SAVE, true);
+        aplicarIconoYEstilo(guardarMedicamento, FontAwesomeSolid.SAVE, true);
 
-        for (JButton b : primarios) if (b != null) estiloPrimario(b, PRIMARY);
-        for (JButton b : secundarios) if (b != null) estiloSecundario(b, SECOND, PRIMARY);
+        aplicarIconoYEstilo(generarReporteMedicosButton, FontAwesomeSolid.FILE_PDF, true);
+        aplicarIconoYEstilo(generarFarma, FontAwesomeSolid.FILE_PDF, true);
+        aplicarIconoYEstilo(generarPaciente, FontAwesomeSolid.FILE_PDF, true);
+        aplicarIconoYEstilo(generarMedicamento, FontAwesomeSolid.FILE_PDF, true);
+        aplicarIconoYEstilo(exportarHistoricoBtn, FontAwesomeSolid.FILE_EXPORT, true);
 
-        Set<JButton> yaEstilados = new HashSet<>();
-        addButtonsToSet(yaEstilados, primarios);
-        addButtonsToSet(yaEstilados, secundarios);
-        estilizarBotonesRestantes(panelPrincipal, yaEstilados, SECOND, PRIMARY);
+        aplicarIconoYEstilo(iniciarProcesoButton, FontAwesomeSolid.CHECK, true);
+        aplicarIconoYEstilo(entregarButton, FontAwesomeSolid.CHECK, true);
+        aplicarIconoYEstilo(marcarListaButton, FontAwesomeSolid.CHECK, true);
+        aplicarIconoYEstilo(aplicarFiltrosButton, FontAwesomeSolid.FILTER, true);
 
+        aplicarIconoYEstilo(buscarPacienteButton, FontAwesomeSolid.SEARCH, false);
+        aplicarIconoYEstilo(agregarMedicamentoButton, FontAwesomeSolid.PLUS, false);
+        aplicarIconoYEstilo(buscarRecetaButton, FontAwesomeSolid.SEARCH, false);
+
+        aplicarIconoYEstilo(buscarButton, FontAwesomeSolid.SEARCH, false);
+        aplicarIconoYEstilo(buscarButton1, FontAwesomeSolid.SEARCH, false);
+        aplicarIconoYEstilo(buscarButton2, FontAwesomeSolid.SEARCH, false);
+        aplicarIconoYEstilo(buscarFarma, FontAwesomeSolid.SEARCH, false);
+        aplicarIconoYEstilo(buscarPaciente, FontAwesomeSolid.SEARCH, false);
+        aplicarIconoYEstilo(buscarMedicamento, FontAwesomeSolid.SEARCH, false);
+
+        aplicarIconoYEstilo(limpiarprescBtn, FontAwesomeSolid.BROOM, false);
+        aplicarIconoYEstilo(limpiarButtonDashboard, FontAwesomeSolid.BROOM, false);
+        aplicarIconoYEstilo(limpiarHistoricoBtn, FontAwesomeSolid.BROOM, false);
+        aplicarIconoYEstilo(limpiarButton3, FontAwesomeSolid.BROOM, false);
+        aplicarIconoYEstilo(limpiarFarm, FontAwesomeSolid.BROOM, false);
+        aplicarIconoYEstilo(limpiarPaciente, FontAwesomeSolid.BROOM, false);
+        aplicarIconoYEstilo(limpiarMedicamento, FontAwesomeSolid.BROOM, false);
+
+        aplicarIconoYEstilo(modificarButton, FontAwesomeSolid.EDIT, false);
+        aplicarIconoYEstilo(modificarFarm, FontAwesomeSolid.EDIT, false);
+        aplicarIconoYEstilo(modificarPaciente, FontAwesomeSolid.EDIT, false);
+        aplicarIconoYEstilo(modificarMedicamento, FontAwesomeSolid.EDIT, false);
+
+        aplicarIconoYEstilo(borrarButton, FontAwesomeSolid.TRASH, false);
+        aplicarIconoYEstilo(borrarFarm, FontAwesomeSolid.TRASH, false);
+        aplicarIconoYEstilo(borrarPaciente, FontAwesomeSolid.TRASH, false);
+        aplicarIconoYEstilo(borrarMedicamento, FontAwesomeSolid.TRASH, false);
+
+        aplicarIconoYEstilo(descartarMedicamentoPresc, FontAwesomeSolid.TIMES, false);
+        aplicarIconoYEstilo(detallesButton, FontAwesomeSolid.EYE, false);
+        aplicarIconoYEstilo(detallesButton1, FontAwesomeSolid.EYE, false);
+        aplicarIconoYEstilo(verDetallesButton, FontAwesomeSolid.EYE, false);
+        aplicarIconoYEstilo(refrescarButtonDashboard, FontAwesomeSolid.SYNC, false);
         JTable[] todasLasTablas = {tablaPrescripcion, tablaMesAnioDashboard, tablaHistorico, tabloMedicos, tablaDespacho, tablaFarma, tablaPac, tablaMed, tablaEstadosDashboard};
         for (JTable t : todasLasTablas) {
             if (t == null) continue;
@@ -2279,24 +2302,44 @@ public class MenuVista extends JFrame {
     }
 
 
-    // ------------------------------------- HELPERS: ESTILO-------------------------------------
+// ------------------------------------- HELPERS: ESTILO + ICONOS -------------------------------------
+    private final Font  FNT_BTN_BOLD = new Font("Segoe UI", Font.BOLD, 13);
+    private final Font  FNT_BTN_PLAIN = new Font("Segoe UI", Font.PLAIN, 13);
 
     private void estiloPrimario(JButton b, Color primary) {
+        if (b == null) return;
         b.setFocusPainted(false);
         b.setBorderPainted(false);
         b.setBackground(primary);
         b.setForeground(Color.WHITE);
-        b.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        b.setFont(FNT_BTN_BOLD);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.putClientProperty("JButton.buttonType", "roundRect"); // Hover FlatLaf
     }
 
     private void estiloSecundario(JButton b, Color bg, Color fg) {
+        if (b == null) return;
         b.setFocusPainted(false);
         b.setBorderPainted(false);
         b.setBackground(bg);
         b.setForeground(fg);
-        b.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        b.setFont(FNT_BTN_PLAIN);
         b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        b.putClientProperty("JButton.buttonType", "roundRect");
+    }
+
+    private void aplicarIconoYEstilo(JButton boton, FontAwesomeSolid icono, boolean primario) {
+        if (boton == null) return;
+
+        // Crear ícono
+        FontIcon icon = FontIcon.of(icono, 16, primario ? Color.WHITE : PRIMARY);
+        boton.setIcon(icon);
+
+        if (primario) {
+            estiloPrimario(boton, PRIMARY);
+        } else {
+            estiloSecundario(boton, SECOND, PRIMARY);
+        }
     }
 
     private void addButtonsToSet(Set<JButton> set, JButton... btns) {

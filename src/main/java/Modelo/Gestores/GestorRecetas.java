@@ -106,6 +106,6 @@ public class GestorRecetas {
             System.out.println("Datos guardados correctamente.");
 
     }
-    private static final String ARCHIVO_DATOS="datos/recetas.xml";
+    private static final String ARCHIVO_DATOS= "datos/recetas.xml";
     private final RecetaDAO recetas;
 }
