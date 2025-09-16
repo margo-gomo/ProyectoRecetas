@@ -2,15 +2,15 @@
 <lista_farmaceutas>
     <farmaceuta>
         <id>11</id>
-        <nombre>José Martínes</nombre>
+        <nombre>Luisa Martínes</nombre>
         <clave>11</clave>
-        <token>0</token>
+        <token>2</token>
     </farmaceuta>
     <farmaceuta>
-        <id>1</id>
-        <nombre>Laura Torres</nombre>
-        <clave>1</clave>
-        <token>0</token>
+        <id>112</id>
+        <nombre>José Flores</nombre>
+        <clave>112</clave>
+        <token>2</token>
     </farmaceuta>
 </lista_farmaceutas>
 
