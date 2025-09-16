@@ -13,11 +13,9 @@ import java.util.List;
 public class GestorMedico {
 
     public GestorMedico() {
-        // Lista en memoria para los médicos
         medicos=new MedicoDAOImpl();
     }
 
-    // Cantidad total de médicos
     public int cantidad() {
         return medicos.cantidad();
     }
@@ -26,42 +24,35 @@ public class GestorMedico {
         return medicos.obtenerListaMedicos();
     }
 
-    // Verifica si existe un médico con el ID indicado
     public boolean existeMedico(String id) {
         return medicos.buscarPorId(id) != null;
     }
 
-    // Busca un médico por ID exacto (o null si no existe)
     public Medico buscarPorId(String id) {
         return medicos.buscarPorId(id);
     }
 
-    // Busca por nombre con coincidencia aproximada (ignorando mayúsculas/minúsculas)
     public Medico buscarPorNombre(String nombre) {
         return  medicos.buscarPorNombre(nombre);
     }
 
-    // Agrega un médico si el ID no está repetido
     public Medico agregar(Medico medico,int token) throws IllegalArgumentException,SecurityException { // (antes: aregarMedico)
         if(token!=0)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         return medicos.agregar(medico);
     }
 
-    // Reemplaza los datos de un médico existente (match por ID)
     public Medico actualizar(Medico medico,int token) throws IllegalArgumentException,SecurityException { // (antes: pacienteporactualizar)
         if(token!=0)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         return medicos.actualizar(medico);
     }
-    // Elimina un médico por ID
     public Medico eliminar(String id,int token) throws IllegalArgumentException,SecurityException {
         if(token!=0)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         return  medicos.eliminar(id);
     }
 
-    // String legible de la lista (debug/impresión)
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[");

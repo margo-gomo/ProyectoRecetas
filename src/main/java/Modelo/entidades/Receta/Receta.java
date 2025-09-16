@@ -87,12 +87,6 @@ public class Receta {
         if ("proceso".equalsIgnoreCase(estado)) {
             estado = "lista";
             idFarmaceutaLista=idFarmaceuta;
-            /*if(!idFarmaceutaProceso.equals(idFarmaceuta)) {
-                estado = "lista";
-                idFarmaceutaLista=idFarmaceuta;
-            }
-            else
-                throw new SecurityException("No puedes marcar como lista a una receta a la que iniciaste el poceso.");*/
         }
         else
             throw new IllegalArgumentException("La receta que no está en proceso.");
@@ -102,12 +96,6 @@ public class Receta {
         if ("lista".equalsIgnoreCase(estado)) {
                 estado = "entregada";
                 idFarmaceutaEntregar=idFarmaceuta;
-                /*if(!idFarmaceutaProceso.equals(idFarmaceuta)&&!idFarmaceutaLista.equals(idFarmaceuta)) {
-                    estado = "entregada";
-                    idFarmaceutaEntregar=idFarmaceuta;
-                }
-                else
-                    throw new SecurityException(idFarmaceuta);*/
         } else
             throw new IllegalArgumentException("La receta no está lista");
     }

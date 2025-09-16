@@ -13,7 +13,6 @@ import java.util.List;
 public class GestorFarmaceuta {
 
     public GestorFarmaceuta() {
-        // Lista en memoria para los médicos
         farmaceutas=new FarmaceutaDAOImpl();
     }
 
@@ -55,7 +54,6 @@ public class GestorFarmaceuta {
         return  farmaceutas.eliminar(id);
     }
 
-    // String legible de la lista (debug/impresión)
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[");

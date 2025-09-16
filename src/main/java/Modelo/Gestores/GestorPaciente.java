@@ -12,7 +12,6 @@ import java.util.List;
 
 public class GestorPaciente { 
     public GestorPaciente() {
-        // Lista en memoria para los médicos
         pacientes=new PacienteDAOImpl();
     }
 

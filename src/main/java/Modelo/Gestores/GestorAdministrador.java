@@ -14,7 +14,6 @@ import java.util.List;
 public class GestorAdministrador {
 
     public GestorAdministrador() {
-        // Lista en memoria para los médicos
         administradores=new AdministradorDAOImpl();
     }
 

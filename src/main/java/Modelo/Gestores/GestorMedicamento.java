@@ -13,7 +13,6 @@ import java.util.List;
 public class GestorMedicamento {
 
     public GestorMedicamento() {
-        // Lista en memoria para los médicos
         medicamentos=new MedicamentoDAOImpl();
     }
 
