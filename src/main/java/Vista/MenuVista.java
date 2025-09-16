@@ -2550,8 +2550,8 @@ public class MenuVista extends JFrame {
 
         switch (token) {
             case 0: // Admin
-                for (int i = 1; i < 3; i++) {
-                    tabbedPanePrincipal.setEnabledAt(i, false);
+                for (int i = 0; i < tabbedPanePrincipal.getTabCount(); i++) {
+                    tabbedPanePrincipal.setEnabledAt(i, true);
                 }
                 break;
             case 1: // Médico
