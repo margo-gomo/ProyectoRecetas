@@ -292,18 +292,21 @@ public class Controlador {
         Receta receta = buscarRecetaPorCodigo(codigo);
         if(receta==null)
             throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
+        receta.setEstado("proceso");
         modeloRecetas.iniciarProceso(receta,token,idUsuario);
     }
     public void marcarLista(String codigo) throws IllegalArgumentException{
         Receta receta = buscarRecetaPorCodigo(codigo);
         if(receta==null)
             throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
+        receta.setEstado("lista");
         modeloRecetas.marcarLista(receta,token,idUsuario);
     }
     public void entregar(String codigo) throws IllegalArgumentException{
         Receta receta = buscarRecetaPorCodigo(codigo);
         if(receta==null)
             throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
+        receta.setEstado("entregado");
         modeloRecetas.entregar(receta,token,idUsuario);
     }
     public DateTimeFormatter getFormatoFecha() {

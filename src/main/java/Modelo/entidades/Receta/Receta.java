@@ -74,7 +74,6 @@ public class Receta {
     public void iniciarProceso(String idFarmaceuta) throws IllegalArgumentException {
         if ("confeccionada".equalsIgnoreCase(estado)) {
             if (fechaDentroVentana(fecha_retiro)) {
-                estado = "proceso";
                 idFarmaceutaProceso=idFarmaceuta;
             }
             else
@@ -86,7 +85,6 @@ public class Receta {
     public void marcarLista(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("proceso".equalsIgnoreCase(estado)) {
             if(!idFarmaceuta.equals(idFarmaceutaProceso)){
-                estado = "lista";
                 idFarmaceutaLista=idFarmaceuta;
             }
             else
@@ -99,7 +97,6 @@ public class Receta {
     public void entregar(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("lista".equalsIgnoreCase(estado)) {
             if(!idFarmaceuta.equals(idFarmaceutaLista)){
-                estado = "entregada";
                 idFarmaceutaEntregar=idFarmaceuta;
             }
             else
