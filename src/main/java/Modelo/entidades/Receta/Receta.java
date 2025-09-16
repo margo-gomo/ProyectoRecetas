@@ -71,38 +71,45 @@ public class Receta {
                 .map(Indicacion::getMedicamento)
                 .collect(Collectors.toList());
     }
-    public void iniciarProceso(String idFarmaceuta) throws IllegalArgumentException {
+    public int iniciarProceso(String idFarmaceuta) throws IllegalArgumentException {
         if ("confeccionada".equalsIgnoreCase(estado)) {
             if (fechaDentroVentana(fecha_retiro)) {
                 idFarmaceutaProceso=idFarmaceuta;
+                return 0;
             }
             else
-                throw new IllegalArgumentException("La receta está fuera de la ventana de 3 días");
+                return 1;
         } else
-            throw new IllegalArgumentException("La receta no está solamente confeccionada");
+            return 2;
     }
 
-    public void marcarLista(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
-        if ("proceso".equalsIgnoreCase(estado)) {
+    public int marcarLista(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
+        if ("proceso".equals(estado)) {
             if(!idFarmaceuta.equals(idFarmaceutaProceso)){
                 idFarmaceutaLista=idFarmaceuta;
+                return 0;
             }
             else
-                throw new SecurityException("No puedes marcar lista una receta a la que le iniciaste el proceso");
+                return 1;
+
         }
         else
-            throw new IllegalArgumentException("La receta que no está en proceso.");
+            return 2;
+
     }
 
-    public void entregar(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
-        if ("lista".equalsIgnoreCase(estado)) {
+    public int entregar(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
+        if ("lista".equals(estado)) {
             if(!idFarmaceuta.equals(idFarmaceutaLista)){
                 idFarmaceutaEntregar=idFarmaceuta;
+                return 0;
             }
             else
-                throw new SecurityException("No puedes entregar una receta a la que marcaste lista");
+                return 1;
+
         } else
-            throw new IllegalArgumentException("La receta no está lista");
+            return 2;
+
     }
 
 

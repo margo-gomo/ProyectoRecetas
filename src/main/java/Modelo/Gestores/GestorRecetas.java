@@ -52,32 +52,50 @@ public class GestorRecetas {
         return recetas.eliminar(codigo);
     }
 
-    public void iniciarProceso(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
+    public Receta iniciarProceso(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if(receta==null)
             throw new IllegalArgumentException(receta.getCodigo());
         if(token!=2)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
-        receta.setEstado("proceso");
-        receta.iniciarProceso(idFarmaceuta);
-        recetas.actualizar(receta);
+        int resultado = receta.iniciarProceso(idFarmaceuta);
+        if(resultado==0){
+            receta.setEstado("proceso");
+            return actualizar(receta,token);
+        } else if (resultado==1) {
+            throw new IllegalArgumentException("La receta está fuera de la ventana de 3 días");
+        }
+        else
+            throw new IllegalArgumentException("La receta no está solamente confeccionada");
     }
-    public void marcarLista(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
+    public Receta marcarLista(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if(receta==null)
             throw new IllegalArgumentException(receta.getCodigo());
         if (token!=2)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
-        receta.setEstado("lista");
-        receta.marcarLista(idFarmaceuta);
-        recetas.actualizar(receta);
+        int resultado=receta.marcarLista(idFarmaceuta);
+        if (resultado==0){
+            receta.setEstado("lista");
+            return actualizar(receta,token);
+        } else if (resultado==1) {
+            throw new SecurityException("No puedes marcar lista una receta a la que le iniciaste el proceso");
+        }else
+            throw new IllegalArgumentException("La receta que no está en proceso.");
     }
-    public void entregar(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
+    public Receta entregar(Receta receta,int token,String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if(receta==null)
             throw new IllegalArgumentException(receta.getCodigo());
         if (token!=2)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
-        receta.setEstado("entregado");
-        receta.entregar(idFarmaceuta);
-        recetas.actualizar(receta);
+        int resultado=receta.entregar(idFarmaceuta);
+        if (resultado==0){
+            receta.setEstado("entregado");
+            return actualizar(receta,token);
+        }
+        else if (resultado==1) {
+            throw new SecurityException("No puedes entregar una receta a la que marcaste lista");
+        }
+        else
+            throw new IllegalArgumentException("La receta no está lista");
     }
 
     @Override
