@@ -342,24 +342,14 @@ public class Controlador {
     public void limpiarDashboard(){
         dashboard.limpiar();
     }
-
     public void agregarMedicamentoDashboard(String nombre){
         dashboard.agregarMedicameno(modeloMedicamento.buscarPorNombre(nombre));
     }
-
-    public Map<YearMonth, Integer> DashboardMedicamentosPorMesUnidades(LocalDate startDate, LocalDate endDate, String nombreMedicamento){
-        return dashboard.medicamentosPorMesUnidades(
-                modeloRecetas.obtenerListaRecetas(), startDate, endDate, nombreMedicamento);
+    public Map<YearMonth, Integer> DashboardMedicamentosPorMes(LocalDate startDate, LocalDate endDate, String nombreMedicamento){
+        return dashboard.medicamentosPorMes(modeloRecetas.obtenerListaRecetas(), startDate, endDate, nombreMedicamento);
     }
-
-    public Map<YearMonth, Integer> DashboardMedicamentosPorMesRecetas(LocalDate startDate, LocalDate endDate, String nombreMedicamento){
-        return dashboard.medicamentosPorMesRecetas(
-                modeloRecetas.obtenerListaRecetas(), startDate, endDate, nombreMedicamento);
-    }
-
     public Map<String, Long> DashboardRecetasPorEstado(LocalDate desde, LocalDate hasta, String nombreMedicamento) {
-        return dashboard.recetasPorEstado(
-                modeloRecetas.obtenerListaRecetas(), desde, hasta, nombreMedicamento);
+        return dashboard.recetasPorEstado(modeloRecetas.obtenerListaRecetas(), desde, hasta, nombreMedicamento);
     }
 
     public Receta buscarRecetaHistorial(String codigo){
