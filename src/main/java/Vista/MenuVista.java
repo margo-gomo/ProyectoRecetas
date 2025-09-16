@@ -2550,7 +2550,7 @@ public class MenuVista extends JFrame {
 
         switch (token) {
             case 0: // Admin
-                for (int i = 0; i < 2; i++) {
+                for (int i = 1; i < 3; i++) {
                     tabbedPanePrincipal.setEnabledAt(i, false);
                 }
                 break;
@@ -2559,7 +2559,7 @@ public class MenuVista extends JFrame {
                     tabbedPanePrincipal.setEnabledAt(i, false);
                 }
                 tabbedPanePrincipal.setEnabledAt(0, true);
-                tabbedPanePrincipal.setEnabledAt(6, true);
+                tabbedPanePrincipal.setEnabledAt(1, true);
                 tabbedPanePrincipal.setEnabledAt(7, true);
                 tabbedPanePrincipal.setEnabledAt(8, true);
                 break;
@@ -2567,8 +2567,8 @@ public class MenuVista extends JFrame {
                 for (int i = 0; i < tabbedPanePrincipal.getTabCount(); i++) {
                     tabbedPanePrincipal.setEnabledAt(i, false);
                 }
-                tabbedPanePrincipal.setEnabledAt(1, true);
-                tabbedPanePrincipal.setEnabledAt(6, true);
+                tabbedPanePrincipal.setEnabledAt(0, true);
+                tabbedPanePrincipal.setEnabledAt(2, true);
                 tabbedPanePrincipal.setEnabledAt(7, true);
                 tabbedPanePrincipal.setEnabledAt(8, true);
                 break;
