@@ -1,9 +1,6 @@
 package Vista;
 
-import Vista.Prescripción.DialogBuscarMedicamento;
-import Vista.Prescripción.DialogBuscarPaciente;
-import Vista.Prescripción.DialogBuscarReceta;
-import Vista.Prescripción.DialogSeleccionarFecha;
+import Vista.Prescripción.*;
 import Modelo.entidades.Medico;
 import Modelo.entidades.Paciente;
 import Controlador.Controlador;
@@ -28,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.regex.Pattern;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -931,6 +929,25 @@ public class MenuVista extends JFrame {
         if (limpiarButtonDashboard != null) {
             limpiarButtonDashboard.addActionListener(e -> limpiarDashboardUI());
         }
+
+        tablaHistorico.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 2) { // doble clic
+                    int fila = tablaHistorico.getSelectedRow();
+                    if (fila >= 0) {
+                        String codigoReceta = tablaHistorico.getValueAt(fila, 0).toString();
+
+                        List<Indicacion> indicaciones = controlador.mostrarIndicaciones(codigoReceta);
+
+                        DialogDetalleReceta dialog = new DialogDetalleReceta();
+                        dialog.setIndicaciones(indicaciones);
+                        dialog.setVisible(true);
+                    }
+                }
+            }
+        });
+
     }
 
 

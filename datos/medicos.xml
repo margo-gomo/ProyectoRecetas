@@ -12,5 +12,11 @@
         <id>2</id>
         <token>1</token>
     </medico>
+    <medico especialidad="Neurología">
+        <nombre>Dra. María Montenegro</nombre>
+        <clave>3</clave>
+        <id>3</id>
+        <token>1</token>
+    </medico>
 </lista_medicos>
 
