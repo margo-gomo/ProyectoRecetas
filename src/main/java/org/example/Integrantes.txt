@@ -1,0 +1,6 @@
+Proyecto: Sistema de Prescripción y Despacho de Recetas
+
+Integrantes:
+- Josué Acuña Bolaños
+- María González Montenegro
+- Kenny Jiménez Wang

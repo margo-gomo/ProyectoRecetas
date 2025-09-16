@@ -38,7 +38,6 @@ public class DialogDetalleReceta extends JDialog {
         contentPane = new JPanel(new BorderLayout(10, 10));
         setContentPane(contentPane);
 
-        // Modelo de solo lectura
         modeloTabla = new DefaultTableModel(
                 new Object[]{"Medicamento", "Cantidad", "Duración (días)", "Indicaciones"}, 0
         ) {
@@ -68,19 +67,16 @@ public class DialogDetalleReceta extends JDialog {
         contentPane.setBorder(new EmptyBorder(12, 12, 12, 12));
         contentPane.setBackground(Color.WHITE);
 
-        // Tabla
         tablaDetalles.setFont(FNT_TXT);
         tablaDetalles.setRowHeight(24);
         tablaDetalles.setFillsViewportHeight(true);
 
-        // Estilo encabezados
         JTableHeader header = tablaDetalles.getTableHeader();
         header.setFont(new Font("Segoe UI", Font.BOLD, 13));
         header.setOpaque(true);
         header.setBackground(PRIMARY);
         header.setForeground(Color.WHITE);
 
-        // Botones
         igualarTamanoBotones(120, 32, buttonOK);
     }
 

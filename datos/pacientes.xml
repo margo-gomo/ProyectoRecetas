@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_pacientes>
-    <paciente fecha_nacimiento="15/05/2015">
-        <id>30</id>
-        <nombre>Marcos Díaz</nombre>
-        <teléfono>600100100</teléfono>
-    </paciente>
-    <paciente fecha_nacimiento="20/10/1990">
-        <id>31</id>
-        <nombre>Lucía Fernández</nombre>
-        <teléfono>600200200</teléfono>
-    </paciente>
     <paciente fecha_nacimiento="02/07/1985">
         <id>32</id>
         <nombre>Andrés Morales</nombre>
@@ -20,4 +10,15 @@
         <nombre>Paula Castillo</nombre>
         <teléfono>600400400</teléfono>
     </paciente>
+    <paciente fecha_nacimiento="15/05/2015">
+        <id>30</id>
+        <nombre>Marcos Díaz</nombre>
+        <teléfono>600100100</teléfono>
+    </paciente>
+    <paciente fecha_nacimiento="20/10/1990">
+        <id>31</id>
+        <nombre>Lucía Fernández</nombre>
+        <teléfono>600200200</teléfono>
+    </paciente>
 </lista_pacientes>
+

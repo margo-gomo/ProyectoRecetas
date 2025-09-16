@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_farmaceutas>
     <farmaceuta>
-        <id>10</id>
-        <nombre>Luisa Martínez</nombre>
-        <clave>10</clave>
-        <token>2</token>
-    </farmaceuta>
-    <farmaceuta>
         <id>11</id>
         <nombre>José Flores</nombre>
         <clave>11</clave>
@@ -18,4 +12,11 @@
         <clave>12</clave>
         <token>2</token>
     </farmaceuta>
+    <farmaceuta>
+        <id>10</id>
+        <nombre>Luisa Martínez</nombre>
+        <clave>10</clave>
+        <token>2</token>
+    </farmaceuta>
 </lista_farmaceutas>
+

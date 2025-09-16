@@ -30,20 +30,14 @@ import java.util.regex.Pattern;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
-import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.chart.plot.PlotOrientation;
 
 
 
 public class MenuVista extends JFrame {
 
-    // ------------------------------------------------------------------------------------------
-    // -------------------------------- ATRIBUTOS DE LA VISTA -----------------------------------
-    // ------------------------------------------------------------------------------------------
+    // -------------------------------- ATRIBUTOS -----------------------------------
 
     private JTabbedPane tabbedPanePrincipal;
     private JPanel panelPrincipal;
@@ -158,7 +152,6 @@ public class MenuVista extends JFrame {
 
     private DefaultTableModel modeloTablaRecetas;
     private Controlador controlador;
-    private int token;
     private final DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private TableRowSorter<DefaultTableModel> sorterMedicos;
     private TableRowSorter<DefaultTableModel> sorterFarma;
@@ -169,9 +162,7 @@ public class MenuVista extends JFrame {
 
     private Paciente pacienteSeleccionado;
 
-    // ------------------------------------------------------------------------------------------
     // ------------------------------------- CONSTRUCTOR ----------------------------------------
-    // ------------------------------------------------------------------------------------------
 
     public MenuVista(Controlador contr) {
         controlador = contr;
@@ -201,13 +192,13 @@ public class MenuVista extends JFrame {
         }
 
         if (labelFechaActualPresc != null) {
-            labelFechaActualPresc.setText(LocalDate.now().format(formatoFecha)); // hoy
+            labelFechaActualPresc.setText(LocalDate.now().format(formatoFecha));
         }
         if (labelFechaRetiroPresc != null) {
             labelFechaRetiroPresc.setText("(sin fecha)");
         }
 
-        // ------------------------- LISTENERS BÁSICOS (DIÁLOGOS) -------------------------
+        // ------------------------- LISTENERS DE DIÁLOGOS -------------------------
 
         if (buscarPacienteButton != null) {
             buscarPacienteButton.addActionListener(new ActionListener() {
@@ -356,7 +347,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // Guardar Prescripción
+        // GUARDAR PRESCRIPCIÓN
         if (guardarButton != null) {
             guardarButton.addActionListener(e -> guardarRecetaDesdeUI());
         }
@@ -371,7 +362,7 @@ public class MenuVista extends JFrame {
             descartarMedicamentoPresc.addActionListener(e -> descartarIndicacionActual());
         }
 
-        // ------------------------- LISTENER: GUARDAR MÉDICO -------------------------
+        // GUARDAR MÉDICO
         if (guardarButton2 != null) {
             guardarButton2.addActionListener(new ActionListener() { // Médicos
                 @Override
@@ -400,7 +391,7 @@ public class MenuVista extends JFrame {
                 }
             });
         }
-        // ------------------------- LISTENER: MODIFICAR MÉDICO -------------------------
+        // MODIFICAR MÉDICO
         if (modificarButton != null) {
             modificarButton.addActionListener(new ActionListener() {
                 @Override
@@ -436,7 +427,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // ------------------------- LISTENER: BORRAR MÉDICO -------------------------
+        // BORRAR MÉDICO
 
         if (borrarButton != null) {
             borrarButton.addActionListener(new ActionListener() {
@@ -457,7 +448,6 @@ public class MenuVista extends JFrame {
                         return;
                     }
 
-                    // Confirmación
                     int opc = JOptionPane.showConfirmDialog(
                             MenuVista.this,
                             "¿Desea eliminar al médico con ID: " + id + "?",
@@ -486,7 +476,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // ------------------------- LISTENER: LIMPIAR MÉDICO -------------------------
+        // LIMPIAR MÉDICO
 
         limpiarButton3.addActionListener(new ActionListener() {
             @Override
@@ -502,7 +492,7 @@ public class MenuVista extends JFrame {
             }
         });
 
-        // ------------------------- LISTENER: GUARDAR FARMACÉUTA -------------------------
+        // GUARDAR FARMACEUTA
         if (guardarFarm != null) {
             guardarFarm.addActionListener(e -> {
                 if (!validarCamposFarmaceuta()) return;
@@ -523,7 +513,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // ------------------------- LISTENER: MODIFICAR FARMACÉUTA -------------------------
+        // MODIFICAR FARMACEUTA
         if (modificarFarm != null) {
             modificarFarm.addActionListener(e -> {
 
@@ -551,7 +541,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // ------------------------- LISTENER: BORRAR FARMACÉUTA -------------------------
+        // BORRAR FARMACEUTA
         if (borrarFarm != null) {
             borrarFarm.addActionListener(e -> {
 
@@ -586,7 +576,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // ------------------------- LISTENER: LIMPIAR FARMACÉUTA -------------------------
+        // LIMPIAR FARMACEUTA
 
         limpiarFarm.addActionListener(e -> {
             if (tablaFarma != null) tablaFarma.clearSelection();
@@ -595,7 +585,7 @@ public class MenuVista extends JFrame {
         });
 
 
-        // --------------------------- LISTENER: GUARDAR PACIENTE ---------------------------
+        // GUARDAR PACIENTE
         if (guardarPaciente != null) {
             guardarPaciente.addActionListener(e -> {
                 if (!validarCamposPacienteParaGuardar()) return;
@@ -626,7 +616,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // --------------------------- LISTENER: MODIFICAR PACIENTE ---------------------------
+        // MODIFICAR PACIENTE
 
         if (modificarPaciente != null) {
             modificarPaciente.addActionListener(e -> {
@@ -658,7 +648,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // --------------------------- LISTENER: BORRAR PACIENTE ---------------------------
+        // BORRAR PACIENTE
         if (borrarPaciente != null) {
             borrarPaciente.addActionListener(e -> {
 
@@ -695,7 +685,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // --------------------------- LISTENER: LIMPIAR PACIENTE ---------------------------
+        // LIMPIAR PACIENTE
 
         limpiarPaciente.addActionListener(e -> {
             if (tablaPac != null) tablaPac.clearSelection();
@@ -703,7 +693,7 @@ public class MenuVista extends JFrame {
             if (tfBusquedaPaciente != null) tfBusquedaPaciente.setText("");
         });
 
-        // ------------------------ LISTENER: GUARDAR MEDICAMENTO ------------------------
+        // GUARDAR MEDICAMENTO
 
         if (guardarMedicamento != null) {
             guardarMedicamento.addActionListener(e -> {
@@ -730,7 +720,7 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // ------------------------ LISTENER: MODIFICAR MEDICAMENTO ------------------------
+        // MODIFICAR MEDICAMENTO
         if (modificarMedicamento != null) {
             modificarMedicamento.addActionListener(e -> {
                 if (!validarCodigoMedicamentoPresente()) return;
@@ -757,7 +747,7 @@ public class MenuVista extends JFrame {
                 }
             });
         }
-        // ------------------------ LISTENER: BORRAR MEDICAMENTO ------------------------
+        // BORRAR MEDICAMENTO
 
         if (borrarMedicamento != null) {
             borrarMedicamento.addActionListener(e -> {
@@ -811,7 +801,7 @@ public class MenuVista extends JFrame {
         });
 
 
-        // ------------------------ LISTENER: LIMPIAR MEDICAMENTO ------------------------
+        // LIMPIAR MEDICAMENTO
 
         limpiarMedicamento.addActionListener(e -> {
             if (tablaMed != null) tablaMed.clearSelection();
@@ -825,15 +815,7 @@ public class MenuVista extends JFrame {
             }
         });
 
-
-        // ------------------------ LISTENER: LIMPIAR MEDICAMENTO ------------------------
-
-        limpiarMedicamento.addActionListener(e -> {
-            if (tablaMed != null) tablaMed.clearSelection();
-            limpiarCamposMedicamento();
-            if (tfBusquedaMedicamento != null) tfBusquedaMedicamento.setText("");
-        });
-        // ------------------------ LISTENER: DESPACHO -----------------------------------
+        // DESPACHO
         if (iniciarProcesoButton != null) {
             iniciarProcesoButton.addActionListener(e -> {
                 int fila = tablaDespacho.getSelectedRow();
@@ -933,7 +915,7 @@ public class MenuVista extends JFrame {
         tablaHistorico.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (evt.getClickCount() == 2) { // doble clic
+                if (evt.getClickCount() == 2) {
                     int fila = tablaHistorico.getSelectedRow();
                     if (fila >= 0) {
                         String codigoReceta = tablaHistorico.getValueAt(fila, 0).toString();
@@ -950,14 +932,12 @@ public class MenuVista extends JFrame {
 
     }
 
-
     private void finalizarVentana(java.awt.event.WindowEvent evt) {
         cerrarAplicacion();
     }
     public void cerrarAplicacion() {
         controlador.cerrarAplicacion();
     }
-
 
     private void aplicarEstilosGenerales() {
         final Color PRIMARY = new Color(66, 133, 244);
@@ -970,7 +950,6 @@ public class MenuVista extends JFrame {
             tabbedPanePrincipal.setBackground(Color.WHITE);
         }
 
-        // Campos de texto
         JComponent[] camposTexto = {
                 tfBusquedaMedicon, tfBusquedaFarmaceutas, tfBusquedaMedicamento, tfBusquedaPaciente, textField5, textField6,
                 textField7, tfHistorico, textField9, textField10, textField11, textField12,
@@ -1040,10 +1019,7 @@ public class MenuVista extends JFrame {
             });
         }
     }
-
-    // ------------------------------------------------------------------------------------------
     // --------------------------------- CONFIGURACIÓN DE XML -----------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void cargarDatosIniciales() {
         cargarMedicosEnTabla();
@@ -1119,9 +1095,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-    // ------------------------------------------------------------------------------------------
     // --------------------------------- CONFIGURACIÓN DE TABLAS --------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void configurarTablaMedicos() {
         if (tabloMedicos == null) return;
@@ -1313,7 +1287,6 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // Despacho
         if (tablaDespacho != null) {
             String[] columnasDespacho = {"Código de la receta","ID Paciente", "Fecha Actual", "Fecha de Retiro", "Estado"};
             DefaultTableModel modeloDespacho = new DefaultTableModel(columnasDespacho, 0) {
@@ -1386,9 +1359,7 @@ public class MenuVista extends JFrame {
             tablaMesAnioDashboard.setModel(modeloDashboard);
         }
     }
-    // ------------------------------------------------------------------------------------------
     // ---------------------------------- FILTROS DE BÚSQUEDA -----------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void conectarFiltroConCombo(JTextField campo,
                                         JComboBox<?> combo,
@@ -1401,7 +1372,7 @@ public class MenuVista extends JFrame {
             String t = (campo.getText() == null) ? "" : campo.getText().trim();
             if (t.isEmpty()) { sorter.setRowFilter(null); return; }
 
-            int col = defaultCol; // columna por defecto si no hay match
+            int col = defaultCol;
             if (combo != null && combo.getSelectedItem() != null) {
                 String key = combo.getSelectedItem().toString().trim().toLowerCase();
                 Integer m = etiquetaACol.get(key);
@@ -1420,9 +1391,7 @@ public class MenuVista extends JFrame {
         if (combo != null) combo.addActionListener(e -> aplicar.run());
     }
 
-    // ------------------------------------------------------------------------------------------
     // --------------------------- HELPERS: FORMULARIO MÉDICOS ----------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void limpiarCamposMedico() {
         if (tfIdMedico != null) tfIdMedico.setText("");
@@ -1488,9 +1457,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-    // ------------------------------------------------------------------------------------------
     // ------------------------- HELPERS: FORMULARIO FARMACEUTAS --------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void limpiarCamposFarmaceuta() {
         if (tfIdFarma != null) tfIdFarma.setText("");
@@ -1538,9 +1505,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-    // ------------------------------------------------------------------------------------------
     // -------------------------- HELPERS: FORMULARIO PACIENTES ---------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void limpiarCamposPaciente() {
         if (tfIdPaciente != null) tfIdPaciente.setText("");
@@ -1667,11 +1632,7 @@ public class MenuVista extends JFrame {
             return null;
         }
     }
-
-
-    // ------------------------------------------------------------------------------------------
     // ------------------------- HELPERS: FORMULARIO MEDICAMENTOS -------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void limpiarCamposMedicamento() {
         if (tfCodigoMed != null) tfCodigoMed.setText("");
@@ -1739,9 +1700,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-    // ------------------------------------------------------------------------------------------
     // ------------------------------------- HELPERS: RECETA-------------------------------------
-    // ------------------------------------------------------------------------------------------
 
     private void recargarTablaIndicacionesDesdeControlador() {
         if (modeloTablaRecetas == null || controlador == null) return;
@@ -1854,7 +1813,6 @@ public class MenuVista extends JFrame {
             return;
         }
 
-        // ---------------- Validar fecha de confección ----------------
         LocalDate fechaConf;
         try {
             String f = (labelFechaActualPresc != null) ? labelFechaActualPresc.getText().trim() : "";
@@ -1871,8 +1829,6 @@ public class MenuVista extends JFrame {
                     "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        // ---------------- Validar fecha de retiro ----------------
         LocalDate fechaRet = null;
         try {
             String r = (labelFechaRetiroPresc != null) ? labelFechaRetiroPresc.getText().trim() : "";
@@ -1892,7 +1848,6 @@ public class MenuVista extends JFrame {
             return;
         }
 
-        // ---------------- Validar código ----------------
         String codigoIngresado = leerCodigoPrescripcion();
         if (codigoIngresado.isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -1908,7 +1863,6 @@ public class MenuVista extends JFrame {
             return;
         }
 
-        // ---------------- Guardar receta ----------------
         try {
             Receta receta = controlador.agregarReceta(
                     codigoIngresado,
@@ -2346,9 +2300,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-    // ------------------------------------------------------------------------------------------
     // ------------------------------------------ MAIN ------------------------------------------
-    // ------------------------------------------------------------------------------------------
     private void mostrarLogin() {
         LoginVista loginVista = new LoginVista();
         JDialog loginDialog = loginVista.createDialog(this);
@@ -2385,11 +2337,9 @@ public class MenuVista extends JFrame {
             }
         });
         loginVista.setOnCambiarContrasena(e -> {
-            // 'loginDialog' ya existe y es modal: lo usamos como owner para el dialogo hijo
             CambiarClaveVista cambiarVista = new CambiarClaveVista();
             final JDialog cambiarDialog = cambiarVista.createDialog(loginDialog);
 
-            // Wirear los listeners usando el controlador
             cambiarVista.setOnAceptar(ev -> {
                 String id = cambiarVista.getUsuarioId();
                 String actual = new String(cambiarVista.getClaveActual());

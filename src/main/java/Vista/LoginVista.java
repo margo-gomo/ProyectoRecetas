@@ -156,7 +156,6 @@ public class LoginVista extends JFrame {
             claveText.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
         }
 
-        // Íconos en los botones
         if (ingresarButton != null) {
             ingresarButton.setIcon(FontIcon.of(FontAwesomeSolid.SIGN_IN_ALT, 18, Color.WHITE));
             estiloPrimario(ingresarButton, PRIMARY, FNT_BTN);
