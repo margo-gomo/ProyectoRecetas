@@ -2,7 +2,7 @@
 <administradores>
     <administrador>
         <nombre>Ana Torres</nombre>
-        <clave>123</clave>
+        <clave>321</clave>
         <id>1</id>
         <token>0</token>
     </administrador>
@@ -12,5 +12,10 @@
         <id>2</id>
         <token>0</token>
     </administrador>
+    <administrador>
+        <nombre>Laura Ramírez</nombre>
+        <clave>456</clave>
+        <id>3</id>
+        <token>0</token>
+    </administrador>
 </administradores>
-

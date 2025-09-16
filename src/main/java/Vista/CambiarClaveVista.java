@@ -43,7 +43,6 @@ public class CambiarClaveVista extends JDialog {
         if (getRootPane() != null && aceptarButton != null)
             getRootPane().setDefaultButton(aceptarButton);
 
-        // Acción por defecto de "Cancelar": cerrar ventana
         if (cancelarButton != null) {
             cancelarButton.addActionListener(e -> dispose());
         }
@@ -56,7 +55,6 @@ public class CambiarClaveVista extends JDialog {
         dialog.setResizable(false);
         dialog.setLocationRelativeTo(owner);
 
-        // establecer el botón por defecto si existe
         if (dialog.getRootPane() != null && aceptarButton != null) {
             dialog.getRootPane().setDefaultButton(aceptarButton);
         }

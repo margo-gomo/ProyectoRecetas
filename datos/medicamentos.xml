@@ -10,5 +10,14 @@
         <nombre>Amoxicilina</nombre>
         <descripcion>250 mg cápsulas</descripcion>
     </medicamento>
+    <medicamento>
+        <codigo>3</codigo>
+        <nombre>Ibuprofeno</nombre>
+        <descripcion>400 mg tabletas</descripcion>
+    </medicamento>
+    <medicamento>
+        <codigo>4</codigo>
+        <nombre>Omeprazol</nombre>
+        <descripcion>20 mg cápsulas</descripcion>
+    </medicamento>
 </lista_medicamentos>
-

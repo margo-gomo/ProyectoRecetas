@@ -3,20 +3,25 @@
     <medico especialidad="Medicina General">
         <nombre>Dr. Juan Pérez</nombre>
         <clave>111</clave>
-        <id>1</id>
+        <id>20</id>
         <token>1</token>
     </medico>
     <medico especialidad="Pediatría">
         <nombre>Dra. Sofía Herrera</nombre>
         <clave>222</clave>
-        <id>2</id>
+        <id>21</id>
         <token>1</token>
     </medico>
     <medico especialidad="Neurología">
         <nombre>Dra. María Montenegro</nombre>
-        <clave>3</clave>
-        <id>3</id>
+        <clave>333</clave>
+        <id>22</id>
+        <token>1</token>
+    </medico>
+    <medico especialidad="Cardiología">
+        <nombre>Dr. Fernando Ruiz</nombre>
+        <clave>444</clave>
+        <id>23</id>
         <token>1</token>
     </medico>
 </lista_medicos>
-
