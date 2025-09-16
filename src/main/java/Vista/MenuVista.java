@@ -2539,7 +2539,7 @@ public class MenuVista extends JFrame {
             System.err.println("Error iniciando FlatLaf: " + ex.getMessage());
         }
         SwingUtilities.invokeLater(() -> {
-            this.setVisible(true);
+            this.setVisible(false);
             mostrarLogin();
             this.setVisible(true); // <-- se muestra solo después del login
         });
