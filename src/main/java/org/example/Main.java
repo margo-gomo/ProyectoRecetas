@@ -35,8 +35,7 @@ public class Main {
         System.out.println("Aplicación inicializada..");
     }
 
-    private void init() {
-        SwingUtilities.invokeLater(() -> {
+    private void init() {       SwingUtilities.invokeLater(() -> {
             mostrarInterfaz();
         });
     }
