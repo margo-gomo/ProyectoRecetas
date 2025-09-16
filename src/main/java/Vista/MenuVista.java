@@ -1400,7 +1400,7 @@ public class MenuVista extends JFrame {
 
     private void configurarTablaDashboard() {
         if (tablaMesAnioDashboard != null) {
-            String[] columnasDashboard = { "Mes/Año", "Cantidad de Recetas" };
+            String[] columnasDashboard = { "Mes/Año", "Cantidad de medicamentos prescritos" };
             DefaultTableModel modeloDashboard = new DefaultTableModel(columnasDashboard, 0) {
                 @Override public boolean isCellEditable(int row, int column) { return false; }
             };
