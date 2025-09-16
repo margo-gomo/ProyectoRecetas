@@ -24,7 +24,7 @@
         </paciente>
         <fecha_confeccion>18/09/2025</fecha_confeccion>
         <fecha_retiro>20/09/2025</fecha_retiro>
-        <estado>Confeccionada</estado>
+        <estado>confeccionada</estado>
         <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
         <idFarmaceutaLista>No lista</idFarmaceutaLista>
         <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
@@ -111,7 +111,36 @@
         </paciente>
         <fecha_confeccion>10/09/2025</fecha_confeccion>
         <fecha_retiro>12/09/2025</fecha_retiro>
-        <estado>Confeccionada</estado>
+        <estado>confeccionada</estado>
+        <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
+        <idFarmaceutaLista>No lista</idFarmaceutaLista>
+        <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
+    </receta>
+    <receta>
+        <codigo>997</codigo>
+        <indicaciones>
+            <entry>
+                <key>4</key>
+                <value>
+                    <medicamento>
+                        <codigo>4</codigo>
+                        <nombre>Omeprazol</nombre>
+                        <descripcion>20 mg cápsulas</descripcion>
+                    </medicamento>
+                    <cantidad>10</cantidad>
+                    <descripcion>Tomar cada 12 horas</descripcion>
+                    <duracion-dias>5</duracion-dias>
+                </value>
+            </entry>
+        </indicaciones>
+        <paciente fecha_nacimiento="15/05/2015">
+            <id>30</id>
+            <nombre>Marcos Díaz</nombre>
+            <teléfono>600100100</teléfono>
+        </paciente>
+        <fecha_confeccion>16/09/2025</fecha_confeccion>
+        <fecha_retiro>31/10/2025</fecha_retiro>
+        <estado>confeccionada</estado>
         <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
         <idFarmaceutaLista>No lista</idFarmaceutaLista>
         <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
