@@ -12,6 +12,7 @@ import Adaptador.LocalDateAdapter;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -152,6 +153,9 @@ public class MenuVista extends JFrame {
     private JTextField tfRecetasDespacho;
     private JTextField tfCodPresc;
     private JComboBox comboCodigoHist;
+    private JPanel panelacerca;
+    private JLabel lblTitulo;
+    private JLabel lblDescripcion;
 
     private DefaultTableModel modeloTablaRecetas;
     private Controlador controlador;
@@ -189,8 +193,11 @@ public class MenuVista extends JFrame {
         cargarMedicamentosEnComboDashboard();
         recargarTablaIndicacionesDesdeControlador();
         cargarHistoricoEnTabla();
+        configurarPanelAcerca();
+
 
         if (tabbedPanePrincipal != null) {
+            tabbedPanePrincipal.setIconAt(8, FontIcon.of(FontAwesomeSolid.INFO_CIRCLE, 16, PRIMARY));    // Acerca de
             tabbedPanePrincipal.setIconAt(0, FontIcon.of(FontAwesomeSolid.FILE_MEDICAL, 16, PRIMARY)); // Prescripción
             tabbedPanePrincipal.setIconAt(1, FontIcon.of(FontAwesomeSolid.CHECK, 16, PRIMARY));        // Despacho
             tabbedPanePrincipal.setIconAt(2, FontIcon.of(FontAwesomeSolid.USER_MD, 16, PRIMARY));      // Médicos
@@ -199,7 +206,6 @@ public class MenuVista extends JFrame {
             tabbedPanePrincipal.setIconAt(5, FontIcon.of(FontAwesomeSolid.CAPSULES, 16, PRIMARY));     // Medicamentos
             tabbedPanePrincipal.setIconAt(6, FontIcon.of(FontAwesomeSolid.HISTORY, 16, PRIMARY));      // Histórico
             tabbedPanePrincipal.setIconAt(7, FontIcon.of(FontAwesomeSolid.CHART_LINE, 16, PRIMARY));   // Dashboard
-            tabbedPanePrincipal.setIconAt(8, FontIcon.of(FontAwesomeSolid.INFO_CIRCLE, 16, PRIMARY));    // Acerca de
         }
 
         if (labelNomPaciente != null) {
@@ -2359,6 +2365,47 @@ public class MenuVista extends JFrame {
                 estilizarBotonesRestantes((Container) comp, yaEstilados, bg, fg);
             }
         }
+    }
+
+    // ------------------------------------- ACERCA DE -------------------------------------
+
+    private void configurarPanelAcerca() {
+        if (panelacerca == null) return;
+
+        panelacerca.setLayout(new BorderLayout(10, 10));
+
+        JLabel iconoLabel = new JLabel();
+        iconoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        FontIcon infoIcon = FontIcon.of(FontAwesomeSolid.INFO_CIRCLE, 100, new Color(66, 133, 244));
+        iconoLabel.setIcon(infoIcon);
+
+        JPanel panelIcono = new JPanel(new BorderLayout());
+        panelIcono.add(iconoLabel, BorderLayout.CENTER);
+        panelIcono.setBorder(new EmptyBorder(20, 20, 10, 20));
+
+        JPanel panelTexto = new JPanel();
+        panelTexto.setLayout(new BoxLayout(panelTexto, BoxLayout.Y_AXIS));
+
+        if (lblTitulo != null) {
+            lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 28));
+            lblTitulo.setForeground(PRIMARY);
+            lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panelTexto.add(lblTitulo);
+        }
+
+        if (lblDescripcion != null) {
+            lblDescripcion.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+            lblDescripcion.setForeground(Color.DARK_GRAY);
+            lblDescripcion.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panelTexto.add(Box.createVerticalStrut(10));
+            panelTexto.add(lblDescripcion);
+        }
+
+        panelacerca.removeAll();
+        panelacerca.add(panelIcono, BorderLayout.NORTH);
+        panelacerca.add(panelTexto, BorderLayout.CENTER);
+        panelacerca.revalidate();
+        panelacerca.repaint();
     }
 
     // ------------------------------------------ MAIN ------------------------------------------
