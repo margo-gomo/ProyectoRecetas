@@ -85,8 +85,12 @@ public class Receta {
 
     public void marcarLista(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("proceso".equalsIgnoreCase(estado)) {
-            estado = "lista";
-            idFarmaceutaLista=idFarmaceuta;
+            if(!idFarmaceuta.equals(idFarmaceutaProceso)){
+                estado = "proceso";
+                idFarmaceutaLista=idFarmaceuta;
+            }
+            else
+                throw new SecurityException("No puedes marcar lista una receta a la que le iniciaste el proceso");
         }
         else
             throw new IllegalArgumentException("La receta que no está en proceso.");
@@ -94,8 +98,12 @@ public class Receta {
 
     public void entregar(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("lista".equalsIgnoreCase(estado)) {
+            if(!idFarmaceuta.equals(idFarmaceutaLista)){
                 estado = "entregada";
                 idFarmaceutaEntregar=idFarmaceuta;
+            }
+            else
+                throw new SecurityException("No puedes entregar una receta a la que marcaste lista");
         } else
             throw new IllegalArgumentException("La receta no está lista");
     }
