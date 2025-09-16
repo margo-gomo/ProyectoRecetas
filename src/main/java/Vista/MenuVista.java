@@ -32,12 +32,18 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.chart.plot.PlotOrientation;
-
-
+import org.kordamp.ikonli.swing.FontIcon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 public class MenuVista extends JFrame {
 
     // -------------------------------- ATRIBUTOS -----------------------------------
+
+    private static final Color PRIMARY = new Color(66, 133, 244);
+    private static final Color SECOND  = new Color(204, 228, 255);
+    private static final Font FNT_TXT  = new Font("Segoe UI", Font.PLAIN, 13);
+    private static final Font FNT_BTN  = new Font("Segoe UI", Font.BOLD, 13);
+    private static final Font FNT_LBL  = new Font("Segoe UI", Font.PLAIN, 12);
 
     private JTabbedPane tabbedPanePrincipal;
     private JPanel panelPrincipal;
@@ -186,6 +192,18 @@ public class MenuVista extends JFrame {
         cargarMedicamentosEnComboDashboard();
         recargarTablaIndicacionesDesdeControlador();
         cargarHistoricoEnTabla();
+
+        if (tabbedPanePrincipal != null) {
+            tabbedPanePrincipal.setIconAt(0, FontIcon.of(FontAwesomeSolid.FILE_MEDICAL, 16, PRIMARY)); // Prescripción
+            tabbedPanePrincipal.setIconAt(1, FontIcon.of(FontAwesomeSolid.CHECK, 16, PRIMARY));        // Despacho
+            tabbedPanePrincipal.setIconAt(2, FontIcon.of(FontAwesomeSolid.USER_MD, 16, PRIMARY));      // Médicos
+            tabbedPanePrincipal.setIconAt(3, FontIcon.of(FontAwesomeSolid.PILLS, 16, PRIMARY));        // Farmacéutas
+            tabbedPanePrincipal.setIconAt(4, FontIcon.of(FontAwesomeSolid.USER, 16, PRIMARY));         // Pacientes
+            tabbedPanePrincipal.setIconAt(5, FontIcon.of(FontAwesomeSolid.CAPSULES, 16, PRIMARY));     // Medicamentos
+            tabbedPanePrincipal.setIconAt(6, FontIcon.of(FontAwesomeSolid.HISTORY, 16, PRIMARY));      // Histórico
+            tabbedPanePrincipal.setIconAt(7, FontIcon.of(FontAwesomeSolid.CHART_LINE, 16, PRIMARY));   // Dashboard
+            tabbedPanePrincipal.setIconAt(8, FontIcon.of(FontAwesomeSolid.INFO_CIRCLE, 16, PRIMARY));    // Acerca de
+        }
 
         if (labelNomPaciente != null) {
             labelNomPaciente.setText("(sin paciente seleccionado)");
