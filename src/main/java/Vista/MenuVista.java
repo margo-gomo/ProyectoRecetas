@@ -21,6 +21,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.YearMonth;
+
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDate;
@@ -2137,6 +2138,25 @@ public class MenuVista extends JFrame {
             return;
         }
 
+        // Si no se dieron fechas, ponemos un rango por defecto: mes actual
+        if (desde == null && hasta == null) {
+            YearMonth ymNow = YearMonth.now();
+            desde = ymNow.atDay(1);
+            hasta = ymNow.atEndOfMonth();
+        } else if (desde == null && hasta != null) {
+            // si solo hay 'hasta', ponemos desde al primer día del mismo mes
+            desde = YearMonth.from(hasta).atDay(1);
+        } else if (desde != null && hasta == null) {
+            // si solo hay 'desde', ponemos hasta al último día del mismo mes
+            hasta = YearMonth.from(desde).atEndOfMonth();
+        }
+
+        // sanity: si desde > hasta no hacemos nada
+        if (desde.isAfter(hasta)) {
+            JOptionPane.showMessageDialog(this, "'Desde' no puede ser posterior a 'Hasta'.", "Validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         String medSeleccionado = null;
         if (comboBox1 != null && comboBox1.getSelectedItem() != null) {
             medSeleccionado = comboBox1.getSelectedItem().toString();
@@ -2146,8 +2166,13 @@ public class MenuVista extends JFrame {
         Map<YearMonth, Integer> acumuladoMeses = new java.util.HashMap<>();
 
         if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
-            for (int i = 1; i < comboBox1.getItemCount(); i++) {
+            // Si quieres la suma por medicamento (cada serie por medicamento) -> iteramos, pero evitamos duplicados:
+            Set<String> medsVistos = new HashSet<>();
+            for (int i = 0; i < comboBox1.getItemCount(); i++) {
                 String med = comboBox1.getItemAt(i).toString();
+                if ("Todos".equals(med) || medsVistos.contains(med)) continue;
+                medsVistos.add(med);
+
                 Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, med);
                 for (Map.Entry<YearMonth, Integer> entry : datos.entrySet()) {
                     acumuladoMeses.merge(entry.getKey(), entry.getValue(), Integer::sum);
@@ -2160,8 +2185,15 @@ public class MenuVista extends JFrame {
         if (tablaMesAnioDashboard != null) {
             DefaultTableModel model = (DefaultTableModel) tablaMesAnioDashboard.getModel();
             model.setRowCount(0);
-            for (Map.Entry<YearMonth, Integer> entry : acumuladoMeses.entrySet()) {
-                model.addRow(new Object[]{entry.getKey().toString(), entry.getValue()});
+
+            // Ordenamos las claves por fecha
+            List<YearMonth> clavesOrdenadas = new ArrayList<>(acumuladoMeses.keySet());
+            clavesOrdenadas.sort(Comparator.naturalOrder());
+
+            DateTimeFormatter formatoMesAnio = DateTimeFormatter.ofPattern("MM/yyyy");
+
+            for (YearMonth ym : clavesOrdenadas) {
+                model.addRow(new Object[]{ym.format(formatoMesAnio), acumuladoMeses.getOrDefault(ym, 0)});
             }
         }
 
@@ -2169,8 +2201,12 @@ public class MenuVista extends JFrame {
         Map<String, Long> acumuladoEstados = new java.util.HashMap<>();
 
         if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
-            for (int i = 1; i < comboBox1.getItemCount(); i++) {
+            Set<String> medsVistos = new HashSet<>();
+            for (int i = 0; i < comboBox1.getItemCount(); i++) {
                 String med = comboBox1.getItemAt(i).toString();
+                if ("Todos".equals(med) || medsVistos.contains(med)) continue;
+                medsVistos.add(med);
+
                 Map<String, Long> datos = controlador.DashboardRecetasPorEstado(desde, hasta, med);
                 for (Map.Entry<String, Long> entry : datos.entrySet()) {
                     acumuladoEstados.merge(entry.getKey(), entry.getValue(), Long::sum);
@@ -2188,46 +2224,75 @@ public class MenuVista extends JFrame {
             }
         }
 
-
         // ---------------- GRÁFICO DE LÍNEAS ----------------
         if (panelLineasDashboard != null) {
             panelLineasDashboard.removeAll();
 
             DefaultCategoryDataset datasetLineas = new DefaultCategoryDataset();
+            DateTimeFormatter formatoMesAnio = DateTimeFormatter.ofPattern("MM/yyyy");
 
             if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
-                // 🔹 recorrer todos
-                for (int i = 1; i < comboBox1.getItemCount(); i++) { // desde 1 para saltar "Todos"
+                // una serie por cada medicamento
+                Set<String> medsVistos = new HashSet<>();
+                for (int i = 0; i < comboBox1.getItemCount(); i++) {
                     String med = comboBox1.getItemAt(i).toString();
+                    if ("Todos".equals(med) || medsVistos.contains(med)) continue;
+                    medsVistos.add(med);
+
                     Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, med);
-                    for (Map.Entry<YearMonth, Integer> entry : datos.entrySet()) {
-                        datasetLineas.addValue(entry.getValue(), med, entry.getKey().toString());
+                    if (datos == null || datos.isEmpty()) continue;
+
+                    List<YearMonth> clavesOrdenadas = new ArrayList<>(datos.keySet());
+                    Collections.sort(clavesOrdenadas);
+
+                    for (YearMonth ym : clavesOrdenadas) {
+                        int val = datos.getOrDefault(ym, 0);
+                        // aquí usamos el nombre del medicamento como serie (rowKey)
+                        datasetLineas.addValue(val, med, ym.format(formatoMesAnio));
                     }
                 }
             } else if (medSeleccionado != null) {
+                // una sola serie
                 Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, medSeleccionado);
-                for (Map.Entry<YearMonth, Integer> entry : datos.entrySet()) {
-                    datasetLineas.addValue(entry.getValue(), medSeleccionado, entry.getKey().toString());
+                if (datos != null && !datos.isEmpty()) {
+                    List<YearMonth> clavesOrdenadas = new ArrayList<>(datos.keySet());
+                    Collections.sort(clavesOrdenadas);
+
+                    for (YearMonth ym : clavesOrdenadas) {
+                        int val = datos.getOrDefault(ym, 0);
+                        // usamos siempre el nombre del medicamento como serie
+                        datasetLineas.addValue(val, medSeleccionado, ym.format(formatoMesAnio));
+                    }
                 }
             }
 
-            JFreeChart chartLineas = ChartFactory.createLineChart(
-                    "Medicamentos",
-                    "Mes",
-                    "Cantidad",
-                    datasetLineas,
-                    PlotOrientation.VERTICAL,
-                    true,
-                    true,
-                    false
-            );
+            // Crear el chart
+            final DefaultCategoryDataset finalDataset = datasetLineas;
+            SwingUtilities.invokeLater(() -> {
+                JFreeChart chartLineas = ChartFactory.createLineChart(
+                        "Medicamentos por Mes",
+                        "Mes",
+                        "Cantidad",
+                        finalDataset,
+                        PlotOrientation.VERTICAL,
+                        true,
+                        true,
+                        false
+                );
 
-            ChartPanel chartPanelLineas = new ChartPanel(chartLineas);
-            chartPanelLineas.setPreferredSize(new Dimension(panelLineasDashboard.getWidth(), panelLineasDashboard.getHeight()));
+                ChartPanel chartPanelLineas = new ChartPanel(chartLineas);
+                if (panelLineasDashboard.getWidth() <= 0 || panelLineasDashboard.getHeight() <= 0) {
+                    chartPanelLineas.setPreferredSize(new Dimension(700, 300));
+                } else {
+                    chartPanelLineas.setPreferredSize(new Dimension(panelLineasDashboard.getWidth(), panelLineasDashboard.getHeight()));
+                }
 
-            panelLineasDashboard.setLayout(new BorderLayout());
-            panelLineasDashboard.add(chartPanelLineas, BorderLayout.CENTER);
-            panelLineasDashboard.validate();
+                panelLineasDashboard.setLayout(new BorderLayout());
+                panelLineasDashboard.removeAll();
+                panelLineasDashboard.add(chartPanelLineas, BorderLayout.CENTER);
+                panelLineasDashboard.revalidate();
+                panelLineasDashboard.repaint();
+            });
         }
 
         // ---------------- GRÁFICO DE PASTEL ----------------
@@ -2254,6 +2319,7 @@ public class MenuVista extends JFrame {
 
         JOptionPane.showMessageDialog(this, "Dashboard actualizado.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
     }
+
 
     private void limpiarDashboardUI() {
         if (formattedTextFieldDesdeDash != null) formattedTextFieldDesdeDash.setText("");
@@ -2437,8 +2503,8 @@ public class MenuVista extends JFrame {
 
         switch (token) {
             case 0: // Admin
-                for (int i = 0; i < tabbedPanePrincipal.getTabCount(); i++) {
-                    tabbedPanePrincipal.setEnabledAt(i, true);
+                for (int i = 0; i < 2; i++) {
+                    tabbedPanePrincipal.setEnabledAt(i, false);
                 }
                 break;
             case 1: // Médico
@@ -2454,7 +2520,7 @@ public class MenuVista extends JFrame {
                 for (int i = 0; i < tabbedPanePrincipal.getTabCount(); i++) {
                     tabbedPanePrincipal.setEnabledAt(i, false);
                 }
-                tabbedPanePrincipal.setEnabledAt(3, true);
+                tabbedPanePrincipal.setEnabledAt(1, true);
                 tabbedPanePrincipal.setEnabledAt(6, true);
                 tabbedPanePrincipal.setEnabledAt(7, true);
                 tabbedPanePrincipal.setEnabledAt(8, true);
@@ -2475,6 +2541,7 @@ public class MenuVista extends JFrame {
         SwingUtilities.invokeLater(() -> {
             this.setVisible(true);
             mostrarLogin();
+            this.setVisible(true); // <-- se muestra solo después del login
         });
     }
 }

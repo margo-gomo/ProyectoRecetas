@@ -32,32 +32,33 @@ public class Dashboard {
             return estadisticas;
         }
 
+        boolean incluirTodos = (nombreMedicamento == null || nombreMedicamento.isEmpty() || "Todos".equalsIgnoreCase(nombreMedicamento));
+
         for (Receta receta : recetas) {
             LocalDate fc = receta.getFecha_confeccion();
             if (fc == null) continue;
             if (fc.isBefore(startDate) || fc.isAfter(endDate)) continue;
 
-            boolean contiene = (nombreMedicamento == null || nombreMedicamento.isEmpty());
             int totalReceta = 0;
 
             for (Indicacion ind : receta.obtenerListaIndicaciones()) {
                 if (ind == null || ind.getMedicamento() == null) continue;
 
                 String nombre = ind.getMedicamento().getNombre();
-                if (contiene || (nombre != null && nombre.equalsIgnoreCase(nombreMedicamento))) {
+                if (incluirTodos || (nombre != null && nombre.equalsIgnoreCase(nombreMedicamento))) {
                     totalReceta += ind.getCantidad();
                 }
             }
 
-            if (totalReceta > 0 || contiene) {
+            if (totalReceta > 0) {
                 YearMonth ym = YearMonth.from(fc);
                 estadisticas.put(ym, estadisticas.getOrDefault(ym, 0) + totalReceta);
             }
         }
 
-        YearMonth startYM = YearMonth.from(startDate);
+        // aseguramos meses intermedios
+        YearMonth cur = YearMonth.from(startDate);
         YearMonth endYM = YearMonth.from(endDate);
-        YearMonth cur = startYM;
         while (!cur.isAfter(endYM)) {
             estadisticas.putIfAbsent(cur, 0);
             cur = cur.plusMonths(1);
@@ -65,6 +66,7 @@ public class Dashboard {
 
         return estadisticas;
     }
+
 
     public Map<String, Long> recetasPorEstado(
             List<Receta> recetas,

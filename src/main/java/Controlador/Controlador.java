@@ -339,12 +339,6 @@ public class Controlador {
     }
     // ---------------- MÉTODOS DASHBOARD ----------------
 
-    public void limpiarDashboard(){
-        dashboard.limpiar();
-    }
-    public void agregarMedicamentoDashboard(String nombre){
-        dashboard.agregarMedicameno(modeloMedicamento.buscarPorNombre(nombre));
-    }
     public Map<YearMonth, Integer> DashboardMedicamentosPorMes(LocalDate startDate, LocalDate endDate, String nombreMedicamento){
         return dashboard.medicamentosPorMes(modeloRecetas.obtenerListaRecetas(), startDate, endDate, nombreMedicamento);
     }
