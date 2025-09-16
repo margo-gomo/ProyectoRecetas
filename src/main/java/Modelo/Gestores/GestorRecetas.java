@@ -57,6 +57,7 @@ public class GestorRecetas {
             throw new IllegalArgumentException(receta.getCodigo());
         if(token!=2)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
+        receta.setEstado("proceso");
         receta.iniciarProceso(idFarmaceuta);
         recetas.actualizar(receta);
     }
@@ -65,6 +66,7 @@ public class GestorRecetas {
             throw new IllegalArgumentException(receta.getCodigo());
         if (token!=2)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
+        receta.setEstado("lista");
         receta.marcarLista(idFarmaceuta);
         recetas.actualizar(receta);
     }
@@ -73,6 +75,7 @@ public class GestorRecetas {
             throw new IllegalArgumentException(receta.getCodigo());
         if (token!=2)
             throw new SecurityException("No tienes los permisos para realizar esta accion");
+        receta.setEstado("entregado");
         receta.entregar(idFarmaceuta);
         recetas.actualizar(receta);
     }
