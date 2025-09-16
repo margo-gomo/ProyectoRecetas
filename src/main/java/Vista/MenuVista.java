@@ -1390,7 +1390,7 @@ public class MenuVista extends JFrame {
 
     private void configurarTablaEstados() {
         if (tablaEstadosDashboard != null) {
-            String[] columnasEstados = {"Estado", "Cantidad de Recetas"};
+            String[] columnasEstados = {"Estado", "Cantidad de medicamentos prescritos"};
             DefaultTableModel modeloEstados = new DefaultTableModel(columnasEstados, 0) {
                 @Override public boolean isCellEditable(int row, int column) { return false; }
             };
