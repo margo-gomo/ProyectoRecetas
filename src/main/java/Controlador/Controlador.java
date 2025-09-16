@@ -56,9 +56,13 @@ public class Controlador {
         int tipo = usuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
 
         if (tipo == 1) {
-            buscarMedicoPorId(id).setClave(claveNueva);
+            Medico medico = buscarMedicoPorId(id);
+            medico.setClave(claveConfirmar);
+            actualizarUsuarioMedico(medico);
         } else if (tipo == 2) {
-            buscarFarmaceutaPorId(id).setClave(claveNueva);
+            Farmaceuta farmaceuta=buscarFarmaceutaPorId(id);
+            farmaceuta.setClave(claveConfirmar);
+            actualizarUsuarioFarmaceuta(farmaceuta);
         }
     }
     public void init() {
@@ -128,6 +132,12 @@ public class Controlador {
         medico.setEspecialidad(especialidad);
         return modeloMedico.actualizar(medico,token);
     }
+    public Medico actualizarUsuarioMedico(Medico medico)throws IllegalArgumentException, SecurityException{
+        if(medico==null){
+            throw new IllegalArgumentException("No existe un médico con ese ID");
+        }
+        return modeloMedico.actualizar(medico,0);
+    }
     public Medico eliminarMedico(String id) throws IllegalArgumentException, SecurityException{
         return modeloMedico.eliminar(id,token);
     }
@@ -156,6 +166,12 @@ public class Controlador {
             throw new IllegalArgumentException("Rellene todos los campos");
         farmaceuta.setNombre(nombre);
         return modeloFarmaceuta.actualizar(farmaceuta,token);
+    }
+    public Farmaceuta actualizarUsuarioFarmaceuta(Farmaceuta farmaceuta)throws IllegalArgumentException, SecurityException{
+        if(farmaceuta==null){
+            throw new IllegalArgumentException("No existe un farmaceuta con ese ID");
+        }
+        return modeloFarmaceuta.actualizar(farmaceuta,0);
     }
     public Farmaceuta eliminarFarmaceuta(String id) throws IllegalArgumentException, SecurityException{
         return modeloFarmaceuta.eliminar(id,token);
