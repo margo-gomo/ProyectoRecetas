@@ -8,9 +8,14 @@ import lombok.*;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@NoArgsConstructor
 @ToString
 public class Farmaceuta implements Usuario {
+    public Farmaceuta() {
+        nombre=null;
+        id=null;
+        clave=null;
+        token=2;
+    }
     public  Farmaceuta(String id, String nombre) {
         this.nombre = nombre;
         this.id = id;

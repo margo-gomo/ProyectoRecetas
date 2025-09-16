@@ -177,7 +177,6 @@ public class MenuVista extends JFrame {
 
     public MenuVista(Controlador contr) {
         controlador = contr;
-        controlador.setToken(1);
 
         setTitle("Sistema de Prescripción y Despacho de Recetas");
         setContentPane(panelPrincipal);
@@ -866,7 +865,7 @@ public class MenuVista extends JFrame {
                 int modelRow = tablaDespacho.convertRowIndexToModel(fila);
                 String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
                 try{
-                    controlador.iniciarProceso(codigo);
+                    controlador.marcarLista(codigo);
                 }catch (IllegalArgumentException ex){
                     JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }catch (SecurityException ex){
@@ -885,7 +884,7 @@ public class MenuVista extends JFrame {
                 int modelRow = tablaDespacho.convertRowIndexToModel(fila);
                 String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
                 try{
-                    controlador.iniciarProceso(codigo);
+                    controlador.entregar(codigo);
                 }catch (IllegalArgumentException ex){
                     JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }catch (SecurityException ex){
@@ -2371,8 +2370,7 @@ public class MenuVista extends JFrame {
 
             try {
                 int token = controlador.devolverToken(id, clave);
-                controlador.setToken(token);
-
+                controlador.devolverId(id, clave);
                 aplicarPermisos(token);
                 loginDialog.dispose();
 

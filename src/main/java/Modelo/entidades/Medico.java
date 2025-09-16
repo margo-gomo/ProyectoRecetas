@@ -9,9 +9,15 @@ import lombok.*;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@NoArgsConstructor
 @ToString
 public class Medico implements Usuario {
+    public Medico() {
+        nombre=null;
+        id=null;
+        especialidad=null;
+        clave=null;
+        token=1;
+    }
     public Medico(String nombre, String id, String especialidad){
         this.nombre = nombre;
         this.id = id;
