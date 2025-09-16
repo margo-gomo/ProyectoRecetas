@@ -86,7 +86,7 @@ public class Receta {
     public void marcarLista(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("proceso".equalsIgnoreCase(estado)) {
             if(!idFarmaceuta.equals(idFarmaceutaProceso)){
-                estado = "proceso";
+                estado = "lista";
                 idFarmaceutaLista=idFarmaceuta;
             }
             else
