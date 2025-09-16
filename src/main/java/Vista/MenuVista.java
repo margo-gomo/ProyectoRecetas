@@ -2588,7 +2588,7 @@ public class MenuVista extends JFrame {
         SwingUtilities.invokeLater(() -> {
             this.setVisible(false);
             mostrarLogin();
-            this.setVisible(true); // <-- se muestra solo después del login
+            this.setVisible(true);
         });
     }
 }

@@ -1,6 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <lista_recetas>
     <receta>
+        <codigo>1005</codigo>
+        <indicaciones>
+            <entry>
+                <key>2</key>
+                <value>
+                    <medicamento>
+                        <codigo>2</codigo>
+                        <nombre>Amoxicilina</nombre>
+                        <descripcion>250 mg cápsulas</descripcion>
+                    </medicamento>
+                    <cantidad>7</cantidad>
+                    <descripcion>Cada dos días</descripcion>
+                    <duracion-dias>14</duracion-dias>
+                </value>
+            </entry>
+        </indicaciones>
+        <paciente fecha_nacimiento="02/07/1985">
+            <id>32</id>
+            <nombre>Andrés Morales</nombre>
+            <teléfono>600300300</teléfono>
+        </paciente>
+        <fecha_confeccion>16/09/2025</fecha_confeccion>
+        <fecha_retiro>18/09/2025</fecha_retiro>
+        <estado>lista</estado>
+        <idFarmaceutaProceso>10</idFarmaceutaProceso>
+        <idFarmaceutaLista>11</idFarmaceutaLista>
+        <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
+    </receta>
+    <receta>
+        <codigo>1004</codigo>
+        <indicaciones>
+            <entry>
+                <key>1</key>
+                <value>
+                    <medicamento>
+                        <codigo>1</codigo>
+                        <nombre>Paracetamol</nombre>
+                        <descripcion>500 mg comprimidos</descripcion>
+                    </medicamento>
+                    <cantidad>7</cantidad>
+                    <descripcion>Uso diario</descripcion>
+                    <duracion-dias>7</duracion-dias>
+                </value>
+            </entry>
+        </indicaciones>
+        <paciente fecha_nacimiento="11/12/2000">
+            <id>33</id>
+            <nombre>Paula Castillo</nombre>
+            <teléfono>600400400</teléfono>
+        </paciente>
+        <fecha_confeccion>16/09/2025</fecha_confeccion>
+        <fecha_retiro>18/09/2025</fecha_retiro>
+        <estado>proceso</estado>
+        <idFarmaceutaProceso>10</idFarmaceutaProceso>
+        <idFarmaceutaLista>No lista</idFarmaceutaLista>
+        <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
+    </receta>
+    <receta>
         <codigo>1003</codigo>
         <indicaciones>
             <entry>
@@ -24,10 +82,10 @@
         </paciente>
         <fecha_confeccion>16/09/2025</fecha_confeccion>
         <fecha_retiro>18/09/2025</fecha_retiro>
-        <estado>confeccionada</estado>
-        <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
-        <idFarmaceutaLista>No lista</idFarmaceutaLista>
-        <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
+        <estado>entregado</estado>
+        <idFarmaceutaProceso>10</idFarmaceutaProceso>
+        <idFarmaceutaLista>11</idFarmaceutaLista>
+        <idFarmaceutaEntregar>12</idFarmaceutaEntregar>
     </receta>
     <receta>
         <codigo>1002</codigo>
@@ -66,9 +124,9 @@
         </paciente>
         <fecha_confeccion>16/09/2025</fecha_confeccion>
         <fecha_retiro>18/09/2025</fecha_retiro>
-        <estado>confeccionada</estado>
-        <idFarmaceutaProceso>No procesada</idFarmaceutaProceso>
-        <idFarmaceutaLista>No lista</idFarmaceutaLista>
+        <estado>lista</estado>
+        <idFarmaceutaProceso>10</idFarmaceutaProceso>
+        <idFarmaceutaLista>11</idFarmaceutaLista>
         <idFarmaceutaEntregar>No entregada</idFarmaceutaEntregar>
     </receta>
     <receta>
