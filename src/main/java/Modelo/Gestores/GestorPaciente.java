@@ -1,82 +1,67 @@
 package Modelo.Gestores;
 
 import Modelo.DAO.PacienteDAO;
-import Modelo.DAO.PacienteDAOImpl;
 import Modelo.entidades.Paciente;
+import Modelo.entidades.Usuario;
 import jakarta.xml.bind.JAXBException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import org.xml.sax.SAXException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.sql.SQLException;
 import java.util.List;
 
-public class GestorPaciente { 
-    public GestorPaciente() {
-        pacientes=new PacienteDAOImpl();
+public class GestorPaciente {
+    public GestorPaciente()throws SQLException {
+        pacientes=new PacienteDAO();
     }
 
-    public int cantidad() {
-        return pacientes.cantidad();
+    public List<Paciente> obtenerListaPacientes()throws SQLException{
+        return pacientes.findAll();
     }
 
-    public List<Paciente> obtenerListaPacientes(){
-        return pacientes.obtenerListaPacientes();
+    public Paciente buscar(int id)throws SQLException {
+        Paciente paciente= pacientes.findById(id);
+        if(paciente==null)
+            throw new SQLException("No existe un usuario con esas credenciales");
+        return paciente;
     }
-
-    public boolean existePaciente(int id) {
-        return pacientes.buscarPorId(id) != null;
-    }
-
-    public Paciente buscarPorId(int id) {
-        return pacientes.buscarPorId(id);
-    }
-
-    public Paciente buscarPorNombre(String nombre) {
-        return  pacientes.buscarPorNombre(nombre);
-    }
-
-    public Paciente agregar(Paciente paciente,int token) throws IllegalArgumentException,SecurityException { // (antes: aregarPaciente)
-        if(token!=0)
+    public void agregar(Paciente paciente, Usuario usuario) throws SecurityException,SQLException {
+        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
-        return pacientes.agregar(paciente);
-    }
-
-    public Paciente actualizar(Paciente paciente,int token) throws IllegalArgumentException,SecurityException { // (antes: pacienteporactualizar)
-        if(token!=0)
-            throw new SecurityException("No tienes los permisos para realizar esta accion");
-        return pacientes.actualizar(paciente);
-    }
-
-    public Paciente eliminar(int id,int token) throws IllegalArgumentException,SecurityException {
-        if(token!=0)
-            throw new SecurityException("No tienes los permisos para realizar esta accion");
-        return  pacientes.eliminar(id);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("[");
-        for (Paciente paciente : pacientes.obtenerListaPacientes()) {
-            sb.append(String.format("%n\t%s,", paciente));
+        try{
+            pacientes.add(paciente);
+        }catch(SQLException e){
+            throw new SQLException("Ya existe un paciente con ese id");
         }
-        sb.append("\n]");
-        return sb.toString();
     }
-    public void cargar()throws FileNotFoundException, JAXBException {
+    public void actualizar(Paciente paciente, Usuario usuario) throws SecurityException,SQLException {
+        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
+        try{
+            pacientes.update(paciente);
+        }catch(SQLException e){
+            throw new SQLException("No existe un paciente con ese id");
+        }
+    }
+
+    public void eliminar(Integer id, Usuario usuario) throws SecurityException,SQLException {
+        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
+        try{
+            pacientes.delete(id);
+        }catch(SQLException e){
+            throw new SQLException("No existe un paciente con ese id");
+        }
+    }
+
+    /*public void cargar() throws IOException, JAXBException, SQLException, ParserConfigurationException, SAXException {
         File f=new File(ARCHIVO_DATOS);
-        if(!f.exists()||f.length()==0)
-            System.out.println("No hay datos previos para cargar.");
-        else{
-            PacienteDAOImpl impl = (PacienteDAOImpl) pacientes;
-            impl.cargar(new FileInputStream(ARCHIVO_DATOS));
-            System.out.println("Datos cargados correctamente.");
-        }
+        if(f.exists()&&f.length()!=0&&obtenerListaPacientes()==null)
+            pacientes.cargar(f);
+    }*/
+    public void guardar () throws JAXBException, SQLException, FileNotFoundException {
+        pacientes.guardar(new FileOutputStream(ARCHIVO_DATOS));
     }
-    public void guardar()throws FileNotFoundException, JAXBException{
-        PacienteDAOImpl impl = (PacienteDAOImpl) pacientes;
-        impl.guardar(new FileOutputStream(ARCHIVO_DATOS));
-        System.out.println("Datos guardados correctamente.");
-    }
-    private static final String ARCHIVO_DATOS= "datos/pacientes.xml";
+    private static final String ARCHIVO_DATOS= "src/datos/pacientes.xml";
     private final PacienteDAO pacientes;
 }

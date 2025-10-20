@@ -1,59 +1,21 @@
 package Modelo.entidades;
-
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.*;
-
-import java.util.Objects;
-
+import lombok.NoArgsConstructor;
+import lombok.Data;
 @XmlAccessorType(XmlAccessType.FIELD)
-@ToString
-public class Medico implements Usuario {
-    public Medico() {
-        nombre=null;
-        id=null;
-        especialidad=null;
-        clave=null;
-        token=1;
-    }
-    public Medico(String nombre, String id, String especialidad){
-        this.nombre = nombre;
-        this.id = id;
+@NoArgsConstructor
+@Data
+@DatabaseTable(tableName = "medico")
+public class Medico extends  Usuario {
+    public Medico(Usuario usuario, String especialidad) {
+        this.usuario = usuario;
         this.especialidad = especialidad;
-        clave=this.id;
-        token=1; //Token para identificar medico
     }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof Medico))
-            return false;
-        Medico other = (Medico) obj;
-        return Objects.equals(id, other.id) && Objects.equals(nombre, other.nombre);
-    }
-    @Override
-    public int hashCode() {
-        int hash=5;
-        hash=29 * hash + Objects.hashCode(this.id);
-        hash=29 * hash + Objects.hashCode(this.nombre);
-        return hash;
-    }
-    @Getter
-    @Setter
-    private String nombre;
-    @Getter
-    @Setter
-    private String clave;
-    @Getter
-    @Setter
-    private String id;
-    @Getter
-    @Setter
-    @XmlAttribute(name = "especialidad")
+    @DatabaseField(id = true, foreign = true, foreignAutoCreate = true,foreignAutoRefresh = true,columnName = "usuario_id")
+    private Usuario usuario;
+    @DatabaseField
     private String especialidad;
-    @Getter
-    private int token;
 }

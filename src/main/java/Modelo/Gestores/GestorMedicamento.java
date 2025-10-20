@@ -1,87 +1,65 @@
 package Modelo.Gestores;
 
 import Modelo.DAO.MedicamentoDAO;
-import Modelo.DAO.MedicamentoDAOImpl;
 import Modelo.entidades.Medicamento;
+import Modelo.entidades.Usuario;
 import jakarta.xml.bind.JAXBException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import org.xml.sax.SAXException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.sql.SQLException;
 import java.util.List;
 
 public class GestorMedicamento {
 
-    public GestorMedicamento() {
-        medicamentos=new MedicamentoDAOImpl();
+    public GestorMedicamento()throws SQLException {
+        medicamentos=new MedicamentoDAO();
     }
 
-    public int cantidad() {
-        return medicamentos.cantidad();
+    public List<Medicamento> obtenerListaMedicamentos()throws SQLException{
+        return medicamentos.findAll();
     }
 
-    public List<Medicamento> obtenerListaMedicamentos(){
-        return medicamentos.obtenerListaMedicamentos();
+    public Medicamento buscar(int codigo)throws SQLException {
+            return medicamentos.findById(codigo);
     }
-
-    public boolean existeMedicamento(int codigo) {
-        return medicamentos.buscarPorCodigo(codigo) != null;
-    }
-
-    public Medicamento buscarPorCodigo(int codigo) {
-            return medicamentos.buscarPorCodigo(codigo);
-    }
-
-    public  Medicamento buscarPorNombre(String nombre) {
-        return medicamentos.buscarPorNombre(nombre);
-    }
-
-    public Medicamento buscarPorDescripcion(String descripcion) {
-        return  medicamentos.buscarPorDescripcion(descripcion);
-    }
-
-    public Medicamento agregar(Medicamento medicamento,int token) throws IllegalArgumentException,SecurityException {
-        if(token!=0)
+    public void agregar(Medicamento medicamento, Usuario usuario) throws SecurityException,SQLException {
+        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
-        return medicamentos.agregar(medicamento);
-    }
-
-    public Medicamento actualizar(Medicamento medicamento,int token) throws IllegalArgumentException,SecurityException {
-        if(token!=0)
-            throw new SecurityException("No tienes los permisos para realizar esta accion");
-        return medicamentos.actualizar(medicamento);
-    }
-
-    public Medicamento eliminar(int codigo,int token) throws IllegalArgumentException,SecurityException {
-        if(token!=0)
-            throw new SecurityException("No tienes los permisos para realizar esta accion");
-        return  medicamentos.eliminar(codigo);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("[");
-        for (Medicamento medicamento : medicamentos.obtenerListaMedicamentos()) {
-            sb.append(String.format("%n\t%s,", medicamento));
+        try{
+            medicamentos.add(medicamento);
+        }catch(SQLException e){
+            throw new SQLException("Ya existe un medicamento con ese codigo");
         }
-        sb.append("\n]");
-        return sb.toString();
     }
-    public void cargar()throws FileNotFoundException, JAXBException {
+    public void actualizar(Medicamento medicamento, Usuario usuario) throws SecurityException,SQLException {
+        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
+        try{
+            medicamentos.update(medicamento);
+        }catch(SQLException e){
+            throw new SQLException("No existe un medicamento con ese codigo");
+        }
+    }
+
+    public void eliminar(Integer codigo, Usuario usuario) throws SecurityException,SQLException {
+        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+            throw new SecurityException("No tienes los permisos para realizar esta accion");
+        try{
+            medicamentos.delete(codigo);
+        }catch(SQLException e){
+            throw new SQLException("No existe un medicamento con ese codigo");
+        }
+    }
+
+    public void cargar() throws IOException, JAXBException, SQLException, ParserConfigurationException, SAXException {
         File f=new File(ARCHIVO_DATOS);
-        if(!f.exists()||f.length()==0)
-            System.out.println("No hay datos previos para cargar.");
-        else {
-            MedicamentoDAOImpl impl=(MedicamentoDAOImpl) medicamentos;
-            impl.cargar(new FileInputStream(ARCHIVO_DATOS));
-            System.out.println("Datos cargados correctamente.");
-        }
+        if(f.exists()&&f.length()!=0&&obtenerListaMedicamentos()==null)
+            medicamentos.cargar(f);
     }
-    public void guardar()throws FileNotFoundException, JAXBException{
-        MedicamentoDAOImpl impl=(MedicamentoDAOImpl) medicamentos;
-        impl.guardar(new FileOutputStream(ARCHIVO_DATOS));
-        System.out.println("Datos guardados correctamente.");
+    public void guardar () throws JAXBException, SQLException, FileNotFoundException {
+        medicamentos.guardar(new FileOutputStream(ARCHIVO_DATOS));
     }
-    private static final String ARCHIVO_DATOS= "datos/medicamentos.xml";
+    private static final String ARCHIVO_DATOS= "src/datos/medicamentos.xml";
     private final MedicamentoDAO medicamentos;
 }

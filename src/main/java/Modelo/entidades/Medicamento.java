@@ -1,14 +1,18 @@
 package Modelo.entidades;
 
-import jakarta.xml.bind.annotation.*;
-import lombok.*;
-
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.Objects;
-
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
+@DatabaseTable(tableName = "medicamento")
 public class Medicamento {
     @Override
     public boolean equals(Object obj) {
@@ -26,16 +30,12 @@ public class Medicamento {
         hash=29 * hash + Objects.hashCode(this.nombre);
         return hash;
     }
-    @Getter @Setter
+    @DatabaseField(id = true)
     private int codigo;
-
-    @Getter @Setter
+    @DatabaseField(canBeNull = false)
     private String nombre;
-
-    @Getter @Setter
-    @XmlElement(name = "presentacion")
+    @DatabaseField(canBeNull = false)
     private String presentacion;
-
-    @Getter @Setter
+    @DatabaseField(canBeNull = false)
     private String descripcion;
 }

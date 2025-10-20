@@ -3,14 +3,10 @@ import Modelo.entidades.Medicamento;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Objects;
-
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -32,19 +28,8 @@ public class Indicacion {
         hash=29 * hash + Objects.hashCode(this.medicamento.getDescripcion());
         return hash;
     }
-    @Getter
-    @Setter
-    @XmlElement
     private Medicamento medicamento;
-    @Getter
-    @Setter
     private int cantidad;
-    @Getter
-    @Setter
     private String descripcion;
-    @Getter
-    @Setter
-    @XmlElement(name = "duracion-dias")
     private int duracion;
-
 }

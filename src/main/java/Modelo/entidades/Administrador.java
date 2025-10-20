@@ -1,53 +1,9 @@
 package Modelo.entidades;
-
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import lombok.*;
-
-import java.util.Objects;
-
-//admin
-@XmlAccessorType(XmlAccessType.FIELD)
+import lombok.NoArgsConstructor;
 @NoArgsConstructor
-@ToString
-public class Administrador implements Usuario {
-
-    public Administrador(String nombre, String id,String clave){
-        this.nombre = nombre;
-        this.id = id;
-        this.clave = clave;
-        this.token = 0; // Token para identificar administrador
+public class Administrador extends Usuario {
+    public Administrador(String id,String nombre){
+        super(id,nombre,"ADMINISTRADOR");
     }
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof Administrador))
-            return false;
-        Administrador other = (Administrador) obj;
-        return Objects.equals(id, other.id) && Objects.equals(nombre, other.nombre);
-    }
-    @Override
-    public int hashCode() {
-        int hash=5;
-        hash=29 * hash + Objects.hashCode(this.id);
-        hash=29 * hash + Objects.hashCode(this.nombre);
-        return hash;
-    }
-    @Getter
-    @Setter
-    private String nombre;
-
-    @Getter
-    @Setter
-    private String clave;
-
-    @Getter
-    @Setter
-    private String id;
-
-    @Getter
-    private int token;
 }
 

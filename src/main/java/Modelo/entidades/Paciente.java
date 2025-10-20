@@ -1,17 +1,19 @@
 package Modelo.entidades;
 
-import Adaptador.LocalDateAdapter;
-import jakarta.xml.bind.annotation.*;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import lombok.*;
-
-import java.time.LocalDate;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.util.Date;
 import java.util.Objects;
-
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@ToString
+@AllArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
+@DatabaseTable(tableName = "paciente")
 public class Paciente {
     @Override
     public boolean equals(Object obj) {
@@ -29,19 +31,13 @@ public class Paciente {
         hash=29 * hash + Objects.hashCode(this.nombre);
         return hash;
     }
-    @Getter
-    @Setter
+    @DatabaseField(id = true)
     private int id;
-    @Getter
-    @Setter
+    @DatabaseField(canBeNull = false)
     private String nombre;
-    @Getter
-    @Setter
-    @XmlElement(name="teléfono")
+    @DatabaseField(canBeNull = false)
+    private Date fecha_nacimiento;
     private int telefono;
-    @Getter
-    @Setter
-    @XmlAttribute(name = "fecha_nacimiento")
-    @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private LocalDate fecha_nacimiento;
+    /*@XmlJavaTypeAdapter(LocalDateAdapter.class)
+    private LocalDate fecha_nacimiento;*/
 }

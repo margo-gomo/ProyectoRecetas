@@ -1,15 +1,15 @@
 package Controlador;
 import Modelo.entidades.*;
 import Modelo.Gestores.*;
-import Modelo.DAO.*;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
-import Modelo.login;
 import Modelo.Estadísticas.*;
 import jakarta.xml.bind.JAXBException;
-import java.awt.*;
+
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Date;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -22,50 +22,32 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
-import lombok.Setter;
 public class Controlador {
-    public Controlador(GestorAdministrador modeloAdministrador,GestorMedico modeloMedico, GestorFarmaceuta modeloFarmaceuta,
+    public Controlador(GestorUsuario modeloUsuario,GestorMedico modeloMedico,
                        GestorMedicamento modeloMedicamento,GestorPaciente modeloPaciente,GestorRecetas modeloRecetas,GestorIndicacion modeloIndicacion) {
-        this.modeloAdministrador = modeloAdministrador;
+        this.modeloUsuarios = modeloUsuario;
         this.modeloMedico = modeloMedico;
-        this.modeloFarmaceuta = modeloFarmaceuta;
         this.modeloPaciente = modeloPaciente;
         this.modeloMedicamento = modeloMedicamento;
         this.modeloRecetas = modeloRecetas;
         this.modeloIndicacion = modeloIndicacion;
-        usuarios=new login();
+        usuario_login=new Usuario();
         dashboard=new Dashboard();
         historial=new Historicos();
     }
-    public Controlador() {
-        this(new GestorAdministrador(),new GestorMedico(),new GestorFarmaceuta(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetas(),new GestorIndicacion());
-        usuarios=new login();
+    public Controlador() throws SQLException {
+        this(new GestorUsuario(),new GestorMedico(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetas(),new GestorIndicacion());
+        usuario_login=new Usuario();
         dashboard=new Dashboard();
         historial=new Historicos();
     }
-    public int devolverToken(String id, String clave) throws SecurityException{
-        token= usuarios.devolverToken(id, clave);
-        return token;
+    public void usuarioLogin(String id,String clave) throws SQLException {
+        usuario_login=modeloUsuarios.buscarIdClave(id,clave);
     }
-    public String devolverId(String id, String clave) throws SecurityException{
-        idUsuario=usuarios.devolverId(id, clave);
-        return idUsuario;
+    public void cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar) throws IllegalArgumentException, SQLException {
+        modeloUsuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
     }
-    public void cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar)throws IllegalArgumentException, SecurityException{
-        int tipo = usuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
-
-        if (tipo == 1) {
-            Medico medico = buscarMedicoPorId(id);
-            medico.setClave(claveConfirmar);
-            actualizarUsuarioMedico(medico);
-        } else if (tipo == 2) {
-            Farmaceuta farmaceuta=buscarFarmaceutaPorId(id);
-            farmaceuta.setClave(claveConfirmar);
-            actualizarUsuarioFarmaceuta(farmaceuta);
-        }
-    }
-    public void init() {
+    /*public void init() {
         try{
             modeloAdministrador.cargar();
         }catch(JAXBException | FileNotFoundException ex){
@@ -102,137 +84,94 @@ public class Controlador {
             System.err.printf("Ocurrió un error al cargar los datos: '%s'%n",
                     ex.getMessage());
         }
-        usuarios.cargarUsuarios(modeloAdministrador.obtenerListaAdministradores());
-        usuarios.cargarUsuarios(modeloMedico.obtenerListaMedicos());
-        usuarios.cargarUsuarios(modeloFarmaceuta.obtenerListaFarmaceutas());
-    }
-    public List<Medico> obtenerListaMedicos(){
+    }*/
+    public List<Medico> obtenerListaMedicos() throws SQLException {
         return modeloMedico.obtenerListaMedicos();
     }
-    public Medico buscarMedicoPorId(String id) {
-        return modeloMedico.buscarPorId(id);
+    public Medico buscarMedico(String id) throws SQLException {
+        return modeloMedico.buscar(id);
     }
-    public Medico buscarMedicoPorNombre(String nombre){
-        return modeloMedico.buscarPorNombre(nombre);
+    public void agregarMedico(String id,String nom,String esp) throws SecurityException, SQLException {
+        Usuario usuario=new Usuario(id,nom,"MEDICO");
+        Medico medico=new Medico(usuario,esp);
+        modeloMedico.agregar(medico,usuario_login);
     }
-    public Medico agregarMedico(String id,String nom,String esp) throws IllegalArgumentException, SecurityException{
-        Medico medico = new Medico();
-        medico.setId(id);
-        medico.setClave(id);
-        medico.setNombre(nom);
-        medico.setEspecialidad(esp);
-        return modeloMedico.agregar(medico,token);
-    }
-    public Medico actualizarMedico(String id,String nombre,String especialidad) throws IllegalArgumentException, SecurityException{
-        Medico medico = buscarMedicoPorId(id);
-        if(medico==null){
-            throw new IllegalArgumentException("No existe un médico con ID: "+id);
-        }
+    public void actualizarMedico(String id,String nombre,String especialidad) throws SecurityException, SQLException {
+        Medico medico = buscarMedico(id);
         medico.setNombre(nombre);
         medico.setEspecialidad(especialidad);
-        return modeloMedico.actualizar(medico,token);
+        modeloMedico.actualizar(medico,usuario_login);
     }
-    public Medico actualizarUsuarioMedico(Medico medico)throws IllegalArgumentException, SecurityException{
-        if(medico==null){
-            throw new IllegalArgumentException("No existe un médico con ese ID");
-        }
-        return modeloMedico.actualizar(medico,0);
+    public void eliminarMedico(String id) throws SQLException {
+        modeloMedico.eliminar(id,usuario_login);
     }
-    public Medico eliminarMedico(String id) throws IllegalArgumentException, SecurityException{
-        return modeloMedico.eliminar(id,token);
+    public List<Usuario> obtenerListaAdministradores() throws SQLException {
+        return modeloUsuarios.obtenerListaAdministradores();
     }
-    public List<Farmaceuta> obtenerListaFarmaceutas(){
-        return modeloFarmaceuta.obtenerListaFarmaceutas();
+    public List<Usuario> obtenerListaFarmaceutas() throws SQLException {
+        return modeloUsuarios.obtenerListaFarmaceutas();
     }
-    public Farmaceuta buscarFarmaceutaPorId(String id) {
-        return modeloFarmaceuta.buscarPorId(id);
+    public List<Usuario> obtenerListaMedicosU() throws SQLException {
+        return modeloUsuarios.obtenerListaMedicos();
     }
-    public Farmaceuta buscarFarmaceutaPorNombre(String nombre) {
-        return modeloFarmaceuta.buscarPorNombre(nombre);
+    public Usuario buscarUsuario(String id) throws SQLException {
+        return modeloUsuarios.buscar(id);
     }
-    public Farmaceuta agregarFarmaceuta(String id,String nombre)  throws IllegalArgumentException, SecurityException{
-        Farmaceuta farmaceuta = new Farmaceuta();
-        farmaceuta.setId(id);
-        farmaceuta.setClave(id);
-        farmaceuta.setNombre(nombre);
-        return modeloFarmaceuta.agregar(farmaceuta,token);
+    public void agregarAdministrador(String id,String nombre)  throws SQLException{
+        Administrador administrador = new Administrador(id,nombre);
+        modeloUsuarios.agregar(administrador,usuario_login);
     }
-    public Farmaceuta actualizarFarmaceuta(String id,String nombre) throws IllegalArgumentException, SecurityException{
-        Farmaceuta farmaceuta = buscarFarmaceutaPorId(id);
-        if(farmaceuta==null){
-            throw new IllegalArgumentException("No existe un farmaceuta con ID: "+id);
-        }
-        if (nombre.isEmpty())
-            throw new IllegalArgumentException("Rellene todos los campos");
-        farmaceuta.setNombre(nombre);
-        return modeloFarmaceuta.actualizar(farmaceuta,token);
+    public void agregarFarmaceuta(String id,String nombre)  throws SQLException{
+        Farmaceuta farmaceuta = new Farmaceuta(id,nombre);
+        modeloUsuarios.agregar(farmaceuta,usuario_login);
     }
-    public Farmaceuta actualizarUsuarioFarmaceuta(Farmaceuta farmaceuta)throws IllegalArgumentException, SecurityException{
-        if(farmaceuta==null){
-            throw new IllegalArgumentException("No existe un farmaceuta con ese ID");
-        }
-        return modeloFarmaceuta.actualizar(farmaceuta,0);
+    public void actualizarUsuario(String id,String nombre) throws IllegalArgumentException, SecurityException, SQLException {
+        Usuario usuario=buscarUsuario(id);
+        usuario.setClave(nombre);
+        usuario.setNombre(nombre);
+        modeloUsuarios.actualizar(usuario,usuario_login);
     }
-    public Farmaceuta eliminarFarmaceuta(String id) throws IllegalArgumentException, SecurityException{
-        return modeloFarmaceuta.eliminar(id,token);
+    public void eliminarUsuario(String id) throws SQLException{
+        modeloUsuarios.eliminar(id,usuario_login);;
     }
-    public List<Paciente> obtenerListaPacientes(){
+    public List<Paciente> obtenerListaPacientes() throws SQLException {
         return modeloPaciente.obtenerListaPacientes();
     }
-    public Paciente buscarPacientePorId(int id){
-        return modeloPaciente.buscarPorId(id);
+    public Paciente buscarPacientePorId(int id) throws SQLException {
+        return modeloPaciente.buscar(id);
     }
-    public Paciente buscarPacientePorNombre(String nombre){
-        return modeloPaciente.buscarPorNombre(nombre);
+    public void agregarPaciente(int id, String nombre, int telefono, Date fecha) throws SecurityException, SQLException {
+        Paciente paciente = new Paciente(id,nombre,fecha,telefono);
+        modeloPaciente.agregar(paciente,usuario_login);
     }
-    public Paciente agregarPaciente(int id, String nombre, int telefono,LocalDate fecha) throws IllegalArgumentException, SecurityException{
-        Paciente paciente = new Paciente();
-        paciente.setId(id);
-        paciente.setNombre(nombre);
-        paciente.setTelefono(telefono);
-        paciente.setFecha_nacimiento(fecha);
-        return modeloPaciente.agregar(paciente,token);
-    }
-    public Paciente actualizarPaciente(int id, String nombre, int telefono,LocalDate fecha) throws IllegalArgumentException, SecurityException{
+    public void actualizarPaciente(int id, String nombre, int telefono,Date fecha) throws SQLException {
         Paciente paciente = buscarPacientePorId(id);
-        if(paciente==null)
-            throw new IllegalArgumentException("No existe un paciente con ID: "+id);
         paciente.setNombre(nombre);
         paciente.setTelefono(telefono);
         paciente.setFecha_nacimiento(fecha);
-        return modeloPaciente.actualizar(paciente,token);
+        modeloPaciente.actualizar(paciente,usuario_login);
     }
-    public Paciente eliminarPaciente(int id) throws IllegalArgumentException, SecurityException{
-        return modeloPaciente.eliminar(id,token);
+    public void eliminarPaciente(int id) throws SecurityException, SQLException {
+         modeloPaciente.eliminar(id,usuario_login);
     }
-    public List<Medicamento> obtenerListaMedicamentos(){
+    public List<Medicamento> obtenerListaMedicamentos() throws SQLException {
         return modeloMedicamento.obtenerListaMedicamentos();
     }
-    public Medicamento buscarMedicamentoPorCodigo(int codigo){
+    public Medicamento buscarMedicamento(int codigo){
         return modeloMedicamento.buscarPorCodigo(codigo);
     }
-    public Medicamento buscarMedicamentoPorDescripcion(String descripcion){
-        return modeloMedicamento.buscarPorDescripcion(descripcion);
+    public void agregarMedicamento(int codigo,String nombre,String presentacion,String descripcion) throws IllegalArgumentException, SecurityException, SQLException {
+        Medicamento medicamento = new Medicamento(codigo,nombre,presentacion,descripcion);
+        modeloMedicamento.agregar(medicamento,usuario_login);
     }
-    public Medicamento agregarMedicamento(int codigo,String nombre,String descripcion) throws IllegalArgumentException, SecurityException{
-        Medicamento medicamento = new Medicamento();
-        medicamento.setCodigo(codigo);
+    public void actualizarMedicamento(int codigo,String nombre,String presentacion,String descripcion) throws IllegalArgumentException, SecurityException, SQLException {
+        Medicamento medicamento = buscarMedicamento(codigo);
         medicamento.setNombre(nombre);
         medicamento.setDescripcion(descripcion);
-        return modeloMedicamento.agregar(medicamento,token);
+        modeloMedicamento.actualizar(medicamento,usuario_login);
     }
-    public Medicamento actualizarMedicamento(int codigo,String nombre,String descripcion) throws IllegalArgumentException, SecurityException{
-        Medicamento medicamento = buscarMedicamentoPorCodigo(codigo);
-        if(medicamento==null)
-            throw new IllegalArgumentException("No existe un medicamento con ID: "+codigo);
-        if (nombre.isEmpty()||descripcion.isEmpty())
-            throw new IllegalArgumentException("Rellene todos los campos");
-        medicamento.setNombre(nombre);
-        medicamento.setDescripcion(descripcion);
-        return modeloMedicamento.actualizar(medicamento,token);
-    }
-    public Medicamento eliminarMedicamento(int codigo) throws IllegalArgumentException, SecurityException{
-        return modeloMedicamento.eliminar(codigo,token);
+    public void eliminarMedicamento(int codigo) throws SecurityException, SQLException {
+        modeloMedicamento.eliminar(codigo,usuario_login);
     }
     public List<Receta> obtenerListaRecetas(){
         return modeloRecetas.obtenerListaRecetas();
@@ -584,17 +523,13 @@ public class Controlador {
         return lineas;
     }
 
-    private GestorAdministrador modeloAdministrador;
     private GestorMedico modeloMedico;
-    private GestorFarmaceuta modeloFarmaceuta;
     private GestorPaciente modeloPaciente;
     private GestorMedicamento modeloMedicamento;
     private GestorRecetas modeloRecetas;
     private GestorIndicacion modeloIndicacion;
-    private login usuarios;
-    @Setter
-    private int token;
-    private String idUsuario;
+    private GestorUsuario modeloUsuarios;
+    private Usuario usuario_login;
     private Dashboard  dashboard;
     private Historicos historial;
 }
