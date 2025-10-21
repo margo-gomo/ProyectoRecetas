@@ -4,9 +4,7 @@ import Modelo.Gestores.*;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import Modelo.Estadísticas.*;
-import jakarta.xml.bind.JAXBException;
 
-import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
@@ -23,20 +21,19 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 public class Controlador {
-    public Controlador(GestorUsuario modeloUsuario,GestorMedico modeloMedico,
-                       GestorMedicamento modeloMedicamento,GestorPaciente modeloPaciente,GestorRecetas modeloRecetas,GestorIndicacion modeloIndicacion) {
+    public Controlador(GestorUsuario modeloUsuario, GestorMedico modeloMedico,
+                       GestorMedicamento modeloMedicamento, GestorPaciente modeloPaciente, GestorRecetaIndicacion modeloRecetasIndicacion) {
         this.modeloUsuarios = modeloUsuario;
         this.modeloMedico = modeloMedico;
         this.modeloPaciente = modeloPaciente;
         this.modeloMedicamento = modeloMedicamento;
-        this.modeloRecetas = modeloRecetas;
-        this.modeloIndicacion = modeloIndicacion;
+        this.modeloRecetasIndicacion = modeloRecetasIndicacion;
         usuario_login=new Usuario();
         dashboard=new Dashboard();
         historial=new Historicos();
     }
     public Controlador() throws SQLException {
-        this(new GestorUsuario(),new GestorMedico(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetas(),new GestorIndicacion());
+        this(new GestorUsuario(),new GestorMedico(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetaIndicacion());
         usuario_login=new Usuario();
         dashboard=new Dashboard();
         historial=new Historicos();
@@ -79,7 +76,7 @@ public class Controlador {
                     ex.getMessage());
         }
         try {
-            modeloRecetas.cargar();
+            modeloRecetasIndicacion.cargar();
         } catch (JAXBException | FileNotFoundException ex) {
             System.err.printf("Ocurrió un error al cargar los datos: '%s'%n",
                     ex.getMessage());
@@ -125,7 +122,7 @@ public class Controlador {
         Farmaceuta farmaceuta = new Farmaceuta(id,nombre);
         modeloUsuarios.agregar(farmaceuta,usuario_login);
     }
-    public void actualizarUsuario(String id,String nombre) throws IllegalArgumentException, SecurityException, SQLException {
+    public void actualizarUsuario(String id,String nombre) throws SecurityException, SQLException {
         Usuario usuario=buscarUsuario(id);
         usuario.setClave(nombre);
         usuario.setNombre(nombre);
@@ -157,99 +154,66 @@ public class Controlador {
     public List<Medicamento> obtenerListaMedicamentos() throws SQLException {
         return modeloMedicamento.obtenerListaMedicamentos();
     }
-    public Medicamento buscarMedicamento(int codigo){
-        return modeloMedicamento.buscarPorCodigo(codigo);
+    public Medicamento buscarMedicamento(String codigo) throws SQLException {
+        return modeloMedicamento.buscar(codigo);
     }
-    public void agregarMedicamento(int codigo,String nombre,String presentacion,String descripcion) throws IllegalArgumentException, SecurityException, SQLException {
+    public void agregarMedicamento(String codigo,String nombre,String presentacion,String descripcion) throws SecurityException, SQLException {
         Medicamento medicamento = new Medicamento(codigo,nombre,presentacion,descripcion);
         modeloMedicamento.agregar(medicamento,usuario_login);
     }
-    public void actualizarMedicamento(int codigo,String nombre,String presentacion,String descripcion) throws IllegalArgumentException, SecurityException, SQLException {
+    public void actualizarMedicamento(String codigo,String nombre,String presentacion,String descripcion) throws SecurityException, SQLException {
         Medicamento medicamento = buscarMedicamento(codigo);
         medicamento.setNombre(nombre);
         medicamento.setDescripcion(descripcion);
         modeloMedicamento.actualizar(medicamento,usuario_login);
     }
-    public void eliminarMedicamento(int codigo) throws SecurityException, SQLException {
+    public void eliminarMedicamento(String codigo) throws SecurityException, SQLException {
         modeloMedicamento.eliminar(codigo,usuario_login);
     }
-    public List<Receta> obtenerListaRecetas(){
-        return modeloRecetas.obtenerListaRecetas();
+    public List<Receta> obtenerListaRecetas() throws SQLException {
+        return modeloRecetasIndicacion.obtenerListaRecetas();
     }
-    public  Receta buscarRecetaPorCodigo(String codigo){
-        return modeloRecetas.buscarRecetaPorCodigo(codigo);
+    public  Receta buscarReceta(String codigo) throws SQLException {
+        return modeloRecetasIndicacion.buscarReceta(codigo);
     }
-    public Receta buscarReceta(int idPaciente, LocalDate fechaConfeccion){
-        return modeloRecetas.buscarReceta(idPaciente, fechaConfeccion);
+    public void agregarReceta(String codigo,Paciente paciente,Date fecha_retiro,Date fecha_confeccion,Usuario farmaceuta_Proceso,Usuario farmaceuta_Lista,Usuario farmaceuta_Entregada) throws IllegalArgumentException, SecurityException, SQLException {
+        Receta receta = new Receta(codigo, paciente, fecha_retiro, fecha_confeccion, farmaceuta_Proceso, farmaceuta_Lista, farmaceuta_Entregada);
+        modeloRecetasIndicacion.agregarReceta(receta,usuario_login);
     }
-    public Receta agregarReceta(String codigo,List<Indicacion>indicaciones,int id,LocalDate fecha_confeccion,LocalDate fecha_retiro) throws IllegalArgumentException, SecurityException{
-        Receta receta = new Receta();
-        receta.setCodigo(codigo);
-        receta.agregarIndicaciones(indicaciones);
-        receta.setPaciente(buscarPacientePorId(id));
-        receta.setFecha_confeccion(fecha_confeccion);
-        receta.setFecha_retiro(fecha_retiro);
-        return modeloRecetas.agregar(receta,token);
+    public void iniciarProceso(String codigo) throws IllegalArgumentException, SQLException,SecurityException {
+        modeloRecetasIndicacion.iniciarProceso(codigo,usuario_login);
     }
-    public Receta actualizarReceta(String codigo,List<Indicacion>indicaciones,int id,LocalDate fecha_confeccion,LocalDate fecha_retiro) throws IllegalArgumentException, SecurityException{
-        Receta receta = buscarRecetaPorCodigo(codigo);
-        if(receta==null)
-            throw new IllegalArgumentException("No existe un receta con código: "+codigo);
-        receta.actualizarIndicaciones(indicaciones);
-        receta.setPaciente(buscarPacientePorId(id));
-        receta.setFecha_confeccion(fecha_confeccion);
-        receta.setFecha_retiro(fecha_retiro);
-        return modeloRecetas.actualizar(receta,token);
+    public void marcarLista(String codigo) throws IllegalArgumentException, SQLException,SecurityException {
+        modeloRecetasIndicacion.marcarLista(codigo,usuario_login);
     }
-    public List<Indicacion> obtenerListaIndicaciones(){
-        return modeloIndicacion.obtenerListaIndicaciones();
+    public void entregar(String codigo) throws IllegalArgumentException, SQLException, SecurityException {
+        modeloRecetasIndicacion.entregar(codigo,usuario_login);
     }
-    public Indicacion buscarIndicacion(int codigo){
-        return modeloIndicacion.buscarIndicacion(codigo);
+    public List<Indicacion> obtenerListaIndicaciones() throws SQLException {
+        return modeloRecetasIndicacion.obtenerListaIndicaciones();
     }
-    public Indicacion agregarIndicacion(Medicamento medicamento,int cantidad,String ind, int duracion) throws IllegalArgumentException, SecurityException{
-        Indicacion indicacion=new Indicacion();
-        indicacion.setMedicamento(medicamento);
-        indicacion.setCantidad(cantidad);
-        indicacion.setDescripcion(ind);
-        indicacion.setDuracion(duracion);
-        return modeloIndicacion.agregar(indicacion,token);
+    public Indicacion buscarIndicacion(String medicamentoCodigo){
+        return modeloRecetasIndicacion.buscarIndicacionLista(medicamentoCodigo);
     }
-    public Indicacion actualizarIndicacion(Medicamento medicamento,int cantidad,String ind, int duracion)throws IllegalArgumentException, SecurityException{
+    public void agregarIndicacion(Medicamento medicamento,int cantidad,String indicaiones,int duracion) throws IllegalArgumentException, SecurityException{
+        Indicacion indicacion=new Indicacion(medicamento,cantidad,indicaiones,duracion);
+        modeloRecetasIndicacion.agregarIndicacionLista(indicacion,usuario_login);
+    }
+    public void actualizarIndicacion(Medicamento medicamento,int cantidad,String indicaiones,int duracion)throws IllegalArgumentException, SecurityException{
         Indicacion indicacion=buscarIndicacion(medicamento.getCodigo());
-        if(medicamento==null)
-            throw new IllegalArgumentException("No existe un medicamento con codigo: "+medicamento.getCodigo()+" en la receta");
         indicacion.setCantidad(cantidad);
-        indicacion.setDescripcion(ind);
+        indicacion.setIndicaiones(indicaiones);
         indicacion.setDuracion(duracion);
-        return modeloIndicacion.actualizar(indicacion,token);
+        modeloRecetasIndicacion.actualizarIndicacionLista(indicacion,usuario_login);
     }
-    public Indicacion eliminarIndicacion(int codigo) throws IllegalArgumentException, SecurityException{
-        return modeloIndicacion.eliminar(codigo,token);
+    public void eliminarIndicacion(String codigo) throws SQLException, SecurityException{
+        modeloRecetasIndicacion.eliminarIndicacionLista(codigo,usuario_login);
     }
-    public void iniciarProceso(String codigo) throws IllegalArgumentException{
-        Receta receta = buscarRecetaPorCodigo(codigo);
-        if(receta==null)
-            throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
-        modeloRecetas.iniciarProceso(receta,token,idUsuario);
-    }
-    public void marcarLista(String codigo) throws IllegalArgumentException{
-        Receta receta = buscarRecetaPorCodigo(codigo);
-        if(receta==null)
-            throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
-        modeloRecetas.marcarLista(receta,token,idUsuario);
-    }
-    public void entregar(String codigo) throws IllegalArgumentException{
-        Receta receta = buscarRecetaPorCodigo(codigo);
-        if(receta==null)
-            throw new IllegalArgumentException("No existe un receta con codigo: "+codigo);
 
-        modeloRecetas.entregar(receta,token,idUsuario);
-    }
     public DateTimeFormatter getFormatoFecha() {
         return DateTimeFormatter.ofPattern("dd/MM/yyyy");
     }
-    public void cerrarAplicacion() {
+    /*public void cerrarAplicacion() {
         try{
             modeloAdministrador.guardar();
         } catch (JAXBException | FileNotFoundException ex) {
@@ -281,7 +245,7 @@ public class Controlador {
                     ex.getMessage());
         }
         try {
-            modeloRecetas.guardar();
+            modeloRecetasIndicacion.guardar();
         } catch (JAXBException | FileNotFoundException ex) {
             System.err.printf("Ocurrió un error al guardar los datos: '%s'%n",
                     ex.getMessage());
@@ -292,23 +256,20 @@ public class Controlador {
             dashboard.limpiar();
         System.out.println("Aplicación finalizada..");
         System.exit(0);
-    }
+    }*/
     // ---------------- MÉTODOS DASHBOARD ----------------
 
-    public Map<YearMonth, Integer> DashboardMedicamentosPorMes(LocalDate startDate, LocalDate endDate, String nombreMedicamento){
-        return dashboard.medicamentosPorMes(modeloRecetas.obtenerListaRecetas(), startDate, endDate, nombreMedicamento);
+    public Map<YearMonth, Integer> DashboardMedicamentosPorMes(LocalDate startDate, LocalDate endDate, String nombreMedicamento) throws SQLException {
+        return dashboard.medicamentosPorMes(modeloRecetasIndicacion.obtenerListaRecetas(), startDate, endDate, nombreMedicamento);
     }
-    public Map<String, Long> DashboardRecetasPorEstado(LocalDate desde, LocalDate hasta, String nombreMedicamento) {
-        return dashboard.recetasPorEstado(modeloRecetas.obtenerListaRecetas(), desde, hasta, nombreMedicamento);
+    public Map<String, Long> DashboardRecetasPorEstado(LocalDate desde, LocalDate hasta, String nombreMedicamento) throws SQLException {
+        return dashboard.recetasPorEstado(modeloRecetasIndicacion.obtenerListaRecetas(), desde, hasta, nombreMedicamento);
     }
 
-    public Receta buscarRecetaHistorial(String codigo){
-        return historial.buscarPorCodigo(buscarRecetaPorCodigo(codigo));
+    public Receta buscarRecetaHistorial(String codigo) throws SQLException {
+        return historial.buscarPorCodigo(buscarReceta(codigo));
     }
-    public Receta buscarRecetaHistorial(int idPaciente, LocalDate fechaConfeccion){
-        return historial.buscarPorPacienteFecha(buscarReceta(idPaciente, fechaConfeccion));
-    }
-    public List<Indicacion>mostrarIndicaciones(String codigo){
+    public List<Indicacion>mostrarIndicaciones(String codigo) throws SQLException {
         Receta receta=buscarRecetaHistorial(codigo);
         return historial.mostrarIndicaciones(receta);
     }
@@ -353,7 +314,7 @@ public class Controlador {
         String[] cabeceras = {"ID", "Nombre"};
         java.util.List<String[]> filas = new java.util.ArrayList<>();
 
-        for (Farmaceuta f : obtenerListaFarmaceutas()) {
+        for (Usuario f : obtenerListaFarmaceutas()) {
             filas.add(new String[]{ f.getId(), f.getNombre() });
         }
 
@@ -526,8 +487,7 @@ public class Controlador {
     private GestorMedico modeloMedico;
     private GestorPaciente modeloPaciente;
     private GestorMedicamento modeloMedicamento;
-    private GestorRecetas modeloRecetas;
-    private GestorIndicacion modeloIndicacion;
+    private GestorRecetaIndicacion modeloRecetasIndicacion;
     private GestorUsuario modeloUsuarios;
     private Usuario usuario_login;
     private Dashboard  dashboard;

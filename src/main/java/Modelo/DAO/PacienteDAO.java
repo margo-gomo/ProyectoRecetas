@@ -19,27 +19,27 @@ public class PacienteDAO implements DAOAbstracto<Integer, Paciente>{
     }
     @Override
     public void add(Paciente e) throws SQLException {
-        
+        dao.create(e);
     }
 
     @Override
     public Paciente findById(Integer id) throws SQLException {
-        return null;
+        return dao.queryForId(id);
     }
 
     @Override
     public List<Paciente> findAll() throws SQLException {
-        return List.of();
+        return dao.queryForAll();
     }
 
     @Override
     public void update(Paciente e) throws SQLException {
-
+        dao.update(e);
     }
 
     @Override
     public void delete(Integer id) throws SQLException {
-
+        dao.deleteById(id);
     }
     public void guardar (OutputStream out) throws JAXBException, SQLException {
         PacienteDAO.PacienteDAOX pacientes=new PacienteDAO.PacienteDAOX(findAll());
@@ -47,7 +47,7 @@ public class PacienteDAO implements DAOAbstracto<Integer, Paciente>{
             printwriter.println(XMLUtils.toXMLString(pacientes));
         }
     }
-    private final Dao<Paciente, String> dao;
+    private final Dao<Paciente, Integer> dao;
     @XmlRootElement(name = "pacientes")
     @XmlAccessorType(XmlAccessType.FIELD)
     static class PacienteDAOX{

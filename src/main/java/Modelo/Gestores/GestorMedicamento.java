@@ -20,7 +20,7 @@ public class GestorMedicamento {
         return medicamentos.findAll();
     }
 
-    public Medicamento buscar(int codigo)throws SQLException {
+    public Medicamento buscar(String codigo)throws SQLException {
             return medicamentos.findById(codigo);
     }
     public void agregar(Medicamento medicamento, Usuario usuario) throws SecurityException,SQLException {
@@ -42,7 +42,7 @@ public class GestorMedicamento {
         }
     }
 
-    public void eliminar(Integer codigo, Usuario usuario) throws SecurityException,SQLException {
+    public void eliminar(String codigo, Usuario usuario) throws SecurityException,SQLException {
         if(!("ADMINISTRADOR".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         try{

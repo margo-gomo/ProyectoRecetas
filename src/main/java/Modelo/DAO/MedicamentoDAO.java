@@ -24,7 +24,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlElement;
 import org.xml.sax.SAXException;
 
-public class MedicamentoDAO implements DAOAbstracto<Integer, Medicamento> {
+public class MedicamentoDAO implements DAOAbstracto<String, Medicamento> {
     public MedicamentoDAO() throws SQLException {
         this.dao=DaoManager.createDao(ConexionBD.getConexion(), Medicamento.class);
     }
@@ -34,7 +34,7 @@ public class MedicamentoDAO implements DAOAbstracto<Integer, Medicamento> {
     }
 
     @Override
-    public Medicamento findById(Integer id) throws SQLException {
+    public Medicamento findById(String id) throws SQLException {
         return dao.queryForId(id);
     }
 
@@ -49,7 +49,7 @@ public class MedicamentoDAO implements DAOAbstracto<Integer, Medicamento> {
     }
 
     @Override
-    public void delete(Integer id) throws SQLException {
+    public void delete(String id) throws SQLException {
         dao.deleteById(id);
     }
     public void guardar (OutputStream out) throws JAXBException, SQLException {
@@ -68,17 +68,16 @@ public class MedicamentoDAO implements DAOAbstracto<Integer, Medicamento> {
             Node nodo = listaMedicamentos.item(i);
             if (nodo.getNodeType() == Node.ELEMENT_NODE) {
                 Element elemento = (Element) nodo;
-                String idText = elemento.getElementsByTagName("codigo").item(0).getTextContent().trim();
+                String codigo = elemento.getElementsByTagName("codigo").item(0).getTextContent().trim();
                 String nombre = elemento.getElementsByTagName("nombre").item(0).getTextContent().trim();
                 String presentacion = elemento.getElementsByTagName("presentacion").item(0).getTextContent().trim();
                 String descripcion = elemento.getElementsByTagName("descripcion").item(0).getTextContent().trim();
-                int codigo = Integer.parseInt(idText);
                 Medicamento medicamento = new Medicamento(codigo, nombre, presentacion, descripcion);
                 add(medicamento);
             }
         }
     }
-    private final Dao<Medicamento, Integer> dao;
+    private final Dao<Medicamento, String> dao;
     @XmlRootElement(name = "medicamentos")
     @XmlAccessorType(XmlAccessType.FIELD)
     static class MedicamentoDAOX{

@@ -60,8 +60,7 @@ public class GestorUsuario {
             throw new IllegalArgumentException("La clave por confirmar no coincide con la clave nueva propuesta.");
         if(claveNueva.isEmpty()||claveConfirmar.isEmpty())
             throw new IllegalArgumentException("Rellene todos los campos");
-        u.setClave(claveNueva);
-        usuarios.update(u);
+        usuarios.cambiarClave(u,claveNueva);
     }
     public void eliminar(String id, Usuario usuario) throws SecurityException,SQLException {
         if(!("ADMINISTRADOR".equals(usuario.getTipo())))

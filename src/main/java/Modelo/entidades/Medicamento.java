@@ -31,7 +31,7 @@ public class Medicamento {
         return hash;
     }
     @DatabaseField(id = true)
-    private int codigo;
+    private String codigo;
     @DatabaseField(canBeNull = false)
     private String nombre;
     @DatabaseField(canBeNull = false)

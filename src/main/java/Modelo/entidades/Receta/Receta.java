@@ -1,37 +1,98 @@
 package Modelo.entidades.Receta;
-
-import Adaptador.LocalDateAdapter;
+import Modelo.entidades.Usuario;
 import Modelo.entidades.Paciente;
-import Modelo.entidades.Medicamento;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.util.Date;
+import java.util.Calendar;
+import java.util.Objects;
+@Data
+@NoArgsConstructor
 @XmlAccessorType(XmlAccessType.FIELD)
-@ToString
+@DatabaseTable(tableName = "receta")
 public class Receta {
-    public Receta() {
-        indicaciones = new HashMap<>();
-        paciente = new Paciente();
-        fecha_confeccion = LocalDate.now();
-        fecha_retiro = null;
-        estado = "NO finalizada";
-        codigo="";
-        idFarmaceutaProceso="No procesada";
-        idFarmaceutaLista="No lista";
-        idFarmaceutaEntregar="No entregada";
+    public Receta(String codigo,Paciente paciente,Date fecha_retiro,Date fecha_confeccion,Usuario farmaceuta_Proceso,Usuario farmaceuta_Lista,Usuario farmaceuta_Entregada) {
+        this.codigo = codigo;
+        this.paciente = paciente;
+        this.fecha_retiro = fecha_retiro;
+        this.fecha_confeccion = fecha_confeccion;
+        estado="CONFECCIONADA";
+        this.farmaceuta_Proceso = farmaceuta_Proceso;
+        this.farmaceuta_Lista = farmaceuta_Lista;
+        this.farmaceuta_Entregada = farmaceuta_Entregada;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Receta))
+            return false;
+        Receta other = (Receta) obj;
+        return Objects.equals(codigo, other.codigo);
+    }
+    @Override
+    public int hashCode() {
+        int hash=5;
+        hash=29 * hash + Objects.hashCode(this.codigo);
+        return hash;
+    }
+    public boolean fechaDentroVentana() {
+        if (fecha_retiro == null) return false;
+        Date hoy = hoy();
+        Date min = restarDias(hoy, 3);
+        Date max = sumarDias(hoy, 3);
+        return esEntreInclusivo(fecha_retiro, min, max);
     }
 
-    public int cantidad(){ return indicaciones.size(); }
+    private static Date hoy() {
+        // Devolvemos solo la fecha (sin hora)
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
+
+    private static Date sumarDias(Date fecha, int dias) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fecha);
+        cal.add(Calendar.DAY_OF_YEAR, dias);
+        return cal.getTime();
+    }
+
+    private static Date restarDias(Date fecha, int dias) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fecha);
+        cal.add(Calendar.DAY_OF_YEAR, -dias);
+        return cal.getTime();
+    }
+
+    private static boolean esEntreInclusivo(Date f, Date ini, Date fin) {
+        return !f.before(ini) && !f.after(fin);
+    }
+    @DatabaseField(id = true)
+    String codigo;
+    @DatabaseField(columnName = "id_paciente",foreign = true,canBeNull = false)
+    private Paciente paciente;
+    @DatabaseField(canBeNull = false)
+    private Date fecha_confeccion;
+    @DatabaseField(canBeNull = false)
+    private Date fecha_retiro;
+    @DatabaseField(canBeNull = false)
+    private String estado;
+    @DatabaseField(foreign = true,columnName = "id_farmaceuta_proceso")
+    private Usuario farmaceuta_Proceso;
+    @DatabaseField(foreign = true,columnName = "id_farmaceuta_lista")
+    private Usuario farmaceuta_Lista;
+    @DatabaseField(foreign = true,columnName = "id_farmaceuta_entregada")
+    private Usuario farmaceuta_Entregada;
+}
+    /*public int cantidad(){ return indicaciones.size(); }
 
     public List<Indicacion> obtenerListaIndicaciones(){
         return List.copyOf(indicaciones.values());
@@ -62,19 +123,17 @@ public class Receta {
         return indicacion;
     }
 
-    public void estadoConfeccionado() {
-        estado = "confeccionada";
-    }
+
     public List<Medicamento> getMedicamentos() {
         return indicaciones.values()
                 .stream()
                 .map(Indicacion::getMedicamento)
                 .collect(Collectors.toList());
-    }
-    public int iniciarProceso(String idFarmaceuta) throws IllegalArgumentException {
-        if ("confeccionada".equalsIgnoreCase(estado)) {
+    }*/
+    /*public int iniciarProceso(Usuario farmaceuta) throws IllegalArgumentException {
+        if ("CONFECCIONADA".equals(estado)) {
             if (fechaDentroVentana(fecha_retiro)) {
-                idFarmaceutaProceso=idFarmaceuta;
+                farmaceuta=idFarmaceuta;
                 return 0;
             }
             else
@@ -82,8 +141,7 @@ public class Receta {
         } else
             return 2;
     }
-
-    public int marcarLista(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
+    public int marcarLista(Usuario farmaceuta) throws IllegalArgumentException,SecurityException {
         if ("proceso".equals(estado)) {
             if(!idFarmaceuta.equals(idFarmaceutaProceso)){
                 idFarmaceutaLista=idFarmaceuta;
@@ -100,7 +158,7 @@ public class Receta {
 
     public int entregar(String idFarmaceuta) throws IllegalArgumentException,SecurityException {
         if ("lista".equals(estado)) {
-            if(!idFarmaceuta.equals(idFarmaceutaLista)){
+            if(!idFarmaceuta.equals(farmaceuta_Lista)){
                 idFarmaceutaEntregar=idFarmaceuta;
                 return 0;
             }
@@ -113,7 +171,7 @@ public class Receta {
     }
 
 
-    private static boolean fechaDentroVentana(LocalDate fechaRetiro) {
+    private boolean fechaDentroVentana(LocalDate fechaRetiro) {
         if (fechaRetiro == null) return false;
         LocalDate hoy = hoy();
         LocalDate min = restarDias(hoy, 3);
@@ -126,42 +184,4 @@ public class Receta {
     private static LocalDate restarDias(LocalDate fecha, int dias) { return fecha.minusDays(dias); }
     private static boolean esEntreInclusivo(LocalDate f, LocalDate ini, LocalDate fin) {
         return !f.isBefore(ini) && !f.isAfter(fin);
-    }
-    @Setter
-    @Getter
-    String codigo;
-    @Getter
-    @XmlElement
-    private final Map<Integer, Indicacion> indicaciones;
-
-    @Getter
-    @Setter
-    @XmlElement
-    private Paciente paciente;
-
-    @Getter
-    @Setter
-    @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private LocalDate fecha_confeccion;
-
-    @Getter
-    @Setter
-    @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private LocalDate fecha_retiro;
-
-    @Getter
-    @Setter
-    private String estado;
-
-    @Getter
-    @Setter
-    private String idFarmaceutaProceso;
-
-    @Getter
-    @Setter
-    private String idFarmaceutaLista;
-
-    @Getter
-    @Setter
-    private String idFarmaceutaEntregar;
-}
+    }*/

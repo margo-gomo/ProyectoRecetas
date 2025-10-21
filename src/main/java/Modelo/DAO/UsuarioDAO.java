@@ -61,7 +61,10 @@ public class UsuarioDAO implements DAOAbstracto<String,Usuario> {
     public void update(Usuario e) throws SQLException {
         dao.update(e);
     }
-
+    public void cambiarClave(Usuario u, String claveNueva) throws SQLException{
+        u.setClave(claveNueva);
+        dao.update(u);
+    }
     @Override
     public void delete(String id) throws SQLException {
         dao.deleteById(id);
