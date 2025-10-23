@@ -7,12 +7,19 @@ import Modelo.entidades.Usuario;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 public class GestorRecetaIndicacion {
     public GestorRecetaIndicacion()throws SQLException {
         recetas=new RecetaDAO();
         indicaciones=new IndicacionDAO();
         indicacionList=new ArrayList<Indicacion>();
+        medicamentoCodigos=new ArrayList<String>();
     }
     public void iniciarProceso(String codigo,Usuario farmaceuta) throws IllegalArgumentException,SecurityException,SQLException {
         Receta receta=buscarReceta(codigo);
@@ -103,7 +110,7 @@ public class GestorRecetaIndicacion {
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         if(buscarIndicacionLista(indicacion.getMedicamento().getCodigo())!=null)
             throw new IllegalArgumentException("Ya existe un medicamento con ese codigo en la receta");
-            indicacionList.add(indicacion);
+        indicacionList.add(indicacion);
     }
     public void actualizarIndicacionLista(Indicacion indicacion, Usuario usuario) throws SecurityException,IllegalArgumentException{
         if(!("MEDICO".equals(usuario.getTipo())))
@@ -140,16 +147,142 @@ public class GestorRecetaIndicacion {
             throw new SQLException("No existe una indicación con esa clave");
         return ind;
     }
-    /*public void cargar() throws IOException, JAXBException, SQLException, ParserConfigurationException, SAXException {
-        File f=new File(ARCHIVO_DATOS);
-        if(f.exists()&&f.length()!=0&&obtenerListaRecetas()==null)
-            recetas.cargar(f);
-    }*/
-    /*public void guardar () throws JAXBException, SQLException, FileNotFoundException {
-        recetas.guardar(new FileOutputStream(ARCHIVO_DATOS));
-    }*/
-    private static final String ARCHIVO_DATOS= "src/datos/recetas.xml";
+    public List<Indicacion> indiccionesReceta(String recetaCodigo) throws SQLException{
+        return indicaciones.findByRecetaCodigo(recetaCodigo);
+    }
+    public List<Indicacion> indicacionesbyMedicamento(String medicamentoCodigo) throws SQLException{
+        return indicaciones.findByMedicamentoCodigo(medicamentoCodigo);
+    }
+
+    public Map<String, Integer> recetasPorEstado() throws SQLException {
+        List<Receta> lista = recetas.findAll();
+        Map<String, Integer> conteo = new HashMap<>();
+        for (Receta receta : lista) {
+            String estado = receta.getEstado();
+            conteo.put(estado, conteo.getOrDefault(estado, 0) + 1);
+        }
+        return conteo;
+    }
+    public void agregarMedicamentoCodigo(String codigo)throws IllegalArgumentException{
+        for(String m:medicamentoCodigos){
+            if(m.equals(codigo))
+                throw new IllegalArgumentException("No se admiten repetidos");
+        }
+        medicamentoCodigos.add(codigo);
+    }
+    public void eliminarMedicamentoCodigo(String codigo){
+        medicamentoCodigos.remove(codigo);
+    }
+    public void limpiarMedicamentoCodigo(){
+        medicamentoCodigos.clear();
+    }
+    public Map<String, Map<String, Integer>> estadisticaMedicamentosPorMes(Date desde, Date hasta) throws IllegalArgumentException,SQLException {
+        if (desde == null || hasta == null)
+            throw new IllegalArgumentException("Fechas inválidas");
+
+        if (desde.after(hasta))
+            throw new IllegalArgumentException("La fecha 'desde' no puede ser posterior a 'hasta'");
+
+        // 1) Generar lista de etiquetas de meses entre desde y hasta (inclusive) en formato "YYYY-M"
+        List<String> meses = generarEtiquetasMeses(desde, hasta);
+
+        // 2) Preparar el mapa resultado: para cada medicamento, inicializar mapa de meses a 0
+        Map<String, Map<String, Integer>> resultado = new LinkedHashMap<>();
+        for (String codigoMed : medicamentoCodigos) {
+            Map<String, Integer> serie = new LinkedHashMap<>();
+            for (String m : meses) serie.put(m, 0);
+            // inicialmente usamos el código como clave; intentaremos obtener el nombre más adelante
+            resultado.put(codigoMed, serie);
+        }
+
+        // 3) Para cada medicamento, obtener indicaciones y acumular por mes si la receta está en el rango
+        for (String codigoMed : medicamentoCodigos) {
+            List<Indicacion> lista = indicaciones.findByMedicamentoCodigo(codigoMed);
+
+            // intentar obtener nombre legible del medicamento (si hay al menos una indicación)
+            String etiquetaMedicamento = codigoMed;
+            if (!lista.isEmpty() && lista.get(0).getMedicamento() != null
+                    && lista.get(0).getMedicamento().getNombre() != null
+                    && !lista.get(0).getMedicamento().getNombre().isEmpty()) {
+                etiquetaMedicamento = lista.get(0).getMedicamento().getNombre();
+                // renombrar la clave en el mapa resultado (mantener orden), moviendo el inner map
+                Map<String, Integer> serie = resultado.remove(codigoMed);
+                resultado.put(etiquetaMedicamento, serie);
+            }
+
+            // si la lista está vacía simplemente queda la serie con ceros (de todos modos la dejamos)
+            List<Indicacion> indicacionesMedicamento = lista;
+            for (Indicacion ind : indicacionesMedicamento) {
+                // obtener la receta asociada y su fecha de confección
+                Receta r = ind.getReceta();
+                Date fecha = null;
+                if (r != null && r.getFecha_confeccion() != null) {
+                    fecha = r.getFecha_confeccion();
+                } else {
+                    // si por alguna razón la receta no está fully cargada, intentar buscar por id
+                    if (r != null && r.getCodigo() != null) {
+                        Receta recetaBD = recetas.findById(r.getCodigo());
+                        if (recetaBD != null) fecha = recetaBD.getFecha_confeccion();
+                    }
+                }
+
+                if (fecha == null) continue; // no hay fecha, no sumamos
+
+                // verificar que la fecha esté dentro del rango (inclusive)
+                if (fecha.before(desde) || fecha.after(hasta)) continue;
+
+                // calcular la etiqueta del mes de la receta
+                String mesLabel = etiquetaMesDesdeFecha(fecha); // "YYYY-M"
+
+                // sumar la cantidad
+                // la clave outer puede ser nombre o código; buscamos la entrada correspondiente
+                String finalEtiquetaMedicamento = etiquetaMedicamento;
+                Map.Entry<String, Map<String, Integer>> entry = resultado.entrySet()
+                        .stream()
+                        .filter(e -> e.getKey().equals(finalEtiquetaMedicamento) || e.getKey().equals(codigoMed))
+                        .findFirst()
+                        .orElse(null);
+
+                if (entry == null) continue; // defensivo, no debería pasar
+
+                Map<String, Integer> serie = entry.getValue();
+                // si por alguna razón mesLabel no está (no debería), ignorar
+                if (!serie.containsKey(mesLabel)) continue;
+
+                int actual = serie.get(mesLabel);
+                serie.put(mesLabel, actual + ind.getCantidad());
+            }
+        }
+
+        return resultado;
+    }
+
+    /* -------------------- helpers -------------------- */
+
+    private static List<String> generarEtiquetasMeses(Date desde, Date hasta) {
+        Calendar ini = Calendar.getInstance();
+        ini.setTime(desde);
+        ini.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar fin = Calendar.getInstance();
+        fin.setTime(hasta);
+        fin.set(Calendar.DAY_OF_MONTH, 1);
+
+        List<String> meses = new ArrayList<>();
+        while (!ini.after(fin)) {
+            meses.add(ini.get(Calendar.YEAR) + "-" + (ini.get(Calendar.MONTH) + 1)); // formato YYYY-M
+            ini.add(Calendar.MONTH, 1);
+        }
+        return meses;
+    }
+
+    private static String etiquetaMesDesdeFecha(Date fecha) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(fecha);
+        return c.get(Calendar.YEAR) + "-" + (c.get(Calendar.MONTH) + 1);
+    }
+
     private final RecetaDAO recetas;
     private final IndicacionDAO indicaciones;
     private final List<Indicacion> indicacionList;
+    List<String> medicamentoCodigos;
 }

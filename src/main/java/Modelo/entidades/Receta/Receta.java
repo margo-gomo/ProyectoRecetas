@@ -41,7 +41,6 @@ public class Receta {
         return hash;
     }
     public boolean fechaDentroVentana() {
-        if (fecha_retiro == null) return false;
         Date hoy = hoy();
         Date min = restarDias(hoy, 3);
         Date max = sumarDias(hoy, 3);

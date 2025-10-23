@@ -3,7 +3,8 @@ import Modelo.entidades.*;
 import Modelo.Gestores.*;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
-import Modelo.Estadísticas.*;
+import Modelo.Graficos.*;
+import org.jfree.chart.ChartPanel;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -12,31 +13,20 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JFileChooser;
-import java.io.File;
-import java.io.IOException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
 public class Controlador {
     public Controlador(GestorUsuario modeloUsuario, GestorMedico modeloMedico,
-                       GestorMedicamento modeloMedicamento, GestorPaciente modeloPaciente, GestorRecetaIndicacion modeloRecetasIndicacion) {
+                       GestorMedicamento modeloMedicamento, GestorPaciente modeloPaciente, GestorRecetaIndicacion modeloRecetasIndicacion,Usuario usuario_login, GraficosUtil graficosUtil) {
         this.modeloUsuarios = modeloUsuario;
         this.modeloMedico = modeloMedico;
         this.modeloPaciente = modeloPaciente;
         this.modeloMedicamento = modeloMedicamento;
         this.modeloRecetasIndicacion = modeloRecetasIndicacion;
-        usuario_login=new Usuario();
-        dashboard=new Dashboard();
-        historial=new Historicos();
+        this.usuario_login=usuario_login;
+        this.graficosUtil=graficosUtil;
     }
     public Controlador() throws SQLException {
-        this(new GestorUsuario(),new GestorMedico(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetaIndicacion());
-        usuario_login=new Usuario();
-        dashboard=new Dashboard();
-        historial=new Historicos();
+        this(new GestorUsuario(),new GestorMedico(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetaIndicacion(),new Usuario(),new GraficosUtil());
     }
     public void usuarioLogin(String id,String clave) throws SQLException {
         usuario_login=modeloUsuarios.buscarIdClave(id,clave);
@@ -258,23 +248,27 @@ public class Controlador {
         System.exit(0);
     }*/
     // ---------------- MÉTODOS DASHBOARD ----------------
+    public void agregarMedicamentoCodigo(String codigo)throws IllegalArgumentException{
+        modeloRecetasIndicacion.agregarMedicamentoCodigo(codigo);
+    }
+    public void eliminarMedicamentoCodigo(String codigo){
+        modeloRecetasIndicacion.eliminarMedicamentoCodigo(codigo);
+    }
+    public void limpiarMedicamentoCodigo(){
+        modeloRecetasIndicacion.limpiarMedicamentoCodigo();
+    }
+    public ChartPanel crearGraficoLineas(Date desde, Date hasta)throws IllegalArgumentException, SQLException{
+        return graficosUtil.crearGraficoLineas(modeloRecetasIndicacion.estadisticaMedicamentosPorMes(desde,hasta));
+    }
+    public ChartPanel crearGraficoPastel()throws SQLException{
+        return graficosUtil.crearGraficoPastel(modeloRecetasIndicacion.recetasPorEstado());
+    }
 
-    public Map<YearMonth, Integer> DashboardMedicamentosPorMes(LocalDate startDate, LocalDate endDate, String nombreMedicamento) throws SQLException {
-        return dashboard.medicamentosPorMes(modeloRecetasIndicacion.obtenerListaRecetas(), startDate, endDate, nombreMedicamento);
-    }
-    public Map<String, Long> DashboardRecetasPorEstado(LocalDate desde, LocalDate hasta, String nombreMedicamento) throws SQLException {
-        return dashboard.recetasPorEstado(modeloRecetasIndicacion.obtenerListaRecetas(), desde, hasta, nombreMedicamento);
-    }
-
-    public Receta buscarRecetaHistorial(String codigo) throws SQLException {
-        return historial.buscarPorCodigo(buscarReceta(codigo));
-    }
     public List<Indicacion>mostrarIndicaciones(String codigo) throws SQLException {
-        Receta receta=buscarRecetaHistorial(codigo);
-        return historial.mostrarIndicaciones(receta);
+        return modeloRecetasIndicacion.indiccionesReceta(codigo);
     }
 
-    // ---------------- EXPORTACIÓN A PDF DESDE CONTROLADOR ----------------
+    /*// ---------------- EXPORTACIÓN A PDF DESDE CONTROLADOR ----------------
 
     public void exportarHistorico(java.util.List<Receta> recetas) throws Exception {
         String[] cabeceras = {"Código", "ID Paciente", "Paciente", "Medicamentos", "Fecha Confección", "Fecha Retiro", "Estado"};
@@ -483,13 +477,12 @@ public class Controlador {
         if (linea.length() > 0) lineas.add(linea.toString());
         return lineas;
     }
-
+*/
     private GestorMedico modeloMedico;
     private GestorPaciente modeloPaciente;
     private GestorMedicamento modeloMedicamento;
     private GestorRecetaIndicacion modeloRecetasIndicacion;
     private GestorUsuario modeloUsuarios;
     private Usuario usuario_login;
-    private Dashboard  dashboard;
-    private Historicos historial;
+    private GraficosUtil graficosUtil;
 }

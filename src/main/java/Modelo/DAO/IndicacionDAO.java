@@ -55,6 +55,17 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         deleteBuilder.delete();
     }
 
+    public List<Indicacion> findByRecetaCodigo(String recetaCodigo) throws SQLException {
+        QueryBuilder<Indicacion, Object> qb = dao.queryBuilder();
+        qb.where().eq("receta_codigo", recetaCodigo);
+        return qb.query();
+    }
+    public List<Indicacion> findByMedicamentoCodigo(String medicamentoCodigo) throws SQLException {
+        QueryBuilder<Indicacion, Object> qb = dao.queryBuilder();
+        qb.where().eq("medicamento_codigo", medicamentoCodigo);
+        return qb.query();
+    }
+
     /**
      * Clase interna que representa la clave compuesta de Indicacion:
      * (recetaCodigo, medicamentoCodigo)

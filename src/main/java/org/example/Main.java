@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -40,7 +41,7 @@ public class Main {
         });
     }
 
-    private void mostrarInterfaz() {
+    private void mostrarInterfaz() throws SQLException {
         System.out.println("Iniciando interfaz..");
 
         Controlador controlador = new Controlador();
