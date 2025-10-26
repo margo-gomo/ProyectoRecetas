@@ -3,10 +3,8 @@ package Modelo.Gestores;
 import Modelo.DAO.MedicamentoDAO;
 import Modelo.entidades.Medicamento;
 import Modelo.entidades.Usuario;
-import jakarta.xml.bind.JAXBException;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -52,14 +50,13 @@ public class GestorMedicamento {
         }
     }
 
-    public void cargar() throws IOException, JAXBException, SQLException, ParserConfigurationException, SAXException {
-        File f=new File(ARCHIVO_DATOS);
-        if(f.exists()&&f.length()!=0&&obtenerListaMedicamentos()==null)
-            medicamentos.cargar(f);
+    public void cargar() throws SQLException, IOException {
+        if(obtenerListaMedicamentos().isEmpty())
+            medicamentos.importAllFromJson(new File(ARCHIVO_DATOS));
     }
-    public void guardar () throws JAXBException, SQLException, FileNotFoundException {
-        medicamentos.guardar(new FileOutputStream(ARCHIVO_DATOS));
+    public void guardar () throws SQLException, IOException {
+        medicamentos.exportAllToJson(new File(ARCHIVO_DATOS));
     }
-    private static final String ARCHIVO_DATOS= "src/datos/medicamentos.xml";
+    private static final String ARCHIVO_DATOS= "src/main/datos/medicamentos.json";
     private final MedicamentoDAO medicamentos;
 }

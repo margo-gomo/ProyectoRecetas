@@ -1,28 +1,14 @@
 package Modelo.DAO;
-
-import Adaptador.XMLUtils;
+import Modelo.Utils.JsonUtil;
 import Modelo.entidades.Medicamento;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 
-import java.io.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlElement;
-import org.xml.sax.SAXException;
 
 public class MedicamentoDAO implements DAOAbstracto<String, Medicamento> {
     public MedicamentoDAO() throws SQLException {
@@ -52,43 +38,19 @@ public class MedicamentoDAO implements DAOAbstracto<String, Medicamento> {
     public void delete(String id) throws SQLException {
         dao.deleteById(id);
     }
-    public void guardar (OutputStream out) throws JAXBException, SQLException {
-        MedicamentoDAO.MedicamentoDAOX medicamentos=new MedicamentoDAO.MedicamentoDAOX(findAll());
-        try(PrintWriter printwriter=new PrintWriter(out)){
-            printwriter.println(XMLUtils.toXMLString(medicamentos));
-        }
+
+    @Override
+    public void exportAllToJson(File file) throws SQLException, IOException {
+        List<Medicamento> all = findAll();
+        JsonUtil.writeListToFile(all, file);
     }
-    public void cargar(File xmlFile) throws SQLException, ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(xmlFile);
-        doc.getDocumentElement().normalize();
-        NodeList listaMedicamentos = doc.getElementsByTagName("medicamento");
-        for (int i = 0; i < listaMedicamentos.getLength(); i++) {
-            Node nodo = listaMedicamentos.item(i);
-            if (nodo.getNodeType() == Node.ELEMENT_NODE) {
-                Element elemento = (Element) nodo;
-                String codigo = elemento.getElementsByTagName("codigo").item(0).getTextContent().trim();
-                String nombre = elemento.getElementsByTagName("nombre").item(0).getTextContent().trim();
-                String presentacion = elemento.getElementsByTagName("presentacion").item(0).getTextContent().trim();
-                String descripcion = elemento.getElementsByTagName("descripcion").item(0).getTextContent().trim();
-                Medicamento medicamento = new Medicamento(codigo, nombre, presentacion, descripcion);
-                add(medicamento);
-            }
-        }
+
+    @Override
+    public void importAllFromJson(File file) throws SQLException, IOException {
+        List<Medicamento> list = JsonUtil.readListFromFile(file, new TypeReference<List<Medicamento>>() {});
+        for (Medicamento e : list)
+            add(e);
     }
+
     private final Dao<Medicamento, String> dao;
-    @XmlRootElement(name = "medicamentos")
-    @XmlAccessorType(XmlAccessType.FIELD)
-    static class MedicamentoDAOX{
-        public MedicamentoDAOX(List<Medicamento> lista) {
-            this();
-            medicamentos.addAll(lista);
-        }
-        public MedicamentoDAOX() {
-            medicamentos = new ArrayList<>();
-        }
-        @XmlElement
-        private List<Medicamento> medicamentos;
-    }
 }

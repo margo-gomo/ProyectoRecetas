@@ -45,7 +45,7 @@ public class Main {
         System.out.println("Iniciando interfaz..");
 
         Controlador controlador = new Controlador();
-        controlador.init();
+        //controlador.init();
         FlatLightLaf.setup();
         MenuVista vistaPrincipal = new MenuVista(controlador);
         vistaPrincipal.init();

@@ -1,18 +1,14 @@
 package Modelo.DAO;
-import Adaptador.XMLUtils;
+import Modelo.Utils.JsonUtil;
 import Modelo.entidades.Paciente;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlElement;
 public class PacienteDAO implements DAOAbstracto<Integer, Paciente>{
     public PacienteDAO() throws SQLException {
         this.dao=DaoManager.createDao(ConexionBD.getConexion(), Paciente.class);
@@ -41,24 +37,19 @@ public class PacienteDAO implements DAOAbstracto<Integer, Paciente>{
     public void delete(Integer id) throws SQLException {
         dao.deleteById(id);
     }
-    public void guardar (OutputStream out) throws JAXBException, SQLException {
-        PacienteDAO.PacienteDAOX pacientes=new PacienteDAO.PacienteDAOX(findAll());
-        try(PrintWriter printwriter=new PrintWriter(out)){
-            printwriter.println(XMLUtils.toXMLString(pacientes));
-        }
+
+    @Override
+    public void exportAllToJson(File file) throws SQLException, IOException {
+        List<Paciente> all = findAll();
+        JsonUtil.writeListToFile(all, file);
     }
+
+    @Override
+    public void importAllFromJson(File file) throws SQLException, IOException {
+        List<Paciente> list = JsonUtil.readListFromFile(file, new TypeReference<List<Paciente>>() {});
+        for (Paciente e : list)
+            add(e);
+    }
+
     private final Dao<Paciente, Integer> dao;
-    @XmlRootElement(name = "pacientes")
-    @XmlAccessorType(XmlAccessType.FIELD)
-    static class PacienteDAOX{
-        public PacienteDAOX(List<Paciente> lista) {
-            this();
-            pacientes.addAll(lista);
-        }
-        public PacienteDAOX() {
-            pacientes = new ArrayList<>();
-        }
-        @XmlElement
-        private List<Paciente> pacientes;
-    }
 }

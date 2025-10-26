@@ -1,8 +1,13 @@
 package Modelo.DAO;
+import Modelo.Utils.JsonUtil;
 import Modelo.entidades.Receta.Receta;
 import Modelo.entidades.Usuario;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 public class RecetaDAO implements DAOAbstracto<String, Receta> {
@@ -46,6 +51,18 @@ public class RecetaDAO implements DAOAbstracto<String, Receta> {
     @Override
     public void delete(String id) throws SQLException {
         dao.deleteById(id);
+    }
+    @Override
+    public void exportAllToJson(File file) throws SQLException, IOException {
+        List<Receta> all = findAll();
+        JsonUtil.writeListToFile(all, file);
+    }
+
+    @Override
+    public void importAllFromJson(File file) throws SQLException, IOException {
+        List<Receta> list = JsonUtil.readListFromFile(file, new TypeReference<List<Receta>>() {});
+        for (Receta e : list)
+            add(e);
     }
     private final Dao<Receta,String> dao;
 }

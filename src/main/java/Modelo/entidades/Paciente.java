@@ -38,6 +38,4 @@ public class Paciente {
     @DatabaseField(canBeNull = false)
     private Date fecha_nacimiento;
     private int telefono;
-    /*@XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private LocalDate fecha_nacimiento;*/
 }

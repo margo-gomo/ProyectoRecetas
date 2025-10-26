@@ -1,9 +1,6 @@
 package Modelo.Gestores;
 import Modelo.DAO.UsuarioDAO;
 import Modelo.entidades.Usuario;
-import jakarta.xml.bind.JAXBException;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
@@ -71,15 +68,13 @@ public class GestorUsuario {
             throw new SQLException("No existe un usuario con esas credenciales");
         }
     }
-
-    /*public void cargar() throws IOException, JAXBException, SQLException, ParserConfigurationException, SAXException {
-        File f=new File(ARCHIVO_DATOS);
-        if(f.exists()&&f.length()!=0&&obtenerListaUsuarios()==null)
-            usuarios.cargar(f);
-    }*/
-    public void guardar () throws JAXBException, SQLException, FileNotFoundException {
-        usuarios.guardar(new FileOutputStream(ARCHIVO_DATOS));
+    public void cargar() throws SQLException, IOException {
+        if(obtenerListaUsuarios().isEmpty())
+            usuarios.importAllFromJson(new File(ARCHIVO_DATOS));
     }
-    private static final String ARCHIVO_DATOS= "src/datos/usuarios.xml";
+    public void guardar () throws SQLException, IOException {
+        usuarios.exportAllToJson(new File(ARCHIVO_DATOS));
+    }
+    private static final String ARCHIVO_DATOS= "src/main/datos/usuarios.json";
     private final UsuarioDAO usuarios;
 }

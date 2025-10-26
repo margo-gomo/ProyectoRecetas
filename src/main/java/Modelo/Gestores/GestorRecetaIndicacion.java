@@ -2,8 +2,12 @@ package Modelo.Gestores;
 
 import Modelo.DAO.RecetaDAO;
 import Modelo.DAO.IndicacionDAO;
+import Modelo.entidades.Medicamento;
 import Modelo.entidades.Receta.*;
 import Modelo.entidades.Usuario;
+
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -256,7 +260,20 @@ public class GestorRecetaIndicacion {
 
         return resultado;
     }
-
+    public void cargarRecetas()throws SQLException, IOException {
+        if(obtenerListaRecetas().isEmpty())
+            recetas.importAllFromJson(new File(ARCHIVO_DATOS_RECETA));
+    }
+    public void guardarRecetas() throws SQLException, IOException {
+        recetas.exportAllToJson(new File(ARCHIVO_DATOS_RECETA));
+    }
+    public void cargarIndicaciones(List<Medicamento> medicamentos) throws SQLException, IOException {
+        if(obtenerListaRecetas().isEmpty())
+            indicaciones.importFromJson(new File(ARCHIVO_DATOS_INDICACION),obtenerListaRecetas(),medicamentos);
+    }
+    public void guardarIndicaciones()throws SQLException, IOException {
+        indicaciones.exportAllToJson(new File(ARCHIVO_DATOS_INDICACION));
+    }
     /* -------------------- helpers -------------------- */
 
     private static List<String> generarEtiquetasMeses(Date desde, Date hasta) {
@@ -280,7 +297,8 @@ public class GestorRecetaIndicacion {
         c.setTime(fecha);
         return c.get(Calendar.YEAR) + "-" + (c.get(Calendar.MONTH) + 1);
     }
-
+    private static final String ARCHIVO_DATOS_RECETA= "src/main/datos/recetas.json";
+    private static final String ARCHIVO_DATOS_INDICACION= "src/main/datos/indicaciones.json";
     private final RecetaDAO recetas;
     private final IndicacionDAO indicaciones;
     private final List<Indicacion> indicacionList;

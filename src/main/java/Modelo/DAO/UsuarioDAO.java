@@ -1,20 +1,15 @@
 package Modelo.DAO;
-import Adaptador.XMLUtils;
+import Modelo.Utils.JsonUtil;
 import Modelo.entidades.Usuario;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.j256.ormlite.stmt.QueryBuilder;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
-import jakarta.xml.bind.annotation.XmlElement;
 public class UsuarioDAO implements DAOAbstracto<String,Usuario> {
     public UsuarioDAO() throws SQLException {
         this.dao=DaoManager.createDao(ConexionBD.getConexion(), Usuario.class);
@@ -69,24 +64,18 @@ public class UsuarioDAO implements DAOAbstracto<String,Usuario> {
     public void delete(String id) throws SQLException {
         dao.deleteById(id);
     }
-    public void guardar (OutputStream out) throws JAXBException, SQLException {
-        UsuarioDAOX usuarios=new UsuarioDAOX(findAll());
-        try(PrintWriter printwriter=new PrintWriter(out)){
-            printwriter.println(XMLUtils.toXMLString(usuarios));
-        }
+
+    @Override
+    public void exportAllToJson(File file) throws SQLException, IOException {
+        List<Usuario> all = findAll();
+        JsonUtil.writeListToFile(all, file);
+    }
+
+    @Override
+    public void importAllFromJson(File file) throws SQLException, IOException {
+        List<Usuario> list = JsonUtil.readListFromFile(file, new TypeReference<List<Usuario>>() {});
+        for (Usuario e : list)
+            add(e);
     }
     private final Dao<Usuario, String> dao;
-    @XmlRootElement(name = "usuarios")
-    @XmlAccessorType(XmlAccessType.FIELD)
-    static class UsuarioDAOX{
-        public UsuarioDAOX(List<Usuario> lista) {
-            this();
-            usuarios.addAll(lista);
-        }
-        public UsuarioDAOX() {
-            usuarios = new ArrayList<>();
-        }
-        @XmlElement
-        private List<Usuario> usuarios;
-    }
 }

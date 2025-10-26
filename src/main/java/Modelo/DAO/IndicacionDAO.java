@@ -1,19 +1,21 @@
 package Modelo.DAO;
 
+import Modelo.Utils.JsonUtil;
+import Modelo.entidades.Medicamento;
 import Modelo.entidades.Receta.Indicacion;
+import Modelo.entidades.Receta.Receta;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
-
+import lombok.AllArgsConstructor;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-/**
- * DAO para la entidad Indicacion usando una clave compuesta (recetaCodigo, medicamentoCodigo).
- * Contiene la clase anidada IndicacionKey que representa la clave compuesta.
- */
 public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, Indicacion> {
 
     public IndicacionDAO() throws SQLException {
@@ -65,20 +67,48 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         qb.where().eq("medicamento_codigo", medicamentoCodigo);
         return qb.query();
     }
+    @Override
+    public void exportAllToJson(File file) throws SQLException, IOException {
+        List<Indicacion> all = findAll();
+        List<IndicacionExport> exports = new ArrayList<>();
+        for (Indicacion ind : all) {
+            String recetaCodigo = ind.getReceta() != null ? ind.getReceta().getCodigo() : null;
+            String medicamentoCodigo = ind.getMedicamento() != null ? ind.getMedicamento().getCodigo() : null;
+            exports.add(new IndicacionExport(recetaCodigo, medicamentoCodigo, ind.getCantidad(), ind.getIndicaiones(), ind.getDuracion()));
+        }
+        JsonUtil.writeListToFile(exports, file);
+    }
+    @Override
+    public void importAllFromJson(File file) throws SQLException, IOException{
 
-    /**
-     * Clase interna que representa la clave compuesta de Indicacion:
-     * (recetaCodigo, medicamentoCodigo)
-     */
+    }
+    public void importFromJson(File file, List<Receta> recetas, List<Medicamento> medicamentos) throws SQLException, IOException {
+        List<IndicacionExport> list = JsonUtil.readListFromFile(file, new TypeReference<List<IndicacionExport>>() {});
+        for (IndicacionExport ie : list) {
+            Receta receta = new Receta();
+            for(Receta r : recetas) {
+                if(r.getCodigo().equals(ie.recetaCodigo)){
+                    receta = r;
+                    break;
+                }
+            }
+            Medicamento medicamento = new Medicamento();
+            for(Medicamento m : medicamentos){
+                if(m.getCodigo().equals(ie.medicamentoCodigo)){
+                    medicamento = m;
+                    break;
+                }
+            }
+            Indicacion ind = new Indicacion(medicamento, ie.cantidad, ie.indicaiones, ie.duracion);
+            ind.setReceta(receta);
+
+            add (ind);
+        }
+    }
+    @AllArgsConstructor
     public static final class IndicacionKey {
         private final String recetaCodigo;
         private final String medicamentoCodigo;
-
-        public IndicacionKey(String recetaCodigo, String medicamentoCodigo) {
-            this.recetaCodigo = recetaCodigo;
-            this.medicamentoCodigo = medicamentoCodigo;
-        }
-
         public String getRecetaCodigo() {
             return recetaCodigo;
         }
@@ -86,7 +116,6 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         public String getMedicamentoCodigo() {
             return medicamentoCodigo;
         }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -95,16 +124,18 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
             return Objects.equals(recetaCodigo, that.recetaCodigo) &&
                     Objects.equals(medicamentoCodigo, that.medicamentoCodigo);
         }
-
         @Override
         public int hashCode() {
             return Objects.hash(recetaCodigo, medicamentoCodigo);
         }
-
-        @Override
-        public String toString() {
-            return "IndicacionKey{recetaCodigo='" + recetaCodigo + "', medicamentoCodigo='" + medicamentoCodigo + "'}";
-        }
+    }
+    @AllArgsConstructor
+    static final class IndicacionExport{
+        public String recetaCodigo;      // solo referencia por clave
+        public String medicamentoCodigo; // solo referencia por clave
+        public int cantidad;
+        public String indicaiones;
+        public int duracion;
     }
     private final Dao<Indicacion, Object> dao;
 }

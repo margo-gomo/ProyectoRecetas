@@ -1,4 +1,6 @@
 package Modelo.DAO;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 public interface DAOAbstracto <K, T> {
@@ -11,4 +13,6 @@ public interface DAOAbstracto <K, T> {
     public void update(T e) throws SQLException;
 
     public void delete(K id) throws SQLException;
+    public void exportAllToJson(File file) throws SQLException, IOException;
+    public void importAllFromJson(File file) throws SQLException, IOException;
 }

@@ -2,14 +2,11 @@ package Modelo.entidades.Receta;
 import Modelo.entidades.Medicamento;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Objects;
 @Data
 @NoArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
 @DatabaseTable(tableName = "indicacion")
 public class Indicacion {
     public Indicacion(Medicamento medicamento,int cantidad,String indicaiones,int duracion) {

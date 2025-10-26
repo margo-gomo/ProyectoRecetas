@@ -3,10 +3,8 @@ package Modelo.Gestores;
 import Modelo.DAO.PacienteDAO;
 import Modelo.entidades.Paciente;
 import Modelo.entidades.Usuario;
-import jakarta.xml.bind.JAXBException;
-import org.xml.sax.SAXException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -53,15 +51,13 @@ public class GestorPaciente {
             throw new SQLException("No existe un paciente con ese id");
         }
     }
-
-    /*public void cargar() throws IOException, JAXBException, SQLException, ParserConfigurationException, SAXException {
-        File f=new File(ARCHIVO_DATOS);
-        if(f.exists()&&f.length()!=0&&obtenerListaPacientes()==null)
-            pacientes.cargar(f);
-    }*/
-    public void guardar () throws JAXBException, SQLException, FileNotFoundException {
-        pacientes.guardar(new FileOutputStream(ARCHIVO_DATOS));
+    public void cargar() throws SQLException, IOException {
+        if(obtenerListaPacientes().isEmpty())
+            pacientes.importAllFromJson(new File(ARCHIVO_DATOS));
     }
-    private static final String ARCHIVO_DATOS= "src/datos/pacientes.xml";
+    public void guardar () throws SQLException, IOException {
+        pacientes.exportAllToJson(new File(ARCHIVO_DATOS));
+    }
+    private static final String ARCHIVO_DATOS= "src/main/datos/pacientes.json";
     private final PacienteDAO pacientes;
 }
