@@ -261,15 +261,17 @@ public class GestorRecetaIndicacion {
         return resultado;
     }
     public void cargarRecetas()throws SQLException, IOException {
-        if(obtenerListaRecetas().isEmpty())
-            recetas.importAllFromJson(new File(ARCHIVO_DATOS_RECETA));
+        File f=new File(ARCHIVO_DATOS_RECETA);
+        if(obtenerListaRecetas().isEmpty()&&f.exists())
+            recetas.importAllFromJson(f);
     }
     public void guardarRecetas() throws SQLException, IOException {
         recetas.exportAllToJson(new File(ARCHIVO_DATOS_RECETA));
     }
     public void cargarIndicaciones(List<Medicamento> medicamentos) throws SQLException, IOException {
-        if(obtenerListaRecetas().isEmpty())
-            indicaciones.importFromJson(new File(ARCHIVO_DATOS_INDICACION),obtenerListaRecetas(),medicamentos);
+        File f=new File(ARCHIVO_DATOS_INDICACION);
+        if(obtenerListaRecetas().isEmpty()&&f.exists())
+            indicaciones.importFromJson(f,obtenerListaRecetas(),medicamentos);
     }
     public void guardarIndicaciones()throws SQLException, IOException {
         indicaciones.exportAllToJson(new File(ARCHIVO_DATOS_INDICACION));

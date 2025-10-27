@@ -51,8 +51,9 @@ public class GestorMedicamento {
     }
 
     public void cargar() throws SQLException, IOException {
-        if(obtenerListaMedicamentos().isEmpty())
-            medicamentos.importAllFromJson(new File(ARCHIVO_DATOS));
+        File f=new File(ARCHIVO_DATOS);
+        if(obtenerListaMedicamentos().isEmpty()&&f.exists())
+            medicamentos.importAllFromJson(f);
     }
     public void guardar () throws SQLException, IOException {
         medicamentos.exportAllToJson(new File(ARCHIVO_DATOS));

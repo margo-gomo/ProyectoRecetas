@@ -69,8 +69,9 @@ public class GestorUsuario {
         }
     }
     public void cargar() throws SQLException, IOException {
-        if(obtenerListaUsuarios().isEmpty())
-            usuarios.importAllFromJson(new File(ARCHIVO_DATOS));
+        File f=new File(ARCHIVO_DATOS);
+        if(obtenerListaUsuarios().isEmpty()&&f.exists())
+            usuarios.importAllFromJson(f);
     }
     public void guardar () throws SQLException, IOException {
         usuarios.exportAllToJson(new File(ARCHIVO_DATOS));
