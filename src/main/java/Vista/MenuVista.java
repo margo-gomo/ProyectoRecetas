@@ -2412,10 +2412,8 @@ public class MenuVista extends JFrame {
 
             try {
                 controlador.usuarioLogin(id, clave);
-
-                Usuario u = controlador.buscarUsuario(id);
-                int token = switch (u.getTipo()) {
-                    case "ADMINISTRADOR" -> 0;
+                int token = switch (controlador.getUsuario_login().getTipo()) {
+                    case "ADMIN"         -> 0;
                     case "MEDICO"        -> 1;
                     case "FARMACEUTA"    -> 2;
                     default              -> -1;

@@ -28,7 +28,7 @@ public class UsuarioDAO implements DAOAbstracto<String,Usuario> {
         builder.where()
                 .eq("id", id)
                 .and()
-                .eq("contraseña", clave);
+                .eq("clave", clave);
 
         return builder.queryForFirst();
     }
