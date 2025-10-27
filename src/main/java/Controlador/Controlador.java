@@ -1,4 +1,5 @@
 package Controlador;
+import Modelo.DAO.ConexionBD;
 import Modelo.entidades.*;
 import Modelo.Gestores.*;
 import Modelo.entidades.Receta.Indicacion;
@@ -244,6 +245,7 @@ public class Controlador {
         } catch (SQLException  | IOException ex) {
             System.err.printf("Ocurrió un error al guardar los datos");
         }
+        ConexionBD.cerrarConexion();
         System.out.println("Aplicación finalizada..");
         System.exit(0);
     }
