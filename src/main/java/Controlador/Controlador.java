@@ -4,8 +4,8 @@ import Modelo.Gestores.*;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import Modelo.Graficos.*;
+import lombok.Getter;
 import org.jfree.chart.ChartPanel;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
@@ -252,6 +252,7 @@ public class Controlador {
     private GestorMedicamento modeloMedicamento;
     private GestorRecetaIndicacion modeloRecetasIndicacion;
     private GestorUsuario modeloUsuarios;
+    @Getter
     private Usuario usuario_login;
     private GraficosUtil graficosUtil;
 }

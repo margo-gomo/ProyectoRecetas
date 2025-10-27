@@ -41,8 +41,9 @@ public class GestorMedico {
     }
 
     public void cargar(List<Usuario>usuarios) throws SQLException, IOException {
-        if(obtenerListaMedicos().isEmpty())
-            medicos.importFromJson(new File(ARCHIVO_DATOS), usuarios);
+        File f=new File(ARCHIVO_DATOS);
+        if(obtenerListaMedicos().isEmpty()&&f.exists())
+            medicos.importFromJson(f, usuarios);
     }
     public void guardar () throws SQLException, IOException {
         medicos.exportAllToJson(new File(ARCHIVO_DATOS));
