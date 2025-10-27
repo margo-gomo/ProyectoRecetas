@@ -11,7 +11,7 @@ public class Medico extends  Usuario {
         this.usuario = usuario;
         this.especialidad = especialidad;
     }
-    @DatabaseField(id = true, foreign = true, foreignAutoCreate = true,foreignAutoRefresh = true,columnName = "usuario_id")
+    @DatabaseField(foreign = true, foreignAutoCreate = true,foreignAutoRefresh = true,columnName = "usuario_id")
     private Usuario usuario;
     @DatabaseField
     private String especialidad;

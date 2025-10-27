@@ -32,9 +32,9 @@ public class Indicacion {
         hash=29 * hash + Objects.hashCode(this.medicamento.getCodigo());
         return hash;
     }
-    @DatabaseField(id=true,foreign = true,columnName = "receta_codigo")
+    @DatabaseField(foreign = true,columnName = "receta_codigo")
     private Receta receta;
-    @DatabaseField(id=true,foreign = true,columnName = "medicamento_codigo")
+    @DatabaseField(foreign = true,columnName = "medicamento_codigo")
     private Medicamento medicamento;
     @DatabaseField(canBeNull = false)
     private int cantidad;
