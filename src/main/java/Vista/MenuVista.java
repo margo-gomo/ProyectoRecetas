@@ -1,13 +1,10 @@
 package Vista;
 
+import Modelo.entidades.*;
 import Vista.Prescripción.*;
-import Modelo.entidades.Medico;
-import Modelo.entidades.Paciente;
 import Controlador.Controlador;
-import Modelo.entidades.Medicamento;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
-import Modelo.entidades.Farmaceuta;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
@@ -20,6 +17,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.YearMonth;
 
 import java.time.format.DateTimeFormatter;
@@ -594,10 +592,10 @@ public class MenuVista extends JFrame {
                     return;
                 }
                 try {
-                    // TODO: Persistir por Controlador cuando confirmemos firma exacta
-                    agregarMedicamentoATabla(new Medicamento(codigo, nom, pres));
+                    controlador.agregarMedicamento(codigo, nom, pres, "");
+                    cargarMedicamentosEnTabla();
                     limpiarCamposMedicamento();
-                    JOptionPane.showMessageDialog(MenuVista.this, "Medicamento agregado en la tabla (persistencia pendiente).", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(MenuVista.this, "Medicamento guardado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(MenuVista.this, "Error al guardar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -614,15 +612,16 @@ public class MenuVista extends JFrame {
                 String nom  = (tfNombreMed != null) ? tfNombreMed.getText().trim() : "";
                 String pres = (tfDescMed   != null) ? tfDescMed.getText().trim()   : "";
                 try {
-                    // TODO: Persistir por Controlador cuando confirmemos firma exacta
-                    actualizarMedicamentoEnTabla(new Medicamento(codigo, nom, pres));
+                    controlador.actualizarMedicamento(codigo, nom, pres, ""); // mantener desc vacía
+                    cargarMedicamentosEnTabla();
                     limpiarCamposMedicamento();
-                    JOptionPane.showMessageDialog(MenuVista.this, "Medicamento modificado en la tabla (persistencia pendiente).", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(MenuVista.this, "Medicamento modificado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(MenuVista.this, "Error al modificar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
+
 
         if (borrarMedicamento != null) {
             borrarMedicamento.addActionListener(e -> {
@@ -639,13 +638,14 @@ public class MenuVista extends JFrame {
                 if (opc != JOptionPane.YES_OPTION) return;
 
                 try {
-                    // TODO: Persistir por Controlador cuando confirmemos firma exacta
-                    eliminarMedicamentoDeTablaPorCodigo(codigo);
+                    controlador.eliminarMedicamento(codigo);
+                    cargarMedicamentosEnTabla();
                     limpiarCamposMedicamento();
-                    JOptionPane.showMessageDialog(MenuVista.this, "Medicamento eliminado de la tabla (persistencia pendiente).", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(MenuVista.this, "Medicamento eliminado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(MenuVista.this, "Error al eliminar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
+
             });
         }
 
@@ -675,12 +675,20 @@ public class MenuVista extends JFrame {
                 }
                 int modelRow = tablaDespacho.convertRowIndexToModel(fila);
                 String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
-                try{
+                try {
                     controlador.iniciarProceso(codigo);
-                }catch (IllegalArgumentException ex){
-                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }catch (SecurityException ex){
-                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al iniciar proceso: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SecurityException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al iniciar proceso: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (java.sql.SQLException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error de base de datos al iniciar proceso: " + ex.getMessage(),
+                            "BD", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
@@ -694,12 +702,20 @@ public class MenuVista extends JFrame {
                 }
                 int modelRow = tablaDespacho.convertRowIndexToModel(fila);
                 String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
-                try{
+                try {
                     controlador.marcarLista(codigo);
-                }catch (IllegalArgumentException ex){
-                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }catch (SecurityException ex){
-                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al marcar lista: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SecurityException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al marcar lista: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (java.sql.SQLException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error de base de datos al marcar lista: " + ex.getMessage(),
+                            "BD", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
@@ -713,12 +729,20 @@ public class MenuVista extends JFrame {
                 }
                 int modelRow = tablaDespacho.convertRowIndexToModel(fila);
                 String codigo = String.valueOf(tablaDespacho.getModel().getValueAt(modelRow, 0));
-                try{
+                try {
                     controlador.entregar(codigo);
-                }catch (IllegalArgumentException ex){
-                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }catch (SecurityException ex){
-                    JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al entregar: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SecurityException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error al entregar: " + ex.getMessage(),
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (java.sql.SQLException ex) {
+                    JOptionPane.showMessageDialog(MenuVista.this,
+                            "Error de base de datos al entregar: " + ex.getMessage(),
+                            "BD", JOptionPane.ERROR_MESSAGE);
                 }
             });
         }
@@ -755,7 +779,14 @@ public class MenuVista extends JFrame {
                     if (fila >= 0) {
                         String codigoReceta = tablaHistorico.getValueAt(fila, 0).toString();
 
-                        List<Indicacion> indicaciones = controlador.mostrarIndicaciones(codigoReceta);
+                        List<Indicacion> indicaciones;
+                        try {
+                            indicaciones = controlador.mostrarIndicaciones(codigoReceta);
+                        } catch (SQLException ex) {
+                            JOptionPane.showMessageDialog(MenuVista.this, "No se pudieron cargar las indicaciones: " + ex.getMessage(),
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
 
                         DialogDetalleReceta dialog = new DialogDetalleReceta();
                         dialog.setIndicaciones(indicaciones);
@@ -912,9 +943,10 @@ public class MenuVista extends JFrame {
         DefaultTableModel model = (DefaultTableModel) tablaFarma.getModel();
         model.setRowCount(0);
         try {
-            for (Farmaceuta f : controlador.obtenerListaFarmaceutas()) {
-                model.addRow(new Object[]{ f.getId(), f.getNombre() });
+            for (Usuario u : controlador.obtenerListaFarmaceutas()) {
+                model.addRow(new Object[]{ u.getId(), u.getNombre() });
             }
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "No se pudieron cargar los farmacéutas:\n" + ex.getMessage(),
                     "Base de datos", JOptionPane.ERROR_MESSAGE);
@@ -962,11 +994,17 @@ public class MenuVista extends JFrame {
             for (Receta r : recetas) {
                 if (r == null) continue;
                 String nombrePaciente = (r.getPaciente() != null) ? r.getPaciente().getNombre() : "";
-                String medicamentos = r.obtenerListaIndicaciones().stream()
-                        .map(in -> in.getMedicamento() != null ? in.getMedicamento().getNombre() : "")
-                        .filter(s -> !s.isEmpty())
-                        .reduce((a, b) -> a + ", " + b)
-                        .orElse("");
+                String medicamentos = "";
+                try {
+                    List<Indicacion> inds = controlador.mostrarIndicaciones(r.getCodigo());
+                    medicamentos = inds.stream()
+                            .map(in -> (in.getMedicamento() != null) ? in.getMedicamento().getNombre() : "")
+                            .filter(s -> !s.isEmpty())
+                            .reduce((a, b) -> a + ", " + b)
+                            .orElse("");
+                } catch (SQLException ex) {
+                    medicamentos = "(sin datos)";
+                }
 
                 model.addRow(new Object[]{
                         r.getCodigo(),
@@ -1454,7 +1492,7 @@ public class MenuVista extends JFrame {
     private void agregarPacienteATabla(Modelo.entidades.Paciente p) {
         if (tablaPac == null || p == null) return;
         DefaultTableModel model = (DefaultTableModel) tablaPac.getModel();
-        String fechaStr = p.getFecha_nacimiento() != null ? p.getFecha_nacimiento().format(formatoFecha) : "";
+        String fechaStr = fmt(p.getFecha_nacimiento());
         model.addRow(new Object[]{ p.getId(), p.getNombre(), fechaStr, p.getTelefono() });
     }
 
@@ -1465,7 +1503,7 @@ public class MenuVista extends JFrame {
             String idTabla = String.valueOf(model.getValueAt(i, 0));
             if (idTabla.equals(String.valueOf(p.getId()))) {
                 model.setValueAt(p.getNombre(), i, 1);
-                model.setValueAt(p.getFecha_nacimiento() != null ? p.getFecha_nacimiento().format(formatoFecha) : "", i, 2);
+                model.setValueAt(fmt(p.getFecha_nacimiento()), i, 2);
                 model.setValueAt(p.getTelefono(), i, 3);
                 break;
             }
@@ -1606,7 +1644,8 @@ public class MenuVista extends JFrame {
     private void recargarTablaIndicacionesDesdeControlador() {
         if (modeloTablaRecetas == null || controlador == null) return;
         modeloTablaRecetas.setRowCount(0);
-        List<Indicacion> lista = controlador.obtenerListaIndicaciones();
+        List<Indicacion> lista = java.util.Collections.emptyList();
+        try { lista = controlador.obtenerListaIndicaciones(); } catch (SQLException ex) {}
         if (lista == null) return;
 
         for (Indicacion in : lista) {
@@ -1628,11 +1667,12 @@ public class MenuVista extends JFrame {
 
     private void limpiarIndicacionesDelModelo() {
         if (controlador == null) return;
-        java.util.List<Indicacion> copia = new java.util.ArrayList<>(controlador.obtenerListaIndicaciones());
+        java.util.List<Indicacion> copia = new java.util.ArrayList<>();
+        try { copia.addAll(controlador.obtenerListaIndicaciones()); } catch (SQLException ex) {}
         for (Indicacion in : copia) {
             try {
                 if (in != null && in.getMedicamento() != null) {
-                    controlador.eliminarIndicacion(in.getMedicamento().getCodigo());
+                    controlador.eliminarIndicacionReceta(in.getMedicamento().getCodigo());
                 }
             } catch (Exception ignored) {}
         }
@@ -1666,7 +1706,15 @@ public class MenuVista extends JFrame {
         Integer duracion = dialog.getDuracionElegida();
         String indicaciones = dialog.getIndicacionesTexto();
 
-        Medicamento med = controlador.buscarMedicamentoPorCodigo(codigo); // <- String
+        Medicamento med;
+        try {
+            med = controlador.buscarMedicamento(codigo);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al buscar medicamento: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         if (med == null) {
             JOptionPane.showMessageDialog(this, "No se encontró el medicamento seleccionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
@@ -1682,9 +1730,9 @@ public class MenuVista extends JFrame {
 
         try {
             if (filaAActualizar != null && codigoOld != null && !codigoOld.equals(codigo)) {
-                try { controlador.eliminarIndicacion(codigoOld); } catch (Exception ignored) {}
+                try { controlador.eliminarIndicacionReceta(codigoOld); } catch (Exception ignored) {}
             }
-            try { controlador.eliminarIndicacion(codigo); } catch (Exception ignored) {}
+            try { controlador.eliminarIndicacionReceta(codigo); } catch (Exception ignored) {}
 
             controlador.agregarIndicacion(med, cantidad, indicaciones, duracion);
 
@@ -1710,7 +1758,16 @@ public class MenuVista extends JFrame {
             return;
         }
 
-        java.util.List<Indicacion> indicaciones = controlador.obtenerListaIndicaciones();
+        // Obtener indicaciones con manejo de SQLException
+        java.util.List<Indicacion> indicaciones;
+        try {
+            indicaciones = controlador.obtenerListaIndicaciones();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this,
+                    "No se pudieron cargar las indicaciones: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if (indicaciones == null || indicaciones.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Agregue al menos un medicamento a la receta.",
@@ -1718,6 +1775,7 @@ public class MenuVista extends JFrame {
             return;
         }
 
+        // Lectura y validación de fechas (dd/MM/yyyy)
         LocalDate fechaConf;
         try {
             String f = (labelFechaActualPresc != null) ? labelFechaActualPresc.getText().trim() : "";
@@ -1734,6 +1792,7 @@ public class MenuVista extends JFrame {
                     "Validación", JOptionPane.WARNING_MESSAGE);
             return;
         }
+
         LocalDate fechaRet = null;
         try {
             String r = (labelFechaRetiroPresc != null) ? labelFechaRetiroPresc.getText().trim() : "";
@@ -1753,6 +1812,7 @@ public class MenuVista extends JFrame {
             return;
         }
 
+        // Código de receta
         String codigoIngresado = leerCodigoPrescripcion();
         if (codigoIngresado.isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -1761,7 +1821,13 @@ public class MenuVista extends JFrame {
             return;
         }
 
-        if (controlador.buscarRecetaPorCodigo(codigoIngresado) != null) {
+        boolean yaExiste = false;
+        try {
+            Receta existente = controlador.buscarReceta(codigoIngresado);
+            yaExiste = (existente != null);
+        } catch (SQLException ignore) {
+        }
+        if (yaExiste) {
             JOptionPane.showMessageDialog(this,
                     "Ya existe una receta con código: " + codigoIngresado,
                     "Duplicado", JOptionPane.WARNING_MESSAGE);
@@ -1769,30 +1835,44 @@ public class MenuVista extends JFrame {
         }
 
         try {
-            Receta receta = controlador.agregarReceta(
-                    codigoIngresado,
-                    controlador.obtenerListaIndicaciones(),
-                    pacienteSeleccionado.getId(),
-                    fechaConf,
-                    fechaRet
+            // Guardar receta
+            controlador.agregarReceta(
+                    codigoIngresado, pacienteSeleccionado,
+                    (fechaRet == null ? null : toDate(fechaRet)),
+                    toDate(fechaConf),
+                    null, null, null
             );
 
+            // Recuperar la receta recién guardada
+            Receta receta;
+            try {
+                receta = controlador.buscarReceta(codigoIngresado);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this,
+                        "No se pudo recuperar la receta recién guardada: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Limpiar y recargar lista de indicaciones
             limpiarIndicacionesDelModelo();
             recargarTablaIndicacionesDesdeControlador();
             recetaEnPantalla = null;
             escribirCodigoPrescripcion("");
 
+            // Agregar a la tabla de despacho (usando fmt(Date) para formatear)
             if (tablaDespacho != null && tablaDespacho.getModel() instanceof DefaultTableModel) {
                 DefaultTableModel md = (DefaultTableModel) tablaDespacho.getModel();
                 md.addRow(new Object[]{
                         receta.getCodigo(),
                         pacienteSeleccionado.getId(),
-                        receta.getFecha_confeccion() != null ? receta.getFecha_confeccion().format(formatoFecha) : "",
-                        receta.getFecha_retiro() != null ? receta.getFecha_retiro().format(formatoFecha) : "",
+                        fmt(receta.getFecha_confeccion()),
+                        fmt(receta.getFecha_retiro()),
                         receta.getEstado()
                 });
             }
 
+            // Actualizar histórico
             cargarHistoricoEnTabla();
 
             JOptionPane.showMessageDialog(this,
@@ -1805,7 +1885,6 @@ public class MenuVista extends JFrame {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     private void limpiarPrescripcionUI() {
         if (tablaPrescripcion != null) tablaPrescripcion.clearSelection();
@@ -1843,7 +1922,7 @@ public class MenuVista extends JFrame {
             Object codObj = modeloTablaRecetas.getValueAt(modelRow, 0);
             if (codObj != null) {
                 String codMed = String.valueOf(codObj);
-                controlador.eliminarIndicacion(codMed); // <- String
+                controlador.eliminarIndicacionReceta(codMed); // <- String
             }
         } catch (Exception ignored) {}
 
@@ -1864,16 +1943,29 @@ public class MenuVista extends JFrame {
     private void cargarRecetaInicialEnPrescripcion() {
         if (controlador == null || modeloTablaRecetas == null) return;
 
-        java.util.List<Receta> recetas = controlador.obtenerListaRecetas();
+        java.util.List<Receta> recetas;
+        try {
+            recetas = controlador.obtenerListaRecetas();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "No se pudieron cargar las recetas: " + ex.getMessage(),
+                    "Base de datos", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         if (recetas == null || recetas.isEmpty()) return;
 
+        // Elegir la receta más reciente por fecha de confección (permite nulos)
         Receta r = recetas.stream()
-                .filter(java.util.Objects::nonNull)
-                .sorted(java.util.Comparator.comparing(
-                        Receta::getFecha_confeccion,
-                        java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())
-                ).reversed())
-                .findFirst()
+                .filter(Objects::nonNull)
+                .max((a, b) -> {
+                    java.util.Date da = a.getFecha_confeccion();
+                    java.util.Date db = b.getFecha_confeccion();
+                    if (da == null && db == null) return 0;
+                    if (da == null) return -1;
+                    if (db == null) return 1;
+                    return da.compareTo(db);
+                })
                 .orElse(null);
 
         if (r != null) {
@@ -1883,12 +1975,15 @@ public class MenuVista extends JFrame {
     }
 
 
+
     private void pintarRecetaEnUI(Receta r) {
         this.recetaEnPantalla = r;
         if (r == null || modeloTablaRecetas == null) return;
 
         modeloTablaRecetas.setRowCount(0);
-        java.util.List<Indicacion> inds = controlador.mostrarIndicaciones(r.getCodigo());
+        java.util.List<Indicacion> inds = java.util.Collections.emptyList();
+        try { inds = controlador.mostrarIndicaciones(r.getCodigo()); } catch (SQLException ex) {}
+
         if (inds != null) {
             for (Indicacion in : inds) {
                 if (in == null || in.getMedicamento() == null) continue;
@@ -1899,7 +1994,7 @@ public class MenuVista extends JFrame {
                         m.getNombre(),
                         presentacion,
                         in.getCantidad(),
-                        (in.getDescripcion() != null ? in.getDescripcion() : (in.getIndicaiones() != null ? in.getIndicaiones() : "")),
+                        (in.getIndicaiones() != null ? in.getIndicaiones() : ""),
                         in.getDuracion()
                 });
             }
@@ -2003,161 +2098,92 @@ public class MenuVista extends JFrame {
         }
 
         // ---------------- TABLA MESES ----------------
-        Map<YearMonth, Integer> acumuladoMeses = new java.util.HashMap<>();
+        try {
+            controlador.limpiarMedicamentoCodigo();
+        } catch (java.sql.SQLException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "No se pudo preparar el filtro de medicamentos: " + ex.getMessage(),
+                    "BD", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-        if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
-            // Si quieres la suma por medicamento (cada serie por medicamento) -> iteramos, pero evitamos duplicados:
-            Set<String> medsVistos = new HashSet<>();
-            for (int i = 0; i < comboBox1.getItemCount(); i++) {
-                String med = comboBox1.getItemAt(i).toString();
-                if ("Todos".equals(med) || medsVistos.contains(med)) continue;
-                medsVistos.add(med);
+        if (comboBox1 != null && comboBox1.getSelectedItem() != null) {
+            medSeleccionado = comboBox1.getSelectedItem().toString();
 
-                Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, med);
-                for (Map.Entry<YearMonth, Integer> entry : datos.entrySet()) {
-                    acumuladoMeses.merge(entry.getKey(), entry.getValue(), Integer::sum);
+            try {
+                if ("Todos".equals(medSeleccionado)) {
+                    for (Medicamento m : controlador.obtenerListaMedicamentos()) {
+                        if (m != null && m.getCodigo() != null) {
+                            controlador.agregarMedicamentoCodigo(m.getCodigo());
+                        }
+                    }
+                } else {
+                    for (Medicamento m : controlador.obtenerListaMedicamentos()) {
+                        if (m != null && medSeleccionado.equals(m.getNombre())) {
+                            controlador.agregarMedicamentoCodigo(m.getCodigo());
+                            break;
+                        }
+                    }
                 }
+            } catch (java.sql.SQLException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "No se pudieron cargar/agregar medicamentos: " + ex.getMessage(),
+                        "BD", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-        } else if (medSeleccionado != null) {
-            acumuladoMeses = controlador.DashboardMedicamentosPorMes(desde, hasta, medSeleccionado);
         }
 
         if (tablaMesAnioDashboard != null) {
-            DefaultTableModel model = (DefaultTableModel) tablaMesAnioDashboard.getModel();
-            model.setRowCount(0);
-
-            // Ordenamos las claves por fecha
-            List<YearMonth> clavesOrdenadas = new ArrayList<>(acumuladoMeses.keySet());
-            clavesOrdenadas.sort(Comparator.naturalOrder());
-
-            DateTimeFormatter formatoMesAnio = DateTimeFormatter.ofPattern("MM/yyyy");
-
-            for (YearMonth ym : clavesOrdenadas) {
-                model.addRow(new Object[]{ym.format(formatoMesAnio), acumuladoMeses.getOrDefault(ym, 0)});
-            }
+            ((DefaultTableModel) tablaMesAnioDashboard.getModel()).setRowCount(0);
         }
-
-        // ---------------- TABLA ESTADOS ----------------
-        Map<String, Long> acumuladoEstados = new java.util.HashMap<>();
-
-        if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
-            Set<String> medsVistos = new HashSet<>();
-            for (int i = 0; i < comboBox1.getItemCount(); i++) {
-                String med = comboBox1.getItemAt(i).toString();
-                if ("Todos".equals(med) || medsVistos.contains(med)) continue;
-                medsVistos.add(med);
-
-                Map<String, Long> datos = controlador.DashboardRecetasPorEstado(desde, hasta, med);
-                for (Map.Entry<String, Long> entry : datos.entrySet()) {
-                    acumuladoEstados.merge(entry.getKey(), entry.getValue(), Long::sum);
-                }
-            }
-        } else if (medSeleccionado != null) {
-            acumuladoEstados = controlador.DashboardRecetasPorEstado(desde, hasta, medSeleccionado);
-        }
-
         if (tablaEstadosDashboard != null) {
-            DefaultTableModel model = (DefaultTableModel) tablaEstadosDashboard.getModel();
-            model.setRowCount(0);
-            for (Map.Entry<String, Long> entry : acumuladoEstados.entrySet()) {
-                model.addRow(new Object[]{entry.getKey(), entry.getValue()});
-            }
+            ((DefaultTableModel) tablaEstadosDashboard.getModel()).setRowCount(0);
         }
 
-        // ---------------- GRÁFICO DE LÍNEAS ----------------
+// GRÁFICO DE LÍNEAS
         if (panelLineasDashboard != null) {
             panelLineasDashboard.removeAll();
-
-            DefaultCategoryDataset datasetLineas = new DefaultCategoryDataset();
-            DateTimeFormatter formatoMesAnio = DateTimeFormatter.ofPattern("MM/yyyy");
-
-            if (medSeleccionado != null && medSeleccionado.equals("Todos")) {
-                // una serie por cada medicamento
-                Set<String> medsVistos = new HashSet<>();
-                for (int i = 0; i < comboBox1.getItemCount(); i++) {
-                    String med = comboBox1.getItemAt(i).toString();
-                    if ("Todos".equals(med) || medsVistos.contains(med)) continue;
-                    medsVistos.add(med);
-
-                    Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, med);
-                    if (datos == null || datos.isEmpty()) continue;
-
-                    List<YearMonth> clavesOrdenadas = new ArrayList<>(datos.keySet());
-                    Collections.sort(clavesOrdenadas);
-
-                    for (YearMonth ym : clavesOrdenadas) {
-                        int val = datos.getOrDefault(ym, 0);
-                        // aquí usamos el nombre del medicamento como serie (rowKey)
-                        datasetLineas.addValue(val, med, ym.format(formatoMesAnio));
-                    }
-                }
-            } else if (medSeleccionado != null) {
-                // una sola serie
-                Map<YearMonth, Integer> datos = controlador.DashboardMedicamentosPorMes(desde, hasta, medSeleccionado);
-                if (datos != null && !datos.isEmpty()) {
-                    List<YearMonth> clavesOrdenadas = new ArrayList<>(datos.keySet());
-                    Collections.sort(clavesOrdenadas);
-
-                    for (YearMonth ym : clavesOrdenadas) {
-                        int val = datos.getOrDefault(ym, 0);
-                        // usamos siempre el nombre del medicamento como serie
-                        datasetLineas.addValue(val, medSeleccionado, ym.format(formatoMesAnio));
-                    }
-                }
-            }
-
-            // Crear el chart
-            final DefaultCategoryDataset finalDataset = datasetLineas;
-            SwingUtilities.invokeLater(() -> {
-                JFreeChart chartLineas = ChartFactory.createLineChart(
-                        "Medicamentos por Mes",
-                        "Mes",
-                        "Cantidad",
-                        finalDataset,
-                        PlotOrientation.VERTICAL,
-                        true,
-                        true,
-                        false
+            try {
+                ChartPanel lineas = controlador.crearGraficoLineas(
+                        (desde == null ? null : toDate(desde)),
+                        (hasta == null ? null : toDate(hasta))
                 );
-
-                ChartPanel chartPanelLineas = new ChartPanel(chartLineas);
-                if (panelLineasDashboard.getWidth() <= 0 || panelLineasDashboard.getHeight() <= 0) {
-                    chartPanelLineas.setPreferredSize(new Dimension(700, 300));
-                } else {
-                    chartPanelLineas.setPreferredSize(new Dimension(panelLineasDashboard.getWidth(), panelLineasDashboard.getHeight()));
-                }
-
+                lineas.setPreferredSize(new Dimension(
+                        Math.max(1, panelLineasDashboard.getWidth()),
+                        Math.max(1, panelLineasDashboard.getHeight())
+                ));
                 panelLineasDashboard.setLayout(new BorderLayout());
-                panelLineasDashboard.removeAll();
-                panelLineasDashboard.add(chartPanelLineas, BorderLayout.CENTER);
-                panelLineasDashboard.revalidate();
-                panelLineasDashboard.repaint();
-            });
+                panelLineasDashboard.add(lineas, BorderLayout.CENTER);
+            } catch (Exception ex) { // SQLException / IllegalArgumentException
+                JOptionPane.showMessageDialog(this,
+                        "Error al generar gráfico de líneas: " + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            panelLineasDashboard.revalidate();
+            panelLineasDashboard.repaint();
         }
 
-        // ---------------- GRÁFICO DE PASTEL ----------------
+// GRÁFICO DE PASTEL
         if (panelPastelDashboard != null) {
             panelPastelDashboard.removeAll();
-
-            org.jfree.data.general.DefaultPieDataset<String> datasetPastel = new org.jfree.data.general.DefaultPieDataset<>();
-            for (Map.Entry<String, Long> entry : acumuladoEstados.entrySet()) {
-                datasetPastel.setValue(entry.getKey(), entry.getValue());
+            try {
+                ChartPanel pastel = controlador.crearGraficoPastel();
+                pastel.setPreferredSize(new Dimension(
+                        Math.max(1, panelPastelDashboard.getWidth()),
+                        Math.max(1, panelPastelDashboard.getHeight())
+                ));
+                panelPastelDashboard.setLayout(new BorderLayout());
+                panelPastelDashboard.add(pastel, BorderLayout.CENTER);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Error al generar gráfico de pastel: " + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            org.jfree.chart.JFreeChart chartPastel = org.jfree.chart.ChartFactory.createPieChart(
-                    "Recetas",
-                    datasetPastel,
-                    true, true, false);
-
-            org.jfree.chart.ChartPanel chartPanelPastel = new org.jfree.chart.ChartPanel(chartPastel);
-            chartPanelPastel.setPreferredSize(new Dimension(panelPastelDashboard.getWidth(), panelPastelDashboard.getHeight()));
-
-            panelPastelDashboard.setLayout(new BorderLayout());
-            panelPastelDashboard.add(chartPanelPastel, BorderLayout.CENTER);
-            panelPastelDashboard.validate();
+            panelPastelDashboard.revalidate();
+            panelPastelDashboard.repaint();
         }
-
         JOptionPane.showMessageDialog(this, "Dashboard actualizado.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
     }
 
 
@@ -2329,8 +2355,16 @@ public class MenuVista extends JFrame {
             String clave = new String(loginVista.getClave());
 
             try {
-                int token = controlador.devolverToken(id, clave);
-                controlador.devolverId(id, clave);
+                controlador.usuarioLogin(id, clave);
+
+                Usuario u = controlador.buscarUsuario(id);
+                int token = switch (u.getTipo()) {
+                    case "ADMINISTRADOR" -> 0;
+                    case "MEDICO"        -> 1;
+                    case "FARMACEUTA"    -> 2;
+                    default              -> -1;
+                };
+
                 aplicarPermisos(token);
                 loginDialog.dispose();
 
@@ -2339,7 +2373,7 @@ public class MenuVista extends JFrame {
                         "Login correcto",
                         JOptionPane.INFORMATION_MESSAGE);
 
-            } catch (SecurityException ex) {
+            } catch (Exception ex) {
                 JOptionPane.showMessageDialog(loginDialog,
                         "Usuario o contraseña incorrectos",
                         "Error de login",
@@ -2373,7 +2407,13 @@ public class MenuVista extends JFrame {
                             "Error de seguridad: " + ex.getMessage(),
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
+                } catch (java.sql.SQLException ex) {
+                    JOptionPane.showMessageDialog(cambiarDialog,
+                            "Error de base de datos al cambiar la clave: " + ex.getMessage(),
+                            "BD",
+                            JOptionPane.ERROR_MESSAGE);
                 }
+
             });
 
             cambiarVista.setOnCancelar(ev -> cambiarDialog.dispose());

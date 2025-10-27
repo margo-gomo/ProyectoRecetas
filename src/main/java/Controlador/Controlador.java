@@ -8,12 +8,8 @@ import org.jfree.chart.ChartPanel;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.Date;
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 
 public class Controlador {
     public Controlador(GestorUsuario modeloUsuario, GestorMedico modeloMedico,
