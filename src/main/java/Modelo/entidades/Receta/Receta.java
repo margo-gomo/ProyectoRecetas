@@ -3,8 +3,6 @@ import Modelo.entidades.Usuario;
 import Modelo.entidades.Paciente;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Date;
@@ -12,7 +10,6 @@ import java.util.Calendar;
 import java.util.Objects;
 @Data
 @NoArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
 @DatabaseTable(tableName = "receta")
 public class Receta {
     public Receta(String codigo,Paciente paciente,Date fecha_retiro,Date fecha_confeccion,Usuario farmaceuta_Proceso,Usuario farmaceuta_Lista,Usuario farmaceuta_Entregada) {

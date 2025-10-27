@@ -14,6 +14,7 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.RowFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -51,7 +52,7 @@ public class DialogBuscarPaciente extends JDialog {
     public DialogBuscarPaciente(Controlador controlador) {
         this.controlador = controlador;
         initUI();
-        cargarPacientesDesdeXml();
+        cargarPacientesDesdeJson();
         configurarFiltroInteractivo();
     }
 
@@ -262,12 +263,23 @@ public class DialogBuscarPaciente extends JDialog {
         }
     }
 
-    private void cargarPacientesDesdeXml() {
+    private void cargarPacientesDesdeJson() {
         if (controlador == null || table1 == null) return;
+
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
         model.setRowCount(0);
-        for (Paciente p : controlador.obtenerListaPacientes()) {
-            model.addRow(new Object[]{ p.getId(), p.getNombre(), p.getTelefono() });
+
+        try {
+            for (Paciente p : controlador.obtenerListaPacientes()) {
+                model.addRow(new Object[]{ p.getId(), p.getNombre(), p.getTelefono() });
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se pudieron cargar los pacientes:\n" + ex.getMessage(),
+                    "Error de base de datos",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 

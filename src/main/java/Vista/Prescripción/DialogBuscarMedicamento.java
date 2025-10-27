@@ -14,6 +14,7 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.RowFilter;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,7 +42,6 @@ public class DialogBuscarMedicamento extends JDialog {
     private TableRowSorter<DefaultTableModel> sorter;
     private Integer codigoPrefill;
 
-    // Fuente de datos (XML, vía Controlador)
     private Controlador controlador;
 
     // ------------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ public class DialogBuscarMedicamento extends JDialog {
     public DialogBuscarMedicamento(Controlador controlador) {
         this.controlador = controlador;
         initUI();
-        cargarMedicamentosDesdeXml();
+        cargarMedicamentosDesdeJson();
         configurarFiltroInteractivo();
     }
 
@@ -246,14 +246,30 @@ public class DialogBuscarMedicamento extends JDialog {
         }
     }
 
-    private void cargarMedicamentosDesdeXml() {
+    private void cargarMedicamentosDesdeJson() {
         if (controlador == null || table1 == null) return;
+
         DefaultTableModel model = (DefaultTableModel) table1.getModel();
         model.setRowCount(0);
-        for (Medicamento m : controlador.obtenerListaMedicamentos()) {
-            model.addRow(new Object[]{ m.getCodigo(), m.getNombre(), m.getDescripcion() });
+
+        try {
+            for (Medicamento m : controlador.obtenerListaMedicamentos()) {
+                model.addRow(new Object[]{
+                        m.getCodigo(),
+                        m.getNombre(),
+                        m.getPresentacion()
+                });
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se pudieron cargar los medicamentos:\n" + ex.getMessage(),
+                    "Error de base de datos",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
+
 
     private void configurarFiltroInteractivo() {
         if (textField1 == null || sorter == null) return;

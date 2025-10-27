@@ -1,4 +1,4 @@
-package backend;
+/*package backend;
 
 import java.net.*;
 import java.io.*;
@@ -23,5 +23,5 @@ public class MainServer {
             pool.submit(new ClientHandler(client));
         }
     }
-}
+}*/
 

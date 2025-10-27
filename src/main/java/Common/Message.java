@@ -1,4 +1,4 @@
-package Common;
+/*package Common;
 import jakarta.xml.bind.annotation.*;
 
 @XmlRootElement(name = "message")
@@ -19,4 +19,4 @@ public class Message {
         public String to;
         public String texto;
     }
-}
+}*/

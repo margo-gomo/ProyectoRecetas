@@ -8,7 +8,6 @@ import Modelo.entidades.Medicamento;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import Modelo.entidades.Farmaceuta;
-import Adaptador.LocalDateAdapter;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
