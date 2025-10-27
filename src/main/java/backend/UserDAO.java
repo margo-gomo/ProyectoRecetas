@@ -1,4 +1,4 @@
-package backend;
+/*package backend;
 
 import java.sql.*;
 
@@ -19,5 +19,5 @@ public class UserDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return false;
     }
-}
+}*/
 

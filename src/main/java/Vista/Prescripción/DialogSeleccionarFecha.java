@@ -2,7 +2,8 @@ package Vista.Prescripción;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import com.toedter.calendar.JCalendar;
-import Adaptador.LocalDateAdapter;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -23,7 +24,7 @@ public class DialogSeleccionarFecha extends JDialog {
     private JButton button2;
     private JFormattedTextField formattedTextField1;
 
-    private final LocalDateAdapter adapter = new LocalDateAdapter();
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private LocalDate fechaSeleccionada = null;
     private boolean confirmado = false;
@@ -48,18 +49,20 @@ public class DialogSeleccionarFecha extends JDialog {
         if (getRootPane() != null && buttonOK != null)
             getRootPane().setDefaultButton(buttonOK);
 
-        // OK -> valida, guarda fecha y cierra (confirmado = true)
         if (buttonOK != null) {
             buttonOK.addActionListener(e -> {
                 try {
                     String val = (formattedTextField1 != null) ? formattedTextField1.getText().trim() : "";
-                    fechaSeleccionada = val.isEmpty() ? null : adapter.unmarshal(val); // dd/MM/yyyy
+                    fechaSeleccionada = val.isEmpty() ? null : LocalDate.parse(val, FMT);
                     confirmado = true;
                     dispose();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(DialogSeleccionarFecha.this,
+                } catch (DateTimeParseException ex) {
+                    JOptionPane.showMessageDialog(
+                            DialogSeleccionarFecha.this,
                             "Fecha inválida. Usa el formato dd/MM/yyyy.",
-                            "Validación", JOptionPane.WARNING_MESSAGE);
+                            "Validación",
+                            JOptionPane.WARNING_MESSAGE
+                    );
                 }
             });
         }
@@ -74,11 +77,8 @@ public class DialogSeleccionarFecha extends JDialog {
 
         if (hoyButton != null) {
             hoyButton.addActionListener(e -> {
-                try {
-                    if (formattedTextField1 != null)
-                        formattedTextField1.setText(adapter.marshal(LocalDate.now()));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                if (formattedTextField1 != null) {
+                    formattedTextField1.setText(FMT.format(LocalDate.now()));
                 }
             });
         }
@@ -99,11 +99,8 @@ public class DialogSeleccionarFecha extends JDialog {
                         LocalDate fecha = calendar.getDate().toInstant()
                                 .atZone(java.time.ZoneId.systemDefault())
                                 .toLocalDate();
-                        try {
-                            if (formattedTextField1 != null)
-                                formattedTextField1.setText(adapter.marshal(fecha));
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
+                        if (formattedTextField1 != null) {
+                            formattedTextField1.setText(FMT.format(fecha));
                         }
                     }
                 }
@@ -209,11 +206,9 @@ public class DialogSeleccionarFecha extends JDialog {
     // ------------------------------------------------------------------------------------------
 
     public void setFechaInicial(LocalDate fecha) {
-        try {
-            if (formattedTextField1 != null) {
-                formattedTextField1.setText(fecha != null ? adapter.marshal(fecha) : "");
-            }
-        } catch (Exception ignored) {}
+        if (formattedTextField1 != null) {
+            formattedTextField1.setText(fecha != null ? FMT.format(fecha) : "");
+        }
     }
 
     public LocalDate getFechaSeleccionada() {

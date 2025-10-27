@@ -12,8 +12,6 @@
         <maven.compiler.source>24</maven.compiler.source>
         <maven.compiler.target>24</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!-- versión centralizada para Ikonli -->
         <ikonli.version>12.3.1</ikonli.version>
     </properties>
 

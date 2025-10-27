@@ -1,4 +1,4 @@
-package frontend;
+/*package frontend;
 
 import Common.Message;
 import javax.swing.*;
@@ -44,5 +44,5 @@ public class LoginView extends JFrame implements BackendProxy.Listener {
             JOptionPane.showMessageDialog(this, msg.payload.msg);
         }
     }
-}
+}*/
 

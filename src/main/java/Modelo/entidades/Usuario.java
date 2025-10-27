@@ -1,14 +1,11 @@
 package Modelo.entidades;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Objects;
 @Data
 @NoArgsConstructor
-@XmlAccessorType(XmlAccessType.FIELD)
 @DatabaseTable(tableName = "usuario")
 public class Usuario {
     public Usuario(String id,String nombre,String tipo){

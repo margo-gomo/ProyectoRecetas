@@ -1,4 +1,4 @@
-package frontend;
+/*package frontend;
 
 import java.net.*;
 import java.io.*;
@@ -40,5 +40,5 @@ public class BackendProxy {
         out.write(XmlUtil.toXml(msg) + "\n");
         out.flush();
     }
-}
+}*/
 

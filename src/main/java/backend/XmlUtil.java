@@ -1,4 +1,4 @@
-package backend;
+/*package backend;
 
 import Common.Message;
 import jakarta.xml.bind.*;
@@ -20,5 +20,5 @@ public class XmlUtil {
     public static Message fromXml(String xml) throws JAXBException {
         return (Message) ctx.createUnmarshaller().unmarshal(new StringReader(xml));
     }
-}
+}*/
 

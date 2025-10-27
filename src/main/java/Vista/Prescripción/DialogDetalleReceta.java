@@ -133,15 +133,21 @@ public class DialogDetalleReceta extends JDialog {
     public void setIndicaciones(List<Indicacion> indicaciones) {
         modeloTabla.setRowCount(0);
         if (indicaciones == null) return;
+
         for (Indicacion ind : indicaciones) {
-            if (ind != null && ind.getMedicamento() != null) {
-                modeloTabla.addRow(new Object[]{
-                        ind.getMedicamento().getNombre(),
-                        ind.getCantidad(),
-                        ind.getDuracion(),
-                        ind.getDescripcion()
-                });
-            }
+            if (ind == null) continue;
+
+            String medNombre = (ind.getMedicamento() != null && ind.getMedicamento().getNombre() != null)
+                    ? ind.getMedicamento().getNombre()
+                    : "(sin medicamento)";
+
+            Integer cantidad = ind.getCantidad();
+            Integer duracion = ind.getDuracion();
+            String textoIndi = (ind.getIndicaiones() != null) ? ind.getIndicaiones().trim() : "";
+
+            modeloTabla.addRow(new Object[]{
+                    medNombre, cantidad, duracion, textoIndi
+            });
         }
     }
 }
