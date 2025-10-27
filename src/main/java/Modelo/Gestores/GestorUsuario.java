@@ -34,7 +34,7 @@ public class GestorUsuario {
         return usuario;
     }
     public void agregar(Usuario u, Usuario usuario) throws SecurityException,SQLException {
-        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+        if(!("ADMIN".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         try{
             usuarios.add(u);
@@ -43,7 +43,7 @@ public class GestorUsuario {
         }
     }
     public void actualizar(Usuario u, Usuario usuario) throws SecurityException,SQLException {
-        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+        if(!("ADMIN".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         try{
             usuarios.update(u);
@@ -60,7 +60,7 @@ public class GestorUsuario {
         usuarios.cambiarClave(u,claveNueva);
     }
     public void eliminar(String id, Usuario usuario) throws SecurityException,SQLException {
-        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+        if(!("ADMIN".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         try{
             usuarios.delete(id);

@@ -24,18 +24,18 @@ public class GestorMedico {
         return medico;
     }
     public void agregar(Medico medico, Usuario usuario) throws SecurityException,SQLException {
-        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+        if(!("ADMIN".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         medicos.add(medico);
     }
     public void actualizar(Medico medico, Usuario usuario) throws SecurityException,SQLException {
-        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+        if(!("ADMIN".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         medicos.update(medico);
     }
 
     public void eliminar(String id, Usuario usuario) throws SecurityException,SQLException {
-        if(!("ADMINISTRADOR".equals(usuario.getTipo())))
+        if(!("ADMIN".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
         medicos.delete(id);
     }

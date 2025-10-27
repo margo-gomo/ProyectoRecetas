@@ -47,7 +47,7 @@ public class Main {
             FlatLightLaf.setup();
 
             Controlador controlador = new Controlador();
-
+            controlador.init();
             MenuVista vistaPrincipal = new MenuVista(controlador);
             vistaPrincipal.init();
 

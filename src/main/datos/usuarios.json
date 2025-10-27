@@ -1,0 +1,11 @@
+[ {
+  "id" : "123",
+  "clave" : "ado",
+  "nombre" : "Josue",
+  "tipo" : "ADMIN"
+}, {
+  "id" : "252",
+  "clave" : "252",
+  "nombre" : "Gregorio",
+  "tipo" : "FARMACEUTA"
+} ]
