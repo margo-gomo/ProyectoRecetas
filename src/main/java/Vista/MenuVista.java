@@ -452,24 +452,84 @@ public class MenuVista extends JFrame {
             });
         }
 
-        // MODIFICAR FARMACEUTA
+// MODIFICAR FARMACEUTA
         if (modificarFarm != null) {
             modificarFarm.addActionListener(e -> {
-                JOptionPane.showMessageDialog(MenuVista.this,
-                        "Función de modificación de farmacéuta no disponible en esta versión.",
-                        "Información", JOptionPane.INFORMATION_MESSAGE);
+                if (!validarCamposFarmaceuta()) return;
+
+                String id  = tfIdFarma.getText().trim();
+                String nom = tfNombreFarma.getText().trim();
+
+                try {
+                    controlador.actualizarUsuario(id, nom);
+                    cargarFarmaceutasEnTabla();
+                    limpiarCamposFarmaceuta();
+                    JOptionPane.showMessageDialog(
+                            MenuVista.this,
+                            "Farmacéuta modificado correctamente.",
+                            "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(
+                            MenuVista.this,
+                            "Error al modificar: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
             });
         }
 
-        // BORRAR FARMACEUTA
+// BORRAR FARMACEUTA
         if (borrarFarm != null) {
             borrarFarm.addActionListener(e -> {
-                JOptionPane.showMessageDialog(MenuVista.this,
-                        "Función de borrado de farmacéuta no disponible en esta versión.",
-                        "Información", JOptionPane.INFORMATION_MESSAGE);
+                String id = (tfIdFarma != null) ? tfIdFarma.getText().trim() : "";
+
+                if ((id == null || id.isEmpty()) && tablaFarma != null && tablaFarma.getSelectedRow() >= 0) {
+                    int sel = tablaFarma.getSelectedRow();
+                    Object v = tablaFarma.getValueAt(sel, 0); // col 0 = ID
+                    id = (v != null) ? v.toString() : "";
+                }
+
+                if (id == null || id.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                            MenuVista.this,
+                            "Ingrese el ID del farmacéuta o seleccione una fila.",
+                            "Falta ID",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
+                }
+
+                int opc = JOptionPane.showConfirmDialog(
+                        MenuVista.this,
+                        "¿Desea eliminar al farmacéuta con ID: " + id + "?",
+                        "Confirmar borrado",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE
+                );
+                if (opc != JOptionPane.YES_OPTION) return;
+                try {
+                    controlador.eliminarUsuario(id);
+                    eliminarFarmaceutaDeTablaPorId(id);
+                    limpiarCamposFarmaceuta();
+                    JOptionPane.showMessageDialog(
+                            MenuVista.this,
+                            "Farmacéuta eliminado correctamente.",
+                            "Éxito",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(
+                            MenuVista.this,
+                            "Error al eliminar: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
             });
         }
-
 
         // LIMPIAR FARMACEUTA
 
