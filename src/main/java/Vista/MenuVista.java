@@ -2100,37 +2100,33 @@ public class MenuVista extends JFrame {
         // ---------------- TABLA MESES ----------------
         try {
             controlador.limpiarMedicamentoCodigo();
-        } catch (java.sql.SQLException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "No se pudo preparar el filtro de medicamentos: " + ex.getMessage(),
-                    "BD", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
-        if (comboBox1 != null && comboBox1.getSelectedItem() != null) {
-            medSeleccionado = comboBox1.getSelectedItem().toString();
+            if (comboBox1 != null && comboBox1.getSelectedItem() != null) {
+                medSeleccionado = comboBox1.getSelectedItem().toString();
 
-            try {
+                List<Medicamento> meds = controlador.obtenerListaMedicamentos();
+                if (meds == null) meds = java.util.Collections.emptyList();
+
                 if ("Todos".equals(medSeleccionado)) {
-                    for (Medicamento m : controlador.obtenerListaMedicamentos()) {
+                    for (Medicamento m : meds) {
                         if (m != null && m.getCodigo() != null) {
                             controlador.agregarMedicamentoCodigo(m.getCodigo());
                         }
                     }
                 } else {
-                    for (Medicamento m : controlador.obtenerListaMedicamentos()) {
+                    for (Medicamento m : meds) {
                         if (m != null && medSeleccionado.equals(m.getNombre())) {
                             controlador.agregarMedicamentoCodigo(m.getCodigo());
                             break;
                         }
                     }
                 }
-            } catch (java.sql.SQLException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "No se pudieron cargar/agregar medicamentos: " + ex.getMessage(),
-                        "BD", JOptionPane.ERROR_MESSAGE);
-                return;
             }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Error preparando los medicamentos del Dashboard: " + ex.getMessage(),
+                    "BD", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         if (tablaMesAnioDashboard != null) {
