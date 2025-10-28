@@ -653,7 +653,7 @@ public class MenuVista extends JFrame {
                     return;
                 }
                 try {
-                    controlador.agregarMedicamento(codigo, nom, pres, "");
+                    controlador.agregarMedicamento(codigo, nom, pres);
                     cargarMedicamentosEnTabla();
                     limpiarCamposMedicamento();
                     JOptionPane.showMessageDialog(MenuVista.this, "Medicamento guardado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -1680,8 +1680,7 @@ public class MenuVista extends JFrame {
             String codTabla = String.valueOf(model.getValueAt(i, 0));
             if (codTabla.equals(String.valueOf(m.getCodigo()))) {
                 model.setValueAt(m.getNombre(), i, 1);
-                String presentacion = (m.getPresentacion() != null) ? m.getPresentacion() : m.getDescripcion();
-                model.setValueAt(presentacion, i, 2);
+                model.setValueAt((m.getPresentacion() != null) ? m.getPresentacion() : "", i, 2);
                 break;
             }
         }
@@ -1712,11 +1711,9 @@ public class MenuVista extends JFrame {
         for (Indicacion in : lista) {
             if (in == null || in.getMedicamento() == null) continue;
             Medicamento m = in.getMedicamento();
-            String presentacion = (m.getPresentacion() != null) ? m.getPresentacion()
-                    : (m.getDescripcion() != null ? m.getDescripcion() : "");
-
+            String presentacion = (m.getPresentacion() != null) ? m.getPresentacion() : "";
             modeloTablaRecetas.addRow(new Object[]{
-                    m.getCodigo(),                    // String
+                    m.getCodigo(),
                     m.getNombre(),
                     presentacion,
                     in.getCantidad(),
@@ -1746,7 +1743,6 @@ public class MenuVista extends JFrame {
         dialog.setLocationRelativeTo(this);
 
         if (filaAActualizar != null && filaAActualizar >= 0 && filaAActualizar < modeloTablaRecetas.getRowCount()) {
-            // intentamos prefill SOLO si el código es numérico
             Integer codPrefill = null;
             try {
                 codPrefill = Integer.valueOf(String.valueOf(modeloTablaRecetas.getValueAt(filaAActualizar, 0)));
@@ -1762,7 +1758,7 @@ public class MenuVista extends JFrame {
         Object codSelObj = dialog.getCodigoSeleccionado();
         if (codSelObj == null) return;
 
-        String codigo = String.valueOf(codSelObj);             // <- String
+        String codigo = String.valueOf(codSelObj);
         Integer cantidad = dialog.getCantidadElegida();
         Integer duracion = dialog.getDuracionElegida();
         String indicaciones = dialog.getIndicacionesTexto();
@@ -1780,9 +1776,7 @@ public class MenuVista extends JFrame {
             JOptionPane.showMessageDialog(this, "No se encontró el medicamento seleccionado.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        String presentacion = (med.getPresentacion() != null) ? med.getPresentacion()
-                : (med.getDescripcion() != null ? med.getDescripcion() : "");
+        String presentacion = (med.getPresentacion() != null) ? med.getPresentacion() : "";
 
         String codigoOld = null;
         if (filaAActualizar != null && filaAActualizar >= 0 && filaAActualizar < modeloTablaRecetas.getRowCount()) {
@@ -2049,7 +2043,7 @@ public class MenuVista extends JFrame {
             for (Indicacion in : inds) {
                 if (in == null || in.getMedicamento() == null) continue;
                 Medicamento m = in.getMedicamento();
-                String presentacion = (m.getPresentacion() != null) ? m.getPresentacion() : (m.getDescripcion() != null ? m.getDescripcion() : "");
+                String presentacion = (m.getPresentacion() != null) ? m.getPresentacion() : "";
                 modeloTablaRecetas.addRow(new Object[]{
                         m.getCodigo(),
                         m.getNombre(),
