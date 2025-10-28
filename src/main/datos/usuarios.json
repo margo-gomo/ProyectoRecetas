@@ -9,8 +9,18 @@
   "nombre" : "Gregor",
   "tipo" : "FARMACEUTA"
 }, {
+  "id" : "252",
+  "clave" : "252",
+  "nombre" : "Gregorio",
+  "tipo" : "FARMACEUTA"
+}, {
   "id" : "3",
   "clave" : "3",
   "nombre" : "John",
+  "tipo" : "MEDICO"
+}, {
+  "id" : "654",
+  "clave" : "654",
+  "nombre" : "House",
   "tipo" : "MEDICO"
 } ]

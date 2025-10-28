@@ -33,6 +33,4 @@ public class Medicamento {
     private String nombre;
     @DatabaseField(canBeNull = false)
     private String presentacion;
-    @DatabaseField(canBeNull = false)
-    private String descripcion;
 }

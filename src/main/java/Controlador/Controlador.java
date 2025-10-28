@@ -186,32 +186,32 @@ public class Controlador {
         try {
             modeloUsuarios.cargar();
         } catch (SQLException  | IOException ex) {
-            System.err.printf("Ocurrió un error al cargar los datos");
+            System.err.printf("Ocurrió un error al cargar usuarios");
         }
         try {
             modeloPaciente.cargar();
         } catch (SQLException  | IOException ex) {
-            System.err.printf("Ocurrió un error al cargar los datos");
+            System.err.printf("Ocurrió un error al cargar pacientes");
         }
         try {
             modeloMedicamento.cargar();
         } catch (SQLException  | IOException ex) {
-            System.err.printf("Ocurrió un error al cargar los datos");
+            System.err.printf("Ocurrió un error al cargar medicamentos");
         }
         try {
             modeloRecetasIndicacion.cargarRecetas();
         } catch (SQLException  | IOException ex) {
-            System.err.printf("Ocurrió un error al cargar los datos");
+            System.err.printf("Ocurrió un error al cargar recetas");
         }
         try {
             modeloMedico.cargar();
         } catch (SQLException  | IOException ex) {
-            System.err.printf("Ocurrió un error al cargar los datos");
+            System.err.printf("Ocurrió un error al cargar medicos");
         }
         try {
             modeloRecetasIndicacion.cargarIndicaciones();
         } catch (SQLException  | IOException ex) {
-            System.err.printf("Ocurrió un error al cargar los datos");
+            System.err.printf("Ocurrió un error al cargar indicaciones");
         }
     }
     public void cerrarAplicacion() {

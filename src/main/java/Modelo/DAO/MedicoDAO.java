@@ -109,7 +109,7 @@ public class MedicoDAO implements DAOAbstracto<String, Medico> {
             if (updated == 0){
                 medicoDao.executeRaw(
                         "INSERT INTO medico (usuario_id, especialidad) VALUES (?, ?)",
-                        usuarioDao.queryForId(me.usuarioId).getId(),
+                        me.usuarioId,
                         me.especialidad == null ? "" : me.especialidad
                 );
             }
