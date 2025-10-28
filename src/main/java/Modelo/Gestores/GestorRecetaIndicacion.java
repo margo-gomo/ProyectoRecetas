@@ -2,7 +2,6 @@ package Modelo.Gestores;
 
 import Modelo.DAO.RecetaDAO;
 import Modelo.DAO.IndicacionDAO;
-import Modelo.entidades.Medicamento;
 import Modelo.entidades.Receta.*;
 import Modelo.entidades.Usuario;
 
