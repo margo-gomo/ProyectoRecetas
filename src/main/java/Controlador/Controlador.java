@@ -143,7 +143,7 @@ public class Controlador {
         modeloRecetasIndicacion.entregar(codigo,usuario_login);
     }
     public List<Indicacion> obtenerListaIndicaciones() throws SQLException {
-        return modeloRecetasIndicacion.obtenerListaIndicaciones();
+        return modeloRecetasIndicacion.getIndicacionList();
     }
     public Indicacion buscarIndicacion(String medicamentoCodigo){
         return modeloRecetasIndicacion.buscarIndicacionLista(medicamentoCodigo);
