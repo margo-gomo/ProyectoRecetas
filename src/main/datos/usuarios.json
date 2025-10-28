@@ -4,8 +4,13 @@
   "nombre" : "Josue",
   "tipo" : "ADMIN"
 }, {
-  "id" : "252",
-  "clave" : "252",
-  "nombre" : "Gregorio",
+  "id" : "23",
+  "clave" : "23",
+  "nombre" : "Gregor",
   "tipo" : "FARMACEUTA"
+}, {
+  "id" : "3",
+  "clave" : "3",
+  "nombre" : "John",
+  "tipo" : "MEDICO"
 } ]
