@@ -96,14 +96,24 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         for (IndicacionExport ie : list){
             Receta receta=recetaDao.queryForId(ie.recetaCodigo);
             Medicamento medicamento=medicamentoDao.queryForId(ie.medicamentoCodigo);
-            dao.executeRaw(
-                    "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaiones, duracion) VALUES (?, ?, ?, ?, ?)",
-                    receta.getCodigo(),
-                    medicamento.getCodigo(),
+            int updated = dao.executeRaw(
+                    "UPDATE indicacion SET cantidad = ?, indicaiones = ?, duracion = ? WHERE receta_codigo = ? AND medicamento_codigo = ?",
                     String.valueOf(ie.cantidad),
                     ie.indicaiones == null ? "" : ie.indicaiones,
-                    String.valueOf(ie.duracion)
+                    String.valueOf(ie.duracion),
+                    receta.getCodigo(),
+                    medicamento.getCodigo()
             );
+            if (updated == 0){
+                dao.executeRaw(
+                        "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaiones, duracion) VALUES (?, ?, ?, ?, ?)",
+                        receta.getCodigo(),
+                        medicamento.getCodigo(),
+                        String.valueOf(ie.cantidad),
+                        ie.indicaiones == null ? "" : ie.indicaiones,
+                        String.valueOf(ie.duracion)
+                );
+            }
         }
     }
     @AllArgsConstructor

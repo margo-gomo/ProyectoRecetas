@@ -261,7 +261,7 @@ public class GestorRecetaIndicacion {
     }
     public void cargarRecetas()throws SQLException, IOException {
         File f=new File(ARCHIVO_DATOS_RECETA);
-        if(obtenerListaRecetas().isEmpty()&&f.exists())
+        if(f.exists())
             recetas.importAllFromJson(f);
     }
     public void guardarRecetas() throws SQLException, IOException {
@@ -269,7 +269,7 @@ public class GestorRecetaIndicacion {
     }
     public void cargarIndicaciones() throws SQLException, IOException {
         File f=new File(ARCHIVO_DATOS_INDICACION);
-        if(obtenerListaRecetas().isEmpty()&&f.exists())
+        if(f.exists())
             indicaciones.importAllFromJson(f);
     }
     public void guardarIndicaciones()throws SQLException, IOException {

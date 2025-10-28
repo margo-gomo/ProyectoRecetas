@@ -52,7 +52,7 @@ public class GestorMedicamento {
 
     public void cargar() throws SQLException, IOException {
         File f=new File(ARCHIVO_DATOS);
-        if(obtenerListaMedicamentos().isEmpty()&&f.exists())
+        if(f.exists())
             medicamentos.importAllFromJson(f);
     }
     public void guardar () throws SQLException, IOException {

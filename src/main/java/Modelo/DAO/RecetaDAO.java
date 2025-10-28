@@ -62,7 +62,7 @@ public class RecetaDAO implements DAOAbstracto<String, Receta> {
     public void importAllFromJson(File file) throws SQLException, IOException {
         List<Receta> list = JsonUtil.readListFromFile(file, new TypeReference<List<Receta>>() {});
         for (Receta e : list)
-            add(e);
+            dao.createOrUpdate(e);
     }
     private final Dao<Receta,String> dao;
 }

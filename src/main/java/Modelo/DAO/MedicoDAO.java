@@ -101,11 +101,18 @@ public class MedicoDAO implements DAOAbstracto<String, Medico> {
     public void importAllFromJson(File file) throws SQLException, IOException {
         List<MedicoExport> list = JsonUtil.readListFromFile(file, new TypeReference<List<MedicoExport>>() {});
         for (MedicoExport me : list){
-            medicoDao.executeRaw(
-                    "INSERT INTO medico (usuario_id, especialidad) VALUES (?, ?)",
-                    usuarioDao.queryForId(me.usuarioId).getId(),
-                    me.especialidad == null ? "" : me.especialidad
+            int updated = medicoDao.executeRaw(
+                    "UPDATE medico SET especialidad = ? WHERE usuario_id = ?",
+                    me.especialidad == null ? "" : me.especialidad,
+                    me.usuarioId
             );
+            if (updated == 0){
+                medicoDao.executeRaw(
+                        "INSERT INTO medico (usuario_id, especialidad) VALUES (?, ?)",
+                        usuarioDao.queryForId(me.usuarioId).getId(),
+                        me.especialidad == null ? "" : me.especialidad
+                );
+            }
         }
     }
 

@@ -42,7 +42,7 @@ public class GestorMedico {
 
     public void cargar() throws SQLException, IOException {
         File f=new File(ARCHIVO_DATOS);
-        if(obtenerListaMedicos().isEmpty()&&f.exists())
+        if(f.exists())
             medicos.importAllFromJson(f);
     }
     public void guardar () throws SQLException, IOException {

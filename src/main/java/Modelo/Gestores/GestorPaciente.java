@@ -53,7 +53,7 @@ public class GestorPaciente {
     }
     public void cargar() throws SQLException, IOException {
         File f=new File(ARCHIVO_DATOS);
-        if(obtenerListaPacientes().isEmpty()&&f.exists())
+        if(f.exists())
             pacientes.importAllFromJson(f);
     }
     public void guardar () throws SQLException, IOException {

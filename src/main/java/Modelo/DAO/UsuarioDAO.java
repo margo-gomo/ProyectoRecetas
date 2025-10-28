@@ -75,7 +75,7 @@ public class UsuarioDAO implements DAOAbstracto<String,Usuario> {
     public void importAllFromJson(File file) throws SQLException, IOException {
         List<Usuario> list = JsonUtil.readListFromFile(file, new TypeReference<List<Usuario>>() {});
         for (Usuario e : list)
-            add(e);
+            dao.createOrUpdate(e);
     }
     private final Dao<Usuario, String> dao;
 }

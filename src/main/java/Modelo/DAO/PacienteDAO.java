@@ -48,7 +48,7 @@ public class PacienteDAO implements DAOAbstracto<Integer, Paciente>{
     public void importAllFromJson(File file) throws SQLException, IOException {
         List<Paciente> list = JsonUtil.readListFromFile(file, new TypeReference<List<Paciente>>() {});
         for (Paciente e : list)
-            add(e);
+            dao.createOrUpdate(e);
     }
 
     private final Dao<Paciente, Integer> dao;

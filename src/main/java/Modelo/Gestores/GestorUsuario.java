@@ -70,7 +70,7 @@ public class GestorUsuario {
     }
     public void cargar() throws SQLException, IOException {
         File f=new File(ARCHIVO_DATOS);
-        if(obtenerListaUsuarios().isEmpty()&&f.exists())
+        if(f.exists())
             usuarios.importAllFromJson(f);
     }
     public void guardar () throws SQLException, IOException {
