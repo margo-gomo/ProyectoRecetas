@@ -4,6 +4,7 @@ import Modelo.DAO.RecetaDAO;
 import Modelo.DAO.IndicacionDAO;
 import Modelo.entidades.Receta.*;
 import Modelo.entidades.Usuario;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.IOException;
@@ -301,6 +302,7 @@ public class GestorRecetaIndicacion {
     private static final String ARCHIVO_DATOS_INDICACION= "src/main/datos/indicaciones.json";
     private final RecetaDAO recetas;
     private final IndicacionDAO indicaciones;
+    @Getter
     private final List<Indicacion> indicacionList;
     List<String> medicamentoCodigos;
 }
