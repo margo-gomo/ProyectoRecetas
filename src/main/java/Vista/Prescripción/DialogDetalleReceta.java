@@ -143,7 +143,7 @@ public class DialogDetalleReceta extends JDialog {
 
             Integer cantidad = ind.getCantidad();
             Integer duracion = ind.getDuracion();
-            String textoIndi = (ind.getIndicaiones() != null) ? ind.getIndicaiones().trim() : "";
+            String textoIndi = (ind.getIndicaciones() != null) ? ind.getIndicaciones().trim() : "";
 
             modeloTabla.addRow(new Object[]{
                     medNombre, cantidad, duracion, textoIndi

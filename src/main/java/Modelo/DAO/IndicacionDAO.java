@@ -27,8 +27,8 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
     @Override
     public void add(Indicacion e) throws SQLException {
         dao.executeRaw(
-                "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaiones, duracion) VALUES (?, ?, ?, ?, ?)",
-                e.getReceta().getCodigo(), e.getMedicamento().getCodigo(), String.valueOf(e.getCantidad()), e.getIndicaiones(),String.valueOf(e.getDuracion())
+                "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaciones, duracion) VALUES (?, ?, ?, ?, ?)",
+                e.getReceta().getCodigo(), e.getMedicamento().getCodigo(), String.valueOf(e.getCantidad()), e.getIndicaciones(),String.valueOf(e.getDuracion())
         );
     }
 
@@ -52,7 +52,7 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         dao.executeRaw(
                 "UPDATE indicacion SET cantidad = ?, indicaiones = ?, duracion = ? WHERE receta_codigo = ? AND medicamento_codigo = ?",
                 String.valueOf(e.getCantidad()),
-                e.getIndicaiones() == null ? "" : e.getIndicaiones(),
+                e.getIndicaciones() == null ? "" : e.getIndicaciones(),
                 String.valueOf(e.getDuracion()),
                 e.getReceta().getCodigo(),
                 e.getMedicamento().getCodigo()
@@ -86,7 +86,7 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         for (Indicacion ind : all) {
             String recetaCodigo = ind.getReceta() != null ? ind.getReceta().getCodigo() : null;
             String medicamentoCodigo = ind.getMedicamento() != null ? ind.getMedicamento().getCodigo() : null;
-            exports.add(new IndicacionExport(recetaCodigo, medicamentoCodigo, ind.getCantidad(), ind.getIndicaiones(), ind.getDuracion()));
+            exports.add(new IndicacionExport(recetaCodigo, medicamentoCodigo, ind.getCantidad(), ind.getIndicaciones(), ind.getDuracion()));
         }
         JsonUtil.writeListToFile(exports, file);
     }

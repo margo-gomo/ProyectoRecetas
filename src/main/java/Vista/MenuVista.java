@@ -1717,7 +1717,7 @@ public class MenuVista extends JFrame {
                     m.getNombre(),
                     presentacion,
                     in.getCantidad(),
-                    (in.getIndicaiones() != null ? in.getIndicaiones() : ""),
+                    (in.getIndicaciones() != null ? in.getIndicaciones() : ""),
                     in.getDuracion()
             });
         }
@@ -1876,7 +1876,7 @@ public class MenuVista extends JFrame {
             return;
         }
 
-        boolean yaExiste = false;
+        /*boolean yaExiste = false;
         try {
             Receta existente = controlador.buscarReceta(codigoIngresado);
             yaExiste = (existente != null);
@@ -1887,7 +1887,7 @@ public class MenuVista extends JFrame {
                     "Ya existe una receta con código: " + codigoIngresado,
                     "Duplicado", JOptionPane.WARNING_MESSAGE);
             return;
-        }
+        }*/
 
         try {
             // Guardar receta
@@ -2049,7 +2049,7 @@ public class MenuVista extends JFrame {
                         m.getNombre(),
                         presentacion,
                         in.getCantidad(),
-                        (in.getIndicaiones() != null ? in.getIndicaiones() : ""),
+                        (in.getIndicaciones() != null ? in.getIndicaciones() : ""),
                         in.getDuracion()
                 });
             }

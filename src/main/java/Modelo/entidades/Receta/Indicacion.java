@@ -13,7 +13,7 @@ public class Indicacion {
         receta=null;
         this.medicamento=medicamento;
         this.cantidad=cantidad;
-        this.indicaiones=indicaiones;
+        this.indicaciones=indicaiones;
         this.duracion=duracion;
     }
     @Override
@@ -39,7 +39,7 @@ public class Indicacion {
     @DatabaseField(canBeNull = false)
     private int cantidad;
     @DatabaseField
-    private String indicaiones;
+    private String indicaciones;
     @DatabaseField(canBeNull = false)
     private int duracion;
 }

@@ -154,7 +154,7 @@ public class Controlador {
     public void actualizarIndicacion(Medicamento medicamento,int cantidad,String indicaiones,int duracion)throws IllegalArgumentException, SecurityException{
         Indicacion indicacion=buscarIndicacion(medicamento.getCodigo());
         indicacion.setCantidad(cantidad);
-        indicacion.setIndicaiones(indicaiones);
+        indicacion.setIndicaciones(indicaiones);
         indicacion.setDuracion(duracion);
         modeloRecetasIndicacion.actualizarIndicacionLista(indicacion,usuario_login);
     }

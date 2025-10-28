@@ -71,7 +71,7 @@ public class GestorRecetaIndicacion {
         try{
             recetas.add(receta);
         }catch(SQLException e){
-            throw new SQLException("Ya existe un receta con ese codigo");
+            throw new SQLException(e.getMessage());
         }
         agregarIndicacion(receta,usuario);
     }
