@@ -40,6 +40,6 @@ public class Indicacion {
     private int cantidad;
     @DatabaseField
     private String indicaciones;
-    @DatabaseField(canBeNull = false)
+    @DatabaseField(canBeNull = false,columnName = "duracion_dias")
     private int duracion;
 }

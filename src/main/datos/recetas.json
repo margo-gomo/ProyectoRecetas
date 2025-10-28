@@ -27,6 +27,34 @@
   "farmaceuta_Lista" : null,
   "farmaceuta_Entregada" : null
 }, {
+  "codigo" : "47",
+  "paciente" : {
+    "id" : 1445,
+    "nombre" : null,
+    "fecha_nacimiento" : null,
+    "telefono" : 0
+  },
+  "fecha_confeccion" : 1761544800000,
+  "fecha_retiro" : 1761631200000,
+  "estado" : "CONFECCIONADA",
+  "farmaceuta_Proceso" : null,
+  "farmaceuta_Lista" : null,
+  "farmaceuta_Entregada" : null
+}, {
+  "codigo" : "787",
+  "paciente" : {
+    "id" : 1445,
+    "nombre" : null,
+    "fecha_nacimiento" : null,
+    "telefono" : 0
+  },
+  "fecha_confeccion" : 1761631200000,
+  "fecha_retiro" : 1761717600000,
+  "estado" : "CONFECCIONADA",
+  "farmaceuta_Proceso" : null,
+  "farmaceuta_Lista" : null,
+  "farmaceuta_Entregada" : null
+}, {
   "codigo" : "R-761",
   "paciente" : {
     "id" : 1445,

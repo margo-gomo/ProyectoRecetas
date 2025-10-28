@@ -27,10 +27,16 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
     @Override
     public void add(Indicacion e) throws SQLException {
         dao.executeRaw(
-                "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaciones, duracion) VALUES (?, ?, ?, ?, ?)",
-                e.getReceta().getCodigo(), e.getMedicamento().getCodigo(), String.valueOf(e.getCantidad()), e.getIndicaciones(),String.valueOf(e.getDuracion())
+                "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaciones, duracion_dias) " +
+                        "VALUES (?, ?, ?, ?, ?)",
+                e.getReceta().getCodigo(),
+                e.getMedicamento().getCodigo(),
+                String.valueOf(e.getCantidad()),
+                e.getIndicaciones() == null ? "" : e.getIndicaciones(),
+                String.valueOf(e.getDuracion())
         );
     }
+
 
     @Override
     public Indicacion findById(IndicacionKey id) throws SQLException {
@@ -50,7 +56,8 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
     @Override
     public void update(Indicacion e) throws SQLException {
         dao.executeRaw(
-                "UPDATE indicacion SET cantidad = ?, indicaiones = ?, duracion = ? WHERE receta_codigo = ? AND medicamento_codigo = ?",
+                "UPDATE indicacion SET cantidad = ?, indicaciones = ?, duracion_dias = ? " +
+                        "WHERE receta_codigo = ? AND medicamento_codigo = ?",
                 String.valueOf(e.getCantidad()),
                 e.getIndicaciones() == null ? "" : e.getIndicaciones(),
                 String.valueOf(e.getDuracion()),
@@ -58,6 +65,7 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
                 e.getMedicamento().getCodigo()
         );
     }
+
 
     @Override
     public void delete(IndicacionKey id) throws SQLException {
@@ -84,38 +92,50 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         List<Indicacion> all = findAll();
         List<IndicacionExport> exports = new ArrayList<>();
         for (Indicacion ind : all) {
-            String recetaCodigo = ind.getReceta() != null ? ind.getReceta().getCodigo() : null;
+            String recetaCodigo      = ind.getReceta() != null ? ind.getReceta().getCodigo() : null;
             String medicamentoCodigo = ind.getMedicamento() != null ? ind.getMedicamento().getCodigo() : null;
-            exports.add(new IndicacionExport(recetaCodigo, medicamentoCodigo, ind.getCantidad(), ind.getIndicaciones(), ind.getDuracion()));
+            exports.add(new IndicacionExport(
+                    recetaCodigo,
+                    medicamentoCodigo,
+                    ind.getCantidad(),
+                    ind.getIndicaciones(),
+                    ind.getDuracion()
+            ));
         }
         JsonUtil.writeListToFile(exports, file);
     }
+
     @Override
-    public void importAllFromJson(File file) throws SQLException, IOException{
+    public void importAllFromJson(File file) throws SQLException, IOException {
         List<IndicacionExport> list = JsonUtil.readListFromFile(file, new TypeReference<List<IndicacionExport>>() {});
-        for (IndicacionExport ie : list){
-            Receta receta=recetaDao.queryForId(ie.recetaCodigo);
-            Medicamento medicamento=medicamentoDao.queryForId(ie.medicamentoCodigo);
+        for (IndicacionExport ie : list) {
+            Receta      receta      = recetaDao.queryForId(ie.recetaCodigo);
+            Medicamento medicamento = medicamentoDao.queryForId(ie.medicamentoCodigo);
+
             int updated = dao.executeRaw(
-                    "UPDATE indicacion SET cantidad = ?, indicaiones = ?, duracion = ? WHERE receta_codigo = ? AND medicamento_codigo = ?",
+                    "UPDATE indicacion SET cantidad = ?, indicaciones = ?, duracion_dias = ? " +
+                            "WHERE receta_codigo = ? AND medicamento_codigo = ?",
                     String.valueOf(ie.cantidad),
-                    ie.indicaiones == null ? "" : ie.indicaiones,
-                    String.valueOf(ie.duracion),
+                    ie.indicaciones == null ? "" : ie.indicaciones,
+                    String.valueOf(ie.duracionDias),
                     receta.getCodigo(),
                     medicamento.getCodigo()
             );
-            if (updated == 0){
+
+            if (updated == 0) {
                 dao.executeRaw(
-                        "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaiones, duracion) VALUES (?, ?, ?, ?, ?)",
+                        "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaciones, duracion_dias) " +
+                                "VALUES (?, ?, ?, ?, ?)",
                         receta.getCodigo(),
                         medicamento.getCodigo(),
                         String.valueOf(ie.cantidad),
-                        ie.indicaiones == null ? "" : ie.indicaiones,
-                        String.valueOf(ie.duracion)
+                        ie.indicaciones == null ? "" : ie.indicaciones,
+                        String.valueOf(ie.duracionDias)
                 );
             }
         }
     }
+
     @AllArgsConstructor
     public static final class IndicacionKey {
         private final String recetaCodigo;
@@ -141,12 +161,12 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         }
     }
     @AllArgsConstructor
-    static final class IndicacionExport{
-        public String recetaCodigo;      // solo referencia por clave
-        public String medicamentoCodigo; // solo referencia por clave
-        public int cantidad;
-        public String indicaiones;
-        public int duracion;
+    static final class IndicacionExport {
+        public String recetaCodigo;
+        public String medicamentoCodigo;
+        public int    cantidad;
+        public String indicaciones;
+        public int    duracionDias;
     }
     private final Dao<Indicacion, Object> dao;
     private final Dao<Receta, String> recetaDao;
