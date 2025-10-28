@@ -8,4 +8,9 @@
   "clave" : "252",
   "nombre" : "Gregorio",
   "tipo" : "FARMACEUTA"
+}, {
+  "id" : "654",
+  "clave" : "654",
+  "nombre" : "House",
+  "tipo" : "MEDICO"
 } ]

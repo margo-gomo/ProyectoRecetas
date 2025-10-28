@@ -40,10 +40,10 @@ public class GestorMedico {
         medicos.delete(id);
     }
 
-    public void cargar(List<Usuario>usuarios) throws SQLException, IOException {
+    public void cargar() throws SQLException, IOException {
         File f=new File(ARCHIVO_DATOS);
         if(obtenerListaMedicos().isEmpty()&&f.exists())
-            medicos.importFromJson(f, usuarios);
+            medicos.importAllFromJson(f);
     }
     public void guardar () throws SQLException, IOException {
         medicos.exportAllToJson(new File(ARCHIVO_DATOS));

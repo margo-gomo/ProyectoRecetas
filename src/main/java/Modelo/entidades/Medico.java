@@ -6,7 +6,7 @@ import lombok.Data;
 @NoArgsConstructor
 @Data
 @DatabaseTable(tableName = "medico")
-public class Medico extends  Usuario {
+public class Medico {
     public Medico(Usuario usuario, String especialidad) {
         this.usuario = usuario;
         this.especialidad = especialidad;

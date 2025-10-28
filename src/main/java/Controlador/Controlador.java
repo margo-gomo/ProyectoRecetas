@@ -48,7 +48,7 @@ public class Controlador {
     }
     public void actualizarMedico(String id,String nombre,String especialidad) throws SecurityException, SQLException {
         Medico medico = buscarMedico(id);
-        medico.setNombre(nombre);
+        medico.getUsuario().setNombre(nombre);
         medico.setEspecialidad(especialidad);
         modeloMedico.actualizar(medico,usuario_login);
     }
@@ -204,12 +204,12 @@ public class Controlador {
             System.err.printf("Ocurrió un error al cargar los datos");
         }
         try {
-            modeloMedico.cargar(obtenerListaUsuarios());
+            modeloMedico.cargar();
         } catch (SQLException  | IOException ex) {
             System.err.printf("Ocurrió un error al cargar los datos");
         }
         try {
-            modeloRecetasIndicacion.cargarIndicaciones(obtenerListaMedicamentos());
+            modeloRecetasIndicacion.cargarIndicaciones();
         } catch (SQLException  | IOException ex) {
             System.err.printf("Ocurrió un error al cargar los datos");
         }

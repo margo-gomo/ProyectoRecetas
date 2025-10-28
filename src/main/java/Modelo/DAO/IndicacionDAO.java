@@ -20,11 +20,16 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
 
     public IndicacionDAO() throws SQLException {
         this.dao = DaoManager.createDao(ConexionBD.getConexion(), Indicacion.class);
+        this.recetaDao = DaoManager.createDao(ConexionBD.getConexion(), Receta.class);
+        this.medicamentoDao = DaoManager.createDao(ConexionBD.getConexion(), Medicamento.class);
     }
 
     @Override
     public void add(Indicacion e) throws SQLException {
-        dao.create(e);
+        dao.executeRaw(
+                "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaiones, duracion) VALUES (?, ?, ?, ?, ?)",
+                e.getReceta().getCodigo(), e.getMedicamento().getCodigo(), String.valueOf(e.getCantidad()), e.getIndicaiones(),String.valueOf(e.getDuracion())
+        );
     }
 
     @Override
@@ -44,7 +49,14 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
 
     @Override
     public void update(Indicacion e) throws SQLException {
-        dao.update(e);
+        dao.executeRaw(
+                "UPDATE indicacion SET cantidad = ?, indicaiones = ?, duracion = ? WHERE receta_codigo = ? AND medicamento_codigo = ?",
+                String.valueOf(e.getCantidad()),
+                e.getIndicaiones() == null ? "" : e.getIndicaiones(),
+                String.valueOf(e.getDuracion()),
+                e.getReceta().getCodigo(),
+                e.getMedicamento().getCodigo()
+        );
     }
 
     @Override
@@ -80,29 +92,18 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
     }
     @Override
     public void importAllFromJson(File file) throws SQLException, IOException{
-
-    }
-    public void importFromJson(File file, List<Receta> recetas, List<Medicamento> medicamentos) throws SQLException, IOException {
         List<IndicacionExport> list = JsonUtil.readListFromFile(file, new TypeReference<List<IndicacionExport>>() {});
-        for (IndicacionExport ie : list) {
-            Receta receta = new Receta();
-            for(Receta r : recetas) {
-                if(r.getCodigo().equals(ie.recetaCodigo)){
-                    receta = r;
-                    break;
-                }
-            }
-            Medicamento medicamento = new Medicamento();
-            for(Medicamento m : medicamentos){
-                if(m.getCodigo().equals(ie.medicamentoCodigo)){
-                    medicamento = m;
-                    break;
-                }
-            }
-            Indicacion ind = new Indicacion(medicamento, ie.cantidad, ie.indicaiones, ie.duracion);
-            ind.setReceta(receta);
-
-            add (ind);
+        for (IndicacionExport ie : list){
+            Receta receta=recetaDao.queryForId(ie.recetaCodigo);
+            Medicamento medicamento=medicamentoDao.queryForId(ie.medicamentoCodigo);
+            dao.executeRaw(
+                    "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaiones, duracion) VALUES (?, ?, ?, ?, ?)",
+                    receta.getCodigo(),
+                    medicamento.getCodigo(),
+                    String.valueOf(ie.cantidad),
+                    ie.indicaiones == null ? "" : ie.indicaiones,
+                    String.valueOf(ie.duracion)
+            );
         }
     }
     @AllArgsConstructor
@@ -138,4 +139,6 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         public int duracion;
     }
     private final Dao<Indicacion, Object> dao;
+    private final Dao<Receta, String> recetaDao;
+    private final Dao<Medicamento, String> medicamentoDao;
 }

@@ -990,7 +990,7 @@ public class MenuVista extends JFrame {
         model.setRowCount(0);
         try {
             for (Medico m : controlador.obtenerListaMedicos()) {
-                model.addRow(new Object[]{ m.getId(), m.getNombre(), m.getEspecialidad() });
+                model.addRow(new Object[]{ m.getUsuario().getId(), m.getUsuario().getNombre(), m.getEspecialidad() });
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "No se pudieron cargar los médicos:\n" + ex.getMessage(),
@@ -1409,7 +1409,7 @@ public class MenuVista extends JFrame {
     private void agregarMedicoATabla(Medico m) {
         if (tabloMedicos == null || m == null) return;
         DefaultTableModel model = (DefaultTableModel) tabloMedicos.getModel();
-        model.addRow(new Object[]{ m.getId(), m.getNombre(), m.getEspecialidad() });
+        model.addRow(new Object[]{ m.getUsuario().getId(), m.getUsuario().getNombre(), m.getEspecialidad() });
     }
 
     private boolean validarCamposMedico() {
@@ -1432,8 +1432,8 @@ public class MenuVista extends JFrame {
         for (int i = 0; i < model.getRowCount(); i++) {
             Object idCell = model.getValueAt(i, 0);
             String idTabla = idCell != null ? idCell.toString() : "";
-            if (idTabla.equals(m.getId())) {
-                model.setValueAt(m.getNombre(), i, 1);
+            if (idTabla.equals(m.getUsuario().getId())) {
+                model.setValueAt(m.getUsuario().getNombre(), i, 1);
                 model.setValueAt(m.getEspecialidad(), i, 2);
                 break;
             }
