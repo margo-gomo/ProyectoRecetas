@@ -153,6 +153,7 @@ public class MenuVista extends JFrame {
     private JPanel panelacerca;
     private JLabel lblTitulo;
     private JLabel lblDescripcion;
+    private JPanel panelUsuarios;
 
     private DefaultTableModel modeloTablaRecetas;
     private Controlador controlador;
@@ -879,7 +880,7 @@ public class MenuVista extends JFrame {
         final Color PRIMARY = new Color(66, 133, 244);
         final Color SECOND = new Color(204, 228, 255);
 
-        JPanel[] paneles = {panelPrincipal, panelContenedor, controlPrescripcionPanel, RecetaMedicaPrescripcionPanel};
+        JPanel[] paneles = {panelPrincipal, panelContenedor, controlPrescripcionPanel, RecetaMedicaPrescripcionPanel, panelUsuarios};
         for (JPanel p : paneles) if (p != null) p.setBackground(Color.WHITE);
         if (tabbedPanePrincipal != null) {
             tabbedPanePrincipal.setFont(new Font("Segoe UI", Font.BOLD, 13));
