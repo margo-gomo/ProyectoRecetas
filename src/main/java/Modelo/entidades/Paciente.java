@@ -34,5 +34,6 @@ public class Paciente {
     private String nombre;
     @DatabaseField(canBeNull = false)
     private Date fecha_nacimiento;
+    @DatabaseField(canBeNull = false)
     private int telefono;
 }
