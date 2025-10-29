@@ -109,15 +109,15 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
     public void importAllFromJson(File file) throws SQLException, IOException {
         List<IndicacionExport> list = JsonUtil.readListFromFile(file, new TypeReference<List<IndicacionExport>>() {});
         for (IndicacionExport ie : list) {
-            Receta      receta      = recetaDao.queryForId(ie.recetaCodigo);
-            Medicamento medicamento = medicamentoDao.queryForId(ie.medicamentoCodigo);
+            Receta      receta      = recetaDao.queryForId(ie.receta_codigo);
+            Medicamento medicamento = medicamentoDao.queryForId(ie.medicamento_codigo);
 
             int updated = dao.executeRaw(
                     "UPDATE indicacion SET cantidad = ?, indicaciones = ?, duracion_dias = ? " +
                             "WHERE receta_codigo = ? AND medicamento_codigo = ?",
                     String.valueOf(ie.cantidad),
                     ie.indicaciones == null ? "" : ie.indicaciones,
-                    String.valueOf(ie.duracionDias),
+                    String.valueOf(ie.duracion_dias),
                     receta.getCodigo(),
                     medicamento.getCodigo()
             );
@@ -130,7 +130,7 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
                         medicamento.getCodigo(),
                         String.valueOf(ie.cantidad),
                         ie.indicaciones == null ? "" : ie.indicaciones,
-                        String.valueOf(ie.duracionDias)
+                        String.valueOf(ie.duracion_dias)
                 );
             }
         }
@@ -162,11 +162,11 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
     }
     @AllArgsConstructor
     static final class IndicacionExport {
-        public String recetaCodigo;
-        public String medicamentoCodigo;
+        public String receta_codigo;
+        public String medicamento_codigo;
         public int    cantidad;
         public String indicaciones;
-        public int    duracionDias;
+        public int    duracion_dias;
     }
     private final Dao<Indicacion, Object> dao;
     private final Dao<Receta, String> recetaDao;

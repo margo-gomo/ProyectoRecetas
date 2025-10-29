@@ -9,9 +9,14 @@ import lombok.Data;
 public class Medico {
     public Medico(Usuario usuario, String especialidad) {
         this.usuario = usuario;
+        this.usuarioId = usuario.getId();
         this.especialidad = especialidad;
     }
-    @DatabaseField(foreign = true, foreignAutoCreate = true,foreignAutoRefresh = true,columnName = "usuario_id")
+    @DatabaseField(id = true, columnName = "usuario_id")
+    private String usuarioId;
+    // No persistimos el objeto Usuario dentro de ORMLite para evitar conflicto.
+    // Lo mantenemos en memoria para conveniencia en la lógica, pero ORMLite no lo guardará.
+    @DatabaseField(persisted = false)
     private Usuario usuario;
     @DatabaseField
     private String especialidad;

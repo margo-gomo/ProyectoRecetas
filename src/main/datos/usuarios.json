@@ -23,4 +23,9 @@
   "clave" : "654",
   "nombre" : "House",
   "tipo" : "MEDICO"
+}, {
+  "id" : "852",
+  "clave" : "852",
+  "nombre" : "Troy",
+  "tipo" : "MEDICO"
 } ]

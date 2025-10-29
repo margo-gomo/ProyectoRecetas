@@ -1,4 +1,10 @@
 [ {
-  "usuarioId" : "3",
+  "usuario_id" : "3",
   "especialidad" : "Patología"
+}, {
+  "usuario_id" : "654",
+  "especialidad" : "General"
+}, {
+  "usuario_id" : "852",
+  "especialidad" : "Trauma"
 } ]
