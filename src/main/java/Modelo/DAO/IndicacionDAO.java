@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, Indicacion> {
+public class IndicacionDAO implements DAOAbstracto<Integer, Indicacion> {
 
     public IndicacionDAO() throws SQLException {
         this.dao = DaoManager.createDao(ConexionBD.getConexion(), Indicacion.class);
@@ -30,13 +30,8 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         dao.create(e);
     }
     @Override
-    public Indicacion findById(IndicacionKey id) throws SQLException {
-        QueryBuilder<Indicacion, Object> qb = dao.queryBuilder();
-        qb.where()
-                .eq("receta_codigo", id.getRecetaCodigo())
-                .and()
-                .eq("medicamento_codigo", id.getMedicamentoCodigo());
-        return qb.queryForFirst();
+    public Indicacion findById(Integer id) throws SQLException {
+        return dao.queryForId(id);
     }
 
     @Override
@@ -50,13 +45,8 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
     }
 
     @Override
-    public void delete(IndicacionKey id) throws SQLException {
-        DeleteBuilder<Indicacion, Object> deleteBuilder = dao.deleteBuilder();
-        deleteBuilder.where()
-                .eq("receta_codigo", id.getRecetaCodigo())
-                .and()
-                .eq("medicamento_codigo", id.getMedicamentoCodigo());
-        deleteBuilder.delete();
+    public void delete(Integer id) throws SQLException {
+        dao.deleteById(id);
     }
 
     public List<Indicacion> findByRecetaCodigo(String recetaCodigo) throws SQLException {
@@ -74,8 +64,8 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         List<Indicacion> all = findAll();
         List<IndicacionExport> exports = new ArrayList<>();
         for (Indicacion ind : all) {
-            String recetaCodigo = ind.getReceta_codigo();
-            String medicamentoCodigo = ind.getMedicamento_codigo();
+            String recetaCodigo = ind.getReceta().getCodigo();
+            String medicamentoCodigo = ind.getMedicamento().getCodigo();
             exports.add(new IndicacionExport(
                     recetaCodigo,
                     medicamentoCodigo,
@@ -93,38 +83,13 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         for (IndicacionExport ie : list) {
             Receta      receta      = recetaDao.queryForId(ie.receta_codigo);
             Medicamento medicamento = medicamentoDao.queryForId(ie.medicamento_codigo);
-            Indicacion  indicacion = new Indicacion(ie.receta_codigo,ie.medicamento_codigo,receta,medicamento,
+            Indicacion  indicacion = new Indicacion(receta,medicamento,
                     ie.cantidad,ie.indicaciones,ie.duracion_dias);
             try {
                 add(indicacion);
             }catch (SQLException ex){
                 update(indicacion);
             }
-        }
-    }
-
-    @AllArgsConstructor
-    public static final class IndicacionKey {
-        private final String recetaCodigo;
-        private final String medicamentoCodigo;
-        public String getRecetaCodigo() {
-            return recetaCodigo;
-        }
-
-        public String getMedicamentoCodigo() {
-            return medicamentoCodigo;
-        }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof IndicacionKey)) return false;
-            IndicacionKey that = (IndicacionKey) o;
-            return Objects.equals(recetaCodigo, that.recetaCodigo) &&
-                    Objects.equals(medicamentoCodigo, that.medicamentoCodigo);
-        }
-        @Override
-        public int hashCode() {
-            return Objects.hash(recetaCodigo, medicamentoCodigo);
         }
     }
     @NoArgsConstructor

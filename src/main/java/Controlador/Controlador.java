@@ -152,7 +152,6 @@ public class Controlador {
         indicacion.setCantidad(cantidad);
         indicacion.setIndicaciones(indicaiones);
         indicacion.setDuracion(duracion);
-        indicacion.setMedicamento_codigo(medicamento_codigo);
         try {
             indicacion.setMedicamento(buscarMedicamento(medicamento_codigo));
         } catch (SQLException e) {

@@ -143,13 +143,6 @@ public class GestorRecetaIndicacion {
     public List<Indicacion> obtenerListaIndicaciones() throws SQLException {
         return indicaciones.findAll();
     }
-    public Indicacion buscarIndicacion(String recetaCodigo, String medicamentoCodigo) throws SQLException {
-        IndicacionDAO.IndicacionKey key = new IndicacionDAO.IndicacionKey(recetaCodigo, medicamentoCodigo);
-        Indicacion ind = indicaciones.findById(key);
-        if (ind == null)
-            throw new SQLException("No existe una indicación con esa clave");
-        return ind;
-    }
     public List<Indicacion> indiccionesReceta(String recetaCodigo) throws SQLException{
         return indicaciones.findByRecetaCodigo(recetaCodigo);
     }
