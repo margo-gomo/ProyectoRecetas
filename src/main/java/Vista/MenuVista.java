@@ -1059,12 +1059,15 @@ public class MenuVista extends JFrame {
                 try {
                     List<Indicacion> inds = controlador.mostrarIndicaciones(r.getCodigo());
                     medicamentos = inds.stream()
-                            .map(in -> (in.getMedicamento() != null) ? in.getMedicamento().getNombre() : "")
+                            .map(in -> Objects.toString(
+                                    (in != null && in.getMedicamento() != null) ? in.getMedicamento().getNombre() : null,
+                                    ""))             // convierte null -> ""
                             .filter(s -> !s.isEmpty())
                             .reduce((a, b) -> a + ", " + b)
                             .orElse("");
                 } catch (SQLException ex) {
                     medicamentos = "(sin datos)";
+                    ex.printStackTrace(); // opcional: ayuda a debug
                 }
 
                 model.addRow(new Object[]{
@@ -1078,6 +1081,7 @@ public class MenuVista extends JFrame {
                 });
             }
         } catch (Exception ex) {
+            ex.printStackTrace(); // ver stack completo
             JOptionPane.showMessageDialog(this, "No se pudo cargar el histórico:\n" + ex.getMessage(),
                     "Base de datos", JOptionPane.ERROR_MESSAGE);
         }
