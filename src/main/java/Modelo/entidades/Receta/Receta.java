@@ -73,7 +73,7 @@ public class Receta {
     }
     @DatabaseField(id = true)
     String codigo;
-    @DatabaseField(columnName = "id_paciente",foreign = true,canBeNull = false)
+    @DatabaseField(columnName = "id_paciente",foreign = true,canBeNull = false,foreignAutoRefresh = true)
     private Paciente paciente;
     @DatabaseField(canBeNull = false)
     private Date fecha_confeccion;
@@ -81,10 +81,10 @@ public class Receta {
     private Date fecha_retiro;
     @DatabaseField(canBeNull = false)
     private String estado;
-    @DatabaseField(foreign = true,columnName = "id_farmaceuta_proceso")
+    @DatabaseField(foreign = true,columnName = "id_farmaceuta_proceso",foreignAutoRefresh = true)
     private Usuario farmaceuta_Proceso;
-    @DatabaseField(foreign = true,columnName = "id_farmaceuta_lista")
+    @DatabaseField(foreign = true,columnName = "id_farmaceuta_lista",foreignAutoRefresh = true)
     private Usuario farmaceuta_Lista;
-    @DatabaseField(foreign = true,columnName = "id_farmaceuta_entregada")
+    @DatabaseField(foreign = true,columnName = "id_farmaceuta_entregada",foreignAutoRefresh = true)
     private Usuario farmaceuta_Entregada;
 }
