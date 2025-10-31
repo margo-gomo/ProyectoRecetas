@@ -147,8 +147,17 @@ public class Controlador {
     public Indicacion buscarIndicacion(String medicamentoCodigo){
         return modeloRecetasIndicacion.buscarIndicacionLista(medicamentoCodigo);
     }
-    public void agregarIndicacion(Medicamento medicamento,int cantidad,String indicaiones,int duracion) throws IllegalArgumentException, SecurityException{
-        Indicacion indicacion=new Indicacion(medicamento,cantidad,indicaiones,duracion);
+    public void agregarIndicacion(String medicamento_codigo,int cantidad,String indicaiones,int duracion) throws IllegalArgumentException, SecurityException{
+        Indicacion indicacion=new Indicacion();
+        indicacion.setCantidad(cantidad);
+        indicacion.setIndicaciones(indicaiones);
+        indicacion.setDuracion(duracion);
+        indicacion.setMedicamento_codigo(medicamento_codigo);
+        try {
+            indicacion.setMedicamento(buscarMedicamento(medicamento_codigo));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         modeloRecetasIndicacion.agregarIndicacionLista(indicacion,usuario_login);
     }
     public void actualizarIndicacion(Medicamento medicamento,int cantidad,String indicaiones,int duracion)throws IllegalArgumentException, SecurityException{

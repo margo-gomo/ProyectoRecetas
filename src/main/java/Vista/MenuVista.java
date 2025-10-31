@@ -1789,7 +1789,7 @@ public class MenuVista extends JFrame {
             }
             try { controlador.eliminarIndicacionReceta(codigo); } catch (Exception ignored) {}
 
-            controlador.agregarIndicacion(med, cantidad, indicaciones, duracion);
+            controlador.agregarIndicacion(codigo, cantidad, indicaciones, duracion);
 
             recargarTablaIndicacionesDesdeControlador();
         } catch (Exception ex) {

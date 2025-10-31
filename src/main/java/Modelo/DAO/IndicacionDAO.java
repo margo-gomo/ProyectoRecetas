@@ -10,6 +10,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,23 +22,13 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
     public IndicacionDAO() throws SQLException {
         this.dao = DaoManager.createDao(ConexionBD.getConexion(), Indicacion.class);
         this.recetaDao = DaoManager.createDao(ConexionBD.getConexion(), Receta.class);
-        this.medicamentoDao = DaoManager.createDao(ConexionBD.getConexion(), Medicamento.class);
+        this.medicamentoDao=DaoManager.createDao(ConexionBD.getConexion(), Medicamento.class);
     }
 
     @Override
     public void add(Indicacion e) throws SQLException {
-        dao.executeRaw(
-                "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaciones, duracion_dias) " +
-                        "VALUES (?, ?, ?, ?, ?)",
-                e.getReceta().getCodigo(),
-                e.getMedicamento().getCodigo(),
-                String.valueOf(e.getCantidad()),
-                e.getIndicaciones() == null ? "" : e.getIndicaciones(),
-                String.valueOf(e.getDuracion())
-        );
+        dao.create(e);
     }
-
-
     @Override
     public Indicacion findById(IndicacionKey id) throws SQLException {
         QueryBuilder<Indicacion, Object> qb = dao.queryBuilder();
@@ -55,17 +46,8 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
 
     @Override
     public void update(Indicacion e) throws SQLException {
-        dao.executeRaw(
-                "UPDATE indicacion SET cantidad = ?, indicaciones = ?, duracion_dias = ? " +
-                        "WHERE receta_codigo = ? AND medicamento_codigo = ?",
-                String.valueOf(e.getCantidad()),
-                e.getIndicaciones() == null ? "" : e.getIndicaciones(),
-                String.valueOf(e.getDuracion()),
-                e.getReceta().getCodigo(),
-                e.getMedicamento().getCodigo()
-        );
+        dao.update(e);
     }
-
 
     @Override
     public void delete(IndicacionKey id) throws SQLException {
@@ -92,8 +74,8 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         List<Indicacion> all = findAll();
         List<IndicacionExport> exports = new ArrayList<>();
         for (Indicacion ind : all) {
-            String recetaCodigo      = ind.getReceta() != null ? ind.getReceta().getCodigo() : null;
-            String medicamentoCodigo = ind.getMedicamento() != null ? ind.getMedicamento().getCodigo() : null;
+            String recetaCodigo = ind.getReceta_codigo();
+            String medicamentoCodigo = ind.getMedicamento_codigo();
             exports.add(new IndicacionExport(
                     recetaCodigo,
                     medicamentoCodigo,
@@ -111,27 +93,12 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
         for (IndicacionExport ie : list) {
             Receta      receta      = recetaDao.queryForId(ie.receta_codigo);
             Medicamento medicamento = medicamentoDao.queryForId(ie.medicamento_codigo);
-
-            int updated = dao.executeRaw(
-                    "UPDATE indicacion SET cantidad = ?, indicaciones = ?, duracion_dias = ? " +
-                            "WHERE receta_codigo = ? AND medicamento_codigo = ?",
-                    String.valueOf(ie.cantidad),
-                    ie.indicaciones == null ? "" : ie.indicaciones,
-                    String.valueOf(ie.duracion_dias),
-                    receta.getCodigo(),
-                    medicamento.getCodigo()
-            );
-
-            if (updated == 0) {
-                dao.executeRaw(
-                        "INSERT INTO indicacion (receta_codigo, medicamento_codigo, cantidad, indicaciones, duracion_dias) " +
-                                "VALUES (?, ?, ?, ?, ?)",
-                        receta.getCodigo(),
-                        medicamento.getCodigo(),
-                        String.valueOf(ie.cantidad),
-                        ie.indicaciones == null ? "" : ie.indicaciones,
-                        String.valueOf(ie.duracion_dias)
-                );
+            Indicacion  indicacion = new Indicacion(ie.receta_codigo,ie.medicamento_codigo,receta,medicamento,
+                    ie.cantidad,ie.indicaciones,ie.duracion_dias);
+            try {
+                add(indicacion);
+            }catch (SQLException ex){
+                update(indicacion);
             }
         }
     }
@@ -160,8 +127,9 @@ public class IndicacionDAO implements DAOAbstracto<IndicacionDAO.IndicacionKey, 
             return Objects.hash(recetaCodigo, medicamentoCodigo);
         }
     }
+    @NoArgsConstructor
     @AllArgsConstructor
-    static final class IndicacionExport {
+    public static class IndicacionExport {
         public String receta_codigo;
         public String medicamento_codigo;
         public int    cantidad;

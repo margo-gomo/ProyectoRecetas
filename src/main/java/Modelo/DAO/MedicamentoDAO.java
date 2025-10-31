@@ -49,7 +49,7 @@ public class MedicamentoDAO implements DAOAbstracto<String, Medicamento> {
     public void importAllFromJson(File file) throws SQLException, IOException {
         List<Medicamento> list = JsonUtil.readListFromFile(file, new TypeReference<List<Medicamento>>() {});
         for (Medicamento e : list)
-            dao.create(e);
+            dao.createOrUpdate(e);
     }
 
     private final Dao<Medicamento, String> dao;
