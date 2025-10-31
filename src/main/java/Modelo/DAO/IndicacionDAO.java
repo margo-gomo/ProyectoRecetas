@@ -7,7 +7,6 @@ import Modelo.entidades.Receta.Receta;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.stmt.DeleteBuilder;
 import com.j256.ormlite.stmt.QueryBuilder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 public class IndicacionDAO implements DAOAbstracto<Integer, Indicacion> {
 
     public IndicacionDAO() throws SQLException {
@@ -67,6 +65,7 @@ public class IndicacionDAO implements DAOAbstracto<Integer, Indicacion> {
             String recetaCodigo = ind.getReceta().getCodigo();
             String medicamentoCodigo = ind.getMedicamento().getCodigo();
             exports.add(new IndicacionExport(
+                    ind.getId(),
                     recetaCodigo,
                     medicamentoCodigo,
                     ind.getCantidad(),
@@ -95,6 +94,7 @@ public class IndicacionDAO implements DAOAbstracto<Integer, Indicacion> {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class IndicacionExport {
+        public int id;
         public String receta_codigo;
         public String medicamento_codigo;
         public int    cantidad;

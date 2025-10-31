@@ -17,9 +17,9 @@ public class Indicacion {
     }
     @DatabaseField(generatedId = true)
     private int id;
-    @DatabaseField(foreign = true,canBeNull = false)
+    @DatabaseField(foreign = true,canBeNull = false,columnName = "receta_codigo")
     private Receta receta;
-    @DatabaseField(foreign = true,canBeNull = false)
+    @DatabaseField(foreign = true,canBeNull = false,columnName = "medicamento_codigo")
     private Medicamento medicamento;
     @DatabaseField(canBeNull = false)
     private int cantidad;
