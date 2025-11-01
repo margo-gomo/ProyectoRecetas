@@ -65,9 +65,11 @@ public class GestorRecetaIndicacion {
             throw new SQLException("No existe un usuario con esas credenciales");
         return receta;
     }
-    public void agregarReceta(Receta receta, Usuario usuario) throws SecurityException,SQLException {
+    public void agregarReceta(Receta receta, Usuario usuario) throws SecurityException,SQLException,IllegalArgumentException {
         if(!("MEDICO".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
+        if(indicacionList.isEmpty())
+            throw new IllegalArgumentException("No le has agregado indicaciones a la receta");
         try{
             recetas.add(receta);
         }catch(SQLException e){
