@@ -11,10 +11,24 @@
   "estado" : "PROCESO",
   "farmaceuta_Proceso" : {
     "id" : "23",
-    "clave" : "23",
-    "nombre" : "Gregor",
+    "clave" : "Lucas",
+    "nombre" : "Lucas",
     "tipo" : "FARMACEUTA"
   },
+  "farmaceuta_Lista" : null,
+  "farmaceuta_Entregada" : null
+}, {
+  "codigo" : "Rec-2",
+  "paciente" : {
+    "id" : 1445,
+    "nombre" : "Pacos",
+    "fecha_nacimiento" : 1256623200000,
+    "telefono" : 777
+  },
+  "fecha_confeccion" : 1761976800000,
+  "fecha_retiro" : 1763013600000,
+  "estado" : "CONFECCIONADA",
+  "farmaceuta_Proceso" : null,
   "farmaceuta_Lista" : null,
   "farmaceuta_Entregada" : null
 } ]

@@ -673,7 +673,7 @@ public class MenuVista extends JFrame {
                 String nom  = (tfNombreMed != null) ? tfNombreMed.getText().trim() : "";
                 String pres = (tfDescMed   != null) ? tfDescMed.getText().trim()   : "";
                 try {
-                    controlador.actualizarMedicamento(codigo, nom, pres, ""); // mantener desc vacía
+                    controlador.actualizarMedicamento(codigo, nom, pres); // mantener desc vacía
                     cargarMedicamentosEnTabla();
                     limpiarCamposMedicamento();
                     JOptionPane.showMessageDialog(MenuVista.this, "Medicamento modificado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);

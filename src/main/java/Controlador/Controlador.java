@@ -114,9 +114,10 @@ public class Controlador {
         Medicamento medicamento = new Medicamento(codigo,nombre,presentacion);
         modeloMedicamento.agregar(medicamento,usuario_login);
     }
-    public void actualizarMedicamento(String codigo,String nombre,String presentacion,String descripcion) throws SecurityException, SQLException {
+    public void actualizarMedicamento(String codigo,String nombre,String presentacion) throws SecurityException, SQLException {
         Medicamento medicamento = buscarMedicamento(codigo);
         medicamento.setNombre(nombre);
+        medicamento.setPresentacion(presentacion);
         modeloMedicamento.actualizar(medicamento,usuario_login);
     }
     public void eliminarMedicamento(String codigo) throws SecurityException, SQLException {
