@@ -134,9 +134,10 @@ public class GestorRecetaIndicacion {
     public void agregarIndicacion(Receta receta, Usuario usuario) throws SecurityException,SQLException{
         if(!("MEDICO".equals(usuario.getTipo())))
             throw new SecurityException("No tienes los permisos para realizar esta accion");
-        for(Indicacion indicacion:indicacionList){
-            indicacion.setReceta(receta);
-            indicaciones.add(indicacion);
+        for(int i=0;i<indicacionList.size();i++){
+            indicacionList.get(i).setReceta(receta);
+            indicacionList.get(i).setId("Ind-"+String.valueOf(i+1)+"-"+receta.getCodigo());
+            indicaciones.add(indicacionList.get(i));
         }
         indicacionList.clear();
     }

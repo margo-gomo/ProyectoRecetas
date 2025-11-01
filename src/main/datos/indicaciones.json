@@ -1,19 +1,5 @@
 [ {
-  "id" : 1,
-  "receta_codigo" : "787",
-  "medicamento_codigo" : "Med1",
-  "cantidad" : 1,
-  "indicaciones" : "beber",
-  "duracion_dias" : 1
-}, {
-  "id" : 2,
-  "receta_codigo" : "787",
-  "medicamento_codigo" : "Med1",
-  "cantidad" : 1,
-  "indicaciones" : "beber",
-  "duracion_dias" : 1
-}, {
-  "id" : 3,
+  "id" : "Ind-1-787",
   "receta_codigo" : "787",
   "medicamento_codigo" : "Med1",
   "cantidad" : 1,

@@ -82,7 +82,7 @@ public class IndicacionDAO implements DAOAbstracto<Integer, Indicacion> {
         for (IndicacionExport ie : list) {
             Receta      receta      = recetaDao.queryForId(ie.receta_codigo);
             Medicamento medicamento = medicamentoDao.queryForId(ie.medicamento_codigo);
-            Indicacion  indicacion = new Indicacion(receta,medicamento,
+            Indicacion  indicacion = new Indicacion(ie.id,receta,medicamento,
                     ie.cantidad,ie.indicaciones,ie.duracion_dias);
             try {
                 add(indicacion);
@@ -94,7 +94,7 @@ public class IndicacionDAO implements DAOAbstracto<Integer, Indicacion> {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class IndicacionExport {
-        public int id;
+        public String id;
         public String receta_codigo;
         public String medicamento_codigo;
         public int    cantidad;
