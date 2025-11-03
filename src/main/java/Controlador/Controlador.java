@@ -12,6 +12,16 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+
+
 public class Controlador {
     public Controlador(GestorUsuario modeloUsuario, GestorMedico modeloMedico,
                        GestorMedicamento modeloMedicamento, GestorPaciente modeloPaciente, GestorRecetaIndicacion modeloRecetasIndicacion,Usuario usuario_login, GraficosUtil graficosUtil) {
@@ -26,9 +36,52 @@ public class Controlador {
     public Controlador() throws SQLException {
         this(new GestorUsuario(),new GestorMedico(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetaIndicacion(),new Usuario(),new GraficosUtil());
     }
-    public void usuarioLogin(String id,String clave) throws SQLException {
-        usuario_login=modeloUsuarios.buscarIdClave(id,clave);
+    public void usuarioLogin(String id, String clave) throws SQLException {
+        final ObjectMapper M = new ObjectMapper();
+        final String reqJson = String.format(
+                "{\"op\":\"login\",\"id\":\"%s\",\"clave\":\"%s\"}",
+                id.replace("\"","\\\""),
+                clave.replace("\"","\\\"")
+        );
+
+        try (Socket s = new Socket("localhost", 5050);
+             BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8));
+             PrintWriter out  = new PrintWriter(new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8), true)) {
+
+            out.println(reqJson);
+            String line = in.readLine();
+            if (line == null) throw new IllegalStateException("Sin respuesta del backend de login.");
+
+            JsonNode resp = M.readTree(line);
+            if (!resp.path("ok").asBoolean(false)) {
+                String msg = resp.has("msg") ? resp.get("msg").asText() :
+                        resp.has("error") ? resp.get("error").asText() :
+                                "Credenciales inválidas";
+                throw new SecurityException(msg);
+            }
+
+            JsonNode user = resp.path("user");
+            String nombreBackend = user.path("nombre").asText("");
+            String idBackend     = user.path("id").asText(id);
+
+            Usuario u = null;
+            try { u = modeloUsuarios.buscar(idBackend); } catch (Exception ignore) {}
+
+            if (u == null) {
+                u = new Usuario(idBackend, (nombreBackend.isBlank()? idBackend : nombreBackend), "MEDICO");
+            } else {
+                if (!nombreBackend.isBlank()) u.setNombre(nombreBackend);
+            }
+
+            this.usuario_login = u;
+
+        } catch (SecurityException se) {
+            throw se;
+        } catch (Exception io) {
+            throw new SQLException("Fallo de conexión con backend de login: " + io.getMessage(), io);
+        }
     }
+
     public void cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar) throws IllegalArgumentException, SQLException {
         modeloUsuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
     }
