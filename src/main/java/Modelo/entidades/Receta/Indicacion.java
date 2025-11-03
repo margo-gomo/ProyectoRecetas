@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @DatabaseTable(tableName = "indicacion")
 public class Indicacion {
-    @DatabaseField(id = true, columnName = "id_indicacion")
+    @DatabaseField(id = true)
     private String id;
 
     @DatabaseField(foreign = true, canBeNull = false, columnName = "receta_codigo", foreignAutoRefresh = true)
