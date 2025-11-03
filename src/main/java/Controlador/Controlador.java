@@ -114,9 +114,10 @@ public class Controlador {
         Medicamento medicamento = new Medicamento(codigo,nombre,presentacion);
         modeloMedicamento.agregar(medicamento,usuario_login);
     }
-    public void actualizarMedicamento(String codigo,String nombre,String presentacion,String descripcion) throws SecurityException, SQLException {
+    public void actualizarMedicamento(String codigo,String nombre,String presentacion) throws SecurityException, SQLException {
         Medicamento medicamento = buscarMedicamento(codigo);
         medicamento.setNombre(nombre);
+        medicamento.setPresentacion(presentacion);
         modeloMedicamento.actualizar(medicamento,usuario_login);
     }
     public void eliminarMedicamento(String codigo) throws SecurityException, SQLException {
@@ -147,8 +148,16 @@ public class Controlador {
     public Indicacion buscarIndicacion(String medicamentoCodigo){
         return modeloRecetasIndicacion.buscarIndicacionLista(medicamentoCodigo);
     }
-    public void agregarIndicacion(Medicamento medicamento,int cantidad,String indicaiones,int duracion) throws IllegalArgumentException, SecurityException{
-        Indicacion indicacion=new Indicacion(medicamento,cantidad,indicaiones,duracion);
+    public void agregarIndicacion(String medicamento_codigo,int cantidad,String indicaiones,int duracion) throws IllegalArgumentException, SecurityException{
+        Indicacion indicacion=new Indicacion();
+        indicacion.setCantidad(cantidad);
+        indicacion.setIndicaciones(indicaiones);
+        indicacion.setDuracion(duracion);
+        try {
+            indicacion.setMedicamento(buscarMedicamento(medicamento_codigo));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         modeloRecetasIndicacion.agregarIndicacionLista(indicacion,usuario_login);
     }
     public void actualizarIndicacion(Medicamento medicamento,int cantidad,String indicaiones,int duracion)throws IllegalArgumentException, SecurityException{

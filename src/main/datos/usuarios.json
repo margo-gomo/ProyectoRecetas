@@ -5,8 +5,8 @@
   "tipo" : "ADMIN"
 }, {
   "id" : "23",
-  "clave" : "23",
-  "nombre" : "Gregor",
+  "clave" : "Lucas",
+  "nombre" : "Lucas",
   "tipo" : "FARMACEUTA"
 }, {
   "id" : "252",
