@@ -181,6 +181,9 @@ public class Controlador {
     public List<Indicacion>mostrarIndicaciones(String codigo) throws SQLException {
         return modeloRecetasIndicacion.indiccionesReceta(codigo);
     }
+
+    private final Modelo.Proxy.SocketProxy proxy = new Modelo.Proxy.SocketProxy();
+
     public void init() {
         try {
             modeloUsuarios.cargar();
@@ -212,8 +215,18 @@ public class Controlador {
         } catch (SQLException  | IOException ex) {
             System.err.printf("Ocurrió un error al cargar indicaciones");
         }
+        // ---- PRUEBA PROXY ----
+        proxy.setOnError(msg -> System.out.println("[UI] Error: " + msg));
+        try {
+            System.out.println("[UI] Intentando conectar al backend...");
+            proxy.conectar("localhost", 5050);         // 1) conecta
+            proxy.enviarLinea("{\"op\":\"ping\"}");     // 2) envía
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
     public void cerrarAplicacion() {
+        try { proxy.cerrar(); } catch (Exception ignored) {}
         try {
             modeloUsuarios.guardar();
         } catch (SQLException  | IOException ex) {
@@ -256,4 +269,5 @@ public class Controlador {
     @Getter
     private Usuario usuario_login;
     private GraficosUtil graficosUtil;
+
 }

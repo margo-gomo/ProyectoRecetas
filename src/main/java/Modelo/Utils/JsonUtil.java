@@ -27,4 +27,16 @@ public final class JsonUtil {
     public static <T> void writeObjectToFile(T obj, File file) throws IOException {
         MAPPER.writeValue(file, obj);
     }
+
+    public static ObjectMapper mapper() {
+        return MAPPER;
+    }
+
+    public static <T> T fromJson(String json, Class<T> type) throws IOException {
+        return MAPPER.readValue(json, type);
+    }
+
+    public static String toJson(Object obj) throws IOException {
+        return MAPPER.writeValueAsString(obj);
+    }
 }

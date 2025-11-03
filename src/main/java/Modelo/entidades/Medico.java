@@ -14,8 +14,6 @@ public class Medico {
     }
     @DatabaseField(id = true, columnName = "usuario_id")
     private String usuarioId;
-    // No persistimos el objeto Usuario dentro de ORMLite para evitar conflicto.
-    // Lo mantenemos en memoria para conveniencia en la lógica, pero ORMLite no lo guardará.
     @DatabaseField(persisted = false)
     private Usuario usuario;
     @DatabaseField
