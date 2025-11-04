@@ -21,8 +21,8 @@ public class GestorMensaje {
     public MensajeDAO.MensajeDTO obtenerMensajeDTO(String id) throws SQLException{
         return mensajes.mensajedto(id);
     }
-    public List<Mensaje> recibirMensjaes(String usuarioId) throws SQLException{
-        return mensajes.findByRemitente(usuarioId);
+    public List<Mensaje> recibirMensajes(String remitenteId, String destinatarioId) throws SQLException{
+        return mensajes.recibirMensaje(remitenteId,destinatarioId);
     }
     public void cargar() throws SQLException, IOException {
         File f=new File(ARCHIVO_DATOS);
