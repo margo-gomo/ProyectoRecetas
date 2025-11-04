@@ -42,17 +42,25 @@ public class MensajeDAO {
         return mensajeDao.queryForAll();
     }
 
-    /**
-     * Mensajes NO leídos enviados por 'usuarioId' (y se marcan como leídos al devolverlos)
-     */
-    public List<Mensaje> findByRemitente(String usuarioId) throws SQLException{
+    public List<Mensaje> recibirMensaje(String remitenteId, String destinatarioId) throws SQLException {
         QueryBuilder<Mensaje, String> qb = mensajeDao.queryBuilder();
         Where<Mensaje, String> w = qb.where();
-        w.eq("remitente_id", usuarioId).and().eq("leido", 0); // ORMLite genera sufijo _id para FKs
-        List<Mensaje> res = qb.query();
-        marcarLeido(res);
-        return res;
+    
+        // Busca mensajes no leídos entre remitente y destinatario
+        w.eq("remitente_id", remitenteId)
+         .and()
+         .eq("destinatario_id", destinatarioId)
+         .and()
+         .eq("leido", 0);
+    
+        List<Mensaje> mensajes = qb.query();
+    
+        // Marcar los mensajes como leídos
+        marcarLeido(mensajes);
+
+        return mensajes;
     }
+
 
     public void marcarLeido(List<Mensaje> mensajes)throws SQLException{
         for(Mensaje e:mensajes){
