@@ -1,46 +1,4 @@
 [ {
-  "codigo" : "33",
-  "paciente" : {
-    "id" : 1445,
-    "nombre" : "Pacos",
-    "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
-  },
-  "fecha_confeccion" : 1761544800000,
-  "fecha_retiro" : 1761631200000,
-  "estado" : "CONFECCIONADA",
-  "farmaceuta_Proceso" : null,
-  "farmaceuta_Lista" : null,
-  "farmaceuta_Entregada" : null
-}, {
-  "codigo" : "44",
-  "paciente" : {
-    "id" : 1445,
-    "nombre" : "Pacos",
-    "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
-  },
-  "fecha_confeccion" : 1761544800000,
-  "fecha_retiro" : 1761631200000,
-  "estado" : "CONFECCIONADA",
-  "farmaceuta_Proceso" : null,
-  "farmaceuta_Lista" : null,
-  "farmaceuta_Entregada" : null
-}, {
-  "codigo" : "47",
-  "paciente" : {
-    "id" : 1445,
-    "nombre" : "Pacos",
-    "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
-  },
-  "fecha_confeccion" : 1761544800000,
-  "fecha_retiro" : 1761631200000,
-  "estado" : "CONFECCIONADA",
-  "farmaceuta_Proceso" : null,
-  "farmaceuta_Lista" : null,
-  "farmaceuta_Entregada" : null
-}, {
   "codigo" : "787",
   "paciente" : {
     "id" : 1445,
@@ -57,62 +15,6 @@
     "nombre" : "Lucas",
     "tipo" : "FARMACEUTA"
   },
-  "farmaceuta_Lista" : null,
-  "farmaceuta_Entregada" : null
-}, {
-  "codigo" : "960",
-  "paciente" : {
-    "id" : 1445,
-    "nombre" : "Pacos",
-    "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
-  },
-  "fecha_confeccion" : 1762149600000,
-  "fecha_retiro" : 1762495200000,
-  "estado" : "CONFECCIONADA",
-  "farmaceuta_Proceso" : null,
-  "farmaceuta_Lista" : null,
-  "farmaceuta_Entregada" : null
-}, {
-  "codigo" : "R-761",
-  "paciente" : {
-    "id" : 1445,
-    "nombre" : "Pacos",
-    "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
-  },
-  "fecha_confeccion" : 1761544800000,
-  "fecha_retiro" : 1761544800000,
-  "estado" : "CONFECCIONADA",
-  "farmaceuta_Proceso" : null,
-  "farmaceuta_Lista" : null,
-  "farmaceuta_Entregada" : null
-}, {
-  "codigo" : "R-78",
-  "paciente" : {
-    "id" : 1445,
-    "nombre" : "Pacos",
-    "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
-  },
-  "fecha_confeccion" : 1761544800000,
-  "fecha_retiro" : 1761544800000,
-  "estado" : "CONFECCIONADA",
-  "farmaceuta_Proceso" : null,
-  "farmaceuta_Lista" : null,
-  "farmaceuta_Entregada" : null
-}, {
-  "codigo" : "R-789",
-  "paciente" : {
-    "id" : 1445,
-    "nombre" : "Pacos",
-    "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
-  },
-  "fecha_confeccion" : 1761544800000,
-  "fecha_retiro" : 1761544800000,
-  "estado" : "CONFECCIONADA",
-  "farmaceuta_Proceso" : null,
   "farmaceuta_Lista" : null,
   "farmaceuta_Entregada" : null
 }, {
