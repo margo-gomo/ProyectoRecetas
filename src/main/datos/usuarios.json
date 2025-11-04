@@ -16,7 +16,7 @@
 }, {
   "id" : "3",
   "clave" : "3",
-  "nombre" : "John",
+  "nombre" : "Johnny",
   "tipo" : "MEDICO"
 }, {
   "id" : "654",
@@ -28,4 +28,9 @@
   "clave" : "852",
   "nombre" : "Troy",
   "tipo" : "MEDICO"
+}, {
+  "id" : "951",
+  "clave" : "951",
+  "nombre" : "Rachel",
+  "tipo" : "FARMACEUTA"
 } ]
