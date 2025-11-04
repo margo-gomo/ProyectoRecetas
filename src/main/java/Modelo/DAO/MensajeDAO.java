@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MensajeDAO {
@@ -33,6 +34,9 @@ public class MensajeDAO {
     public void update(Mensaje e) throws SQLException{
         mensajeDao.update(e);
     }
+    public List<Mensaje> findAll() throws SQLException {
+        return mensajeDao.queryForAll();
+    }
 
     public List<Mensaje> findByRemitente(String usuarioId) throws SQLException{
         QueryBuilder<Mensaje, String> qb = mensajeDao.queryBuilder();
@@ -46,11 +50,19 @@ public class MensajeDAO {
             mensajeDao.update(e);
         }
     }
-    public MensajeDTO mensajedto(Mensaje e) throws SQLException{
+    public MensajeDTO mensajedto(String id) throws SQLException{
+        Mensaje e = mensajeDao.queryForId(id);
         return new MensajeDTO(e.getId(),e.getRemitente().getId(),e.getDestinatario().getId(),e.getTexto(),e.getLeido());
     }
     public void exportAllToJson(File file) throws SQLException, IOException {
-
+        List<Mensaje> mensajes = findAll();
+        List<MensajeDTO> exports= new ArrayList<>();
+        for(Mensaje e:mensajes){
+            String remitente=e.getRemitente().getId();
+            String destinatario=e.getDestinatario().getId();
+            exports.add(new MensajeDTO(e.getId(),remitente,destinatario,e.getTexto(),e.getLeido()));
+        }
+        JsonUtil.writeListToFile(exports, file);
     }
 
     public void importAllFromJson(File file) throws SQLException, IOException {
@@ -76,40 +88,3 @@ public class MensajeDAO {
         private int leido;
     }
 }
-    /*
-    Devuelve nombre si id/clave son válidos; null si no.
-    public String validarUsuario(String id, String clave) throws SQLException {
-        QueryBuilder<Usuario, String> qb = usuarioDao.queryBuilder();
-        qb.where().eq("id", id).and().eq("clave", clave);
-        Usuario u = usuarioDao.queryForFirst(qb.prepare());
-        return (u != null) ? u.getNombre() : null;
-    }
-
-     Inserta un mensaje y devuelve DTO.
-    public MensajeDTO enviar(String remitente, String destinatario, String texto) throws SQLException {
-        Mensaje m = new Mensaje(remitente, destinatario, texto, new Date());
-        mensajeDao.create(m);
-        return toDTO(m);
-    }
-
-    Lista mensajes donde el usuario participa, ordenados por fecha desc.
-    public List<MensajeDTO> listarConversacionesDe(String userId) throws SQLException {
-        QueryBuilder<Mensaje, Long> qb = mensajeDao.queryBuilder();
-        qb.where().eq("remitente", userId).or().eq("destinatario", userId);
-        qb.orderBy("fecha_envio", false);
-        List<Mensaje> lista = mensajeDao.query(qb.prepare());
-        return lista.stream().map(this::toDTO).collect(Collectors.toList());
-    }
-
-    private MensajeDTO toDTO(Mensaje m) {
-        MensajeDTO dto = new MensajeDTO();
-        dto.setId(m.getId());
-        dto.setRemitente(m.getRemitente());
-        dto.setDestinatario(m.getDestinatario());
-        dto.setTexto(m.getTexto());
-
-        dto.setFechaEnvio(m.getFechaEnvio().toInstant()
-                .atZone(java.time.ZoneId.systemDefault())
-                .toLocalDateTime());
-        return dto;
-    }*/

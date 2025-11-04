@@ -24,7 +24,7 @@ import java.io.PrintWriter;
 
 public class Controlador {
     public Controlador(GestorUsuario modeloUsuario, GestorMedico modeloMedico,
-                       GestorMedicamento modeloMedicamento, GestorPaciente modeloPaciente, GestorRecetaIndicacion modeloRecetasIndicacion,Usuario usuario_login, GraficosUtil graficosUtil) {
+                       GestorMedicamento modeloMedicamento, GestorPaciente modeloPaciente, GestorRecetaIndicacion modeloRecetasIndicacion,Usuario usuario_login, GraficosUtil graficosUtil,GestorMensaje modeloMensaje) {
         this.modeloUsuarios = modeloUsuario;
         this.modeloMedico = modeloMedico;
         this.modeloPaciente = modeloPaciente;
@@ -32,9 +32,10 @@ public class Controlador {
         this.modeloRecetasIndicacion = modeloRecetasIndicacion;
         this.usuario_login=usuario_login;
         this.graficosUtil=graficosUtil;
+        this.modeloMensaje = modeloMensaje;
     }
     public Controlador() throws SQLException {
-        this(new GestorUsuario(),new GestorMedico(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetaIndicacion(),new Usuario(),new GraficosUtil());
+        this(new GestorUsuario(),new GestorMedico(),new GestorMedicamento(),new GestorPaciente(),new GestorRecetaIndicacion(),new Usuario(),new GraficosUtil(),new GestorMensaje());
     }
     public void usuarioLogin(String id, String clave) throws SQLException {
         final ObjectMapper M = new ObjectMapper();
@@ -277,6 +278,11 @@ public class Controlador {
         } catch (SQLException  | IOException ex) {
             System.err.printf("Ocurrió un error al cargar indicaciones");
         }
+        try {
+            modeloMensaje.cargar();
+        } catch (SQLException  | IOException ex) {
+            System.err.printf("Ocurrió un error al cargar mensajes");
+        }
         // ---- PRUEBA PROXY ----
         proxy.setOnError(msg -> System.out.println("[UI] Error: " + msg));
         try {
@@ -319,6 +325,11 @@ public class Controlador {
         } catch (SQLException  | IOException ex) {
             System.err.printf("Ocurrió un error al guardar los datos");
         }
+        try {
+            modeloMensaje.guardar();
+        } catch (SQLException  | IOException ex) {
+            System.err.printf("Ocurrió un error al guardar los datos");
+        }
         ConexionBD.cerrarConexion();
         System.out.println("Aplicación finalizada..");
         System.exit(0);
@@ -328,6 +339,7 @@ public class Controlador {
     private GestorMedicamento modeloMedicamento;
     private GestorRecetaIndicacion modeloRecetasIndicacion;
     private GestorUsuario modeloUsuarios;
+    private GestorMensaje modeloMensaje;
     @Getter
     private Usuario usuario_login;
     private GraficosUtil graficosUtil;
