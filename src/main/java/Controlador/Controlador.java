@@ -83,6 +83,128 @@ public class Controlador {
         }
     }
 
+    // =================== MENSAJES: enviar, recibir conversación y listar ===================
+
+    /** Envía un mensaje al destinatario actual vía backend socket. */
+    public Modelo.DAO.MensajeDAO.MensajeDTO enviarMensaje(String destinatarioId, String texto) throws SQLException {
+        if (usuario_login == null || usuario_login.getId() == null)
+            throw new SecurityException("No hay usuario autenticado.");
+        if (destinatarioId == null || destinatarioId.isBlank())
+            throw new IllegalArgumentException("Debe indicar el destinatario.");
+        if (texto == null || texto.isBlank())
+            throw new IllegalArgumentException("El texto del mensaje no puede estar vacío.");
+
+        final ObjectMapper M = new ObjectMapper();
+        final String reqJson = String.format(
+                "{\"op\":\"enviarMensaje\",\"remitente\":\"%s\",\"destinatario\":\"%s\",\"texto\":\"%s\"}",
+                usuario_login.getId().replace("\"","\\\""),
+                destinatarioId.replace("\"","\\\""),
+                texto.replace("\"","\\\"")
+        );
+
+        try (Socket s = new Socket("localhost", 5050);
+             BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8));
+             PrintWriter out  = new PrintWriter(new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8), true)) {
+
+            out.println(reqJson);
+            String line = in.readLine();
+            if (line == null) throw new IllegalStateException("Sin respuesta del backend (enviarMensaje).");
+
+            JsonNode resp = M.readTree(line);
+            if (!resp.path("ok").asBoolean(false)) {
+                String msg = resp.has("msg") ? resp.get("msg").asText()
+                        : resp.has("error") ? resp.get("error").asText()
+                        : "Fallo al enviar mensaje";
+                throw new SQLException(msg);
+            }
+
+            JsonNode nodo = resp.path("mensaje");
+            Modelo.DAO.MensajeDAO.MensajeDTO dto =
+                    M.convertValue(nodo, Modelo.DAO.MensajeDAO.MensajeDTO.class);
+            return dto;
+
+        } catch (Exception io) {
+            throw new SQLException("Fallo de conexión con backend de mensajes: " + io.getMessage(), io);
+        }
+    }
+
+    public java.util.List<Modelo.DAO.MensajeDAO.MensajeDTO> recibirMensajes(String otroId) throws SQLException {
+        if (usuario_login == null || usuario_login.getId() == null)
+            throw new SecurityException("No hay usuario autenticado.");
+        if (otroId == null || otroId.isBlank())
+            throw new IllegalArgumentException("Debe indicar el otro participante.");
+
+        final ObjectMapper M = new ObjectMapper();
+        final String reqJson = String.format(
+                "{\"op\":\"recibirMensajes\",\"remitente\":\"%s\",\"destinatario\":\"%s\"}",
+                usuario_login.getId().replace("\"","\\\""),
+                otroId.replace("\"","\\\"")
+        );
+
+        try (Socket s = new Socket("localhost", 5050);
+             BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8));
+             PrintWriter out  = new PrintWriter(new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8), true)) {
+
+            out.println(reqJson);
+            String line = in.readLine();
+            if (line == null) throw new IllegalStateException("Sin respuesta del backend (recibirMensajes).");
+
+            JsonNode resp = M.readTree(line);
+            if (!resp.path("ok").asBoolean(false)) {
+                String msg = resp.has("msg") ? resp.get("msg").asText()
+                        : resp.has("error") ? resp.get("error").asText()
+                        : "Fallo al recibir mensajes";
+                throw new SQLException(msg);
+            }
+
+            JsonNode arr = resp.path("mensajes");
+            java.util.List<Modelo.DAO.MensajeDAO.MensajeDTO> lista =
+                    M.convertValue(arr, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<Modelo.DAO.MensajeDAO.MensajeDTO>>() {});
+            return (lista != null) ? lista : java.util.Collections.emptyList();
+
+        } catch (Exception io) {
+            throw new SQLException("Fallo de conexión con backend de mensajes: " + io.getMessage(), io);
+        }
+    }
+
+    /** Lista todos los mensajes en los que participa el usuario actual (timeline). */
+    public java.util.List<Modelo.DAO.MensajeDAO.MensajeDTO> listarConversaciones() throws SQLException {
+        if (usuario_login == null || usuario_login.getId() == null)
+            throw new SecurityException("No hay usuario autenticado.");
+
+        final ObjectMapper M = new ObjectMapper();
+        final String reqJson = String.format(
+                "{\"op\":\"listarConversaciones\",\"userId\":\"%s\"}",
+                usuario_login.getId().replace("\"","\\\"")
+        );
+
+        try (Socket s = new Socket("localhost", 5050);
+             BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8));
+             PrintWriter out  = new PrintWriter(new OutputStreamWriter(s.getOutputStream(), StandardCharsets.UTF_8), true)) {
+
+            out.println(reqJson);
+            String line = in.readLine();
+            if (line == null) throw new IllegalStateException("Sin respuesta del backend (listarConversaciones).");
+
+            JsonNode resp = M.readTree(line);
+            if (!resp.path("ok").asBoolean(false)) {
+                String msg = resp.has("msg") ? resp.get("msg").asText()
+                        : resp.has("error") ? resp.get("error").asText()
+                        : "Fallo al listar conversaciones";
+                throw new SQLException(msg);
+            }
+
+            JsonNode arr = resp.path("mensajes");
+            java.util.List<Modelo.DAO.MensajeDAO.MensajeDTO> lista =
+                    M.convertValue(arr, new com.fasterxml.jackson.core.type.TypeReference<java.util.List<Modelo.DAO.MensajeDAO.MensajeDTO>>() {});
+            return (lista != null) ? lista : java.util.Collections.emptyList();
+
+        } catch (Exception io) {
+            throw new SQLException("Fallo de conexión con backend de mensajes: " + io.getMessage(), io);
+        }
+    }
+
+
     public void cambiarClave(String id, String claveActual, String claveNueva, String claveConfirmar) throws IllegalArgumentException, SQLException {
         modeloUsuarios.cambiarClave(id, claveActual, claveNueva, claveConfirmar);
     }

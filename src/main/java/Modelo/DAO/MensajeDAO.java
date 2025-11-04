@@ -42,25 +42,35 @@ public class MensajeDAO {
         return mensajeDao.queryForAll();
     }
 
+
     public List<Mensaje> recibirMensaje(String remitenteId, String destinatarioId) throws SQLException {
-        QueryBuilder<Mensaje, String> qb = mensajeDao.queryBuilder();
-        Where<Mensaje, String> w = qb.where();
-    
-        // Busca mensajes no leídos entre remitente y destinatario
-        w.eq("remitente_id", remitenteId)
-         .and()
-         .eq("destinatario_id", destinatarioId)
-         .and()
-         .eq("leido", 0);
-    
-        List<Mensaje> mensajes = qb.query();
-    
-        // Marcar los mensajes como leídos
-        marcarLeido(mensajes);
+        QueryBuilder<Mensaje, String> qAB = mensajeDao.queryBuilder();
+        qAB.where().eq("remitente_id", remitenteId).and().eq("destinatario_id", destinatarioId);
+        qAB.orderBy("id", true);
+        List<Mensaje> ab = qAB.query();
 
-        return mensajes;
+        // B -> A
+        QueryBuilder<Mensaje, String> qBA = mensajeDao.queryBuilder();
+        qBA.where().eq("remitente_id", destinatarioId).and().eq("destinatario_id", remitenteId);
+        qBA.orderBy("id", true); // idem nota de fecha_envio
+        List<Mensaje> ba = qBA.query();
+
+        // Unir y ordenar
+        List<Mensaje> todos = new ArrayList<>(ab.size() + ba.size());
+        todos.addAll(ab);
+        todos.addAll(ba);
+        todos.sort(Comparator.comparing(Mensaje::getId));
+
+        // Marcar como leídos los que eran para "remitenteId"
+        for (Mensaje m : todos) {
+            Usuario dst = m.getDestinatario();
+            if (dst != null && remitenteId.equals(dst.getId()) && m.getLeido() == 0) {
+                m.setLeido(1);
+                mensajeDao.update(m);
+            }
+        }
+        return todos;
     }
-
 
     public void marcarLeido(List<Mensaje> mensajes)throws SQLException{
         for(Mensaje e:mensajes){
@@ -86,7 +96,6 @@ public class MensajeDAO {
     public String validarUsuario(String id, String clave) throws SQLException {
         Usuario u = usuarioDao.queryForId(id);
         if (u == null) return null;
-        // Se asume que Usuario tiene getClave() y getNombre()
         if (u.getClave() == null || !Objects.equals(u.getClave(), clave)) return null;
         return (u.getNombre() == null || u.getNombre().isBlank()) ? id : u.getNombre();
     }
@@ -98,7 +107,6 @@ public class MensajeDAO {
         if (rem == null) throw new SQLException("Remitente no existe: " + remitenteId);
         if (dst == null) throw new SQLException("Destinatario no existe: " + destinatarioId);
 
-        // ID VARCHAR(20) -> tomamos 20 primeros de un UUID sin guiones
         String id = UUID.randomUUID().toString().replace("-", "");
         if (id.length() > 20) id = id.substring(0, 20);
 
@@ -113,8 +121,6 @@ public class MensajeDAO {
         QueryBuilder<Mensaje, String> qb = mensajeDao.queryBuilder();
         Where<Mensaje, String> w = qb.where();
         w.eq("remitente_id", userId).or().eq("destinatario_id", userId);
-        // Si quiere ordenar por ID (sin timestamp en tabla):
-        // qb.orderBy("id", true);
 
         List<Mensaje> list = qb.query();
         return list.stream()
@@ -125,6 +131,19 @@ public class MensajeDAO {
                         e.getTexto(),
                         e.getLeido()))
                 .collect(Collectors.toList());
+    }
+
+    /** Helper para convertir listas de entidades a DTOs (útil en backend). */
+    public List<MensajeDTO> toDTOs(List<Mensaje> lista) {
+        if (lista == null) return Collections.emptyList();
+        List<MensajeDTO> res = new ArrayList<>(lista.size());
+        for (Mensaje e : lista) {
+            if (e == null) continue;
+            String rem = (e.getRemitente() != null) ? e.getRemitente().getId() : null;
+            String des = (e.getDestinatario() != null) ? e.getDestinatario().getId() : null;
+            res.add(new MensajeDTO(e.getId(), rem, des, e.getTexto(), e.getLeido()));
+        }
+        return res;
     }
 
     /* ---------------- Export/Import JSON para persistencia offline ---------------- */

@@ -1,6 +1,7 @@
 package Modelo.Backend;
 
 import Modelo.DAO.MensajeDAO;
+import Modelo.entidades.Mensaje;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +21,7 @@ import java.util.List;
  *   {"op":"ping"}
  *   {"op":"login","id":"<id>","clave":"<clave>"}
  *   {"op":"enviarMensaje","remitente":"<id>","destinatario":"<id>","texto":"..."}
+ *   {"op":"recibirMensajes","remitente":"<yo>","destinatario":"<otro>"}
  *   {"op":"listarConversaciones","userId":"<id>"}
  */
 public class ClientHandler implements Runnable {
@@ -67,6 +69,7 @@ public class ClientHandler implements Runnable {
                         case "ping" -> handlePing(req);
                         case "login" -> handleLogin(req);
                         case "enviarMensaje" -> handleEnviarMensaje(req);
+                        case "recibirMensajes" -> handleRecibirMensajes(req);
                         case "listarConversaciones" -> handleListarConversaciones(req);
                         default -> sendError("Operación no soportada: " + op);
                     }
@@ -126,6 +129,23 @@ public class ClientHandler implements Runnable {
 
         ObjectNode resp = ok();
         resp.set("mensaje", MAPPER.valueToTree(dto));
+        send(resp);
+    }
+
+    private void handleRecibirMensajes(JsonNode req) throws SQLException {
+        String remitente = text(req, "remitente");     // "yo" (el que está leyendo)
+        String destinatario = text(req, "destinatario"); // el otro participante
+        if (remitente == null || destinatario == null) {
+            sendError("Campos requeridos: remitente, destinatario");
+            return;
+        }
+
+        List<Mensaje> conversacion = mensajes.recibirMensaje(remitente, destinatario);
+        List<MensajeDAO.MensajeDTO> dtos = mensajes.toDTOs(conversacion);
+        ArrayNode arr = MAPPER.valueToTree(dtos);
+
+        ObjectNode resp = ok();
+        resp.set("mensajes", arr);
         send(resp);
     }
 
