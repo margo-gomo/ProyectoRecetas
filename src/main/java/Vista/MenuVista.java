@@ -737,8 +737,8 @@ public class MenuVista extends JFrame {
 
                 try {
                     controlador.iniciarProceso(codigo);
-                    recargarTablaDespachoDesdeBD();   // <-- NUEVO
-                    cargarHistoricoEnTabla();         // <-- opcional
+                    recargarTablaDespachoDesdeBD();
+                    cargarHistoricoEnTabla();
                 } catch (IllegalArgumentException ex) {
                     JOptionPane.showMessageDialog(MenuVista.this, "Error al iniciar proceso: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (SecurityException ex) {
@@ -761,8 +761,8 @@ public class MenuVista extends JFrame {
 
                 try {
                     controlador.marcarLista(codigo);
-                    recargarTablaDespachoDesdeBD();   // <-- NUEVO
-                    cargarHistoricoEnTabla();         // <-- opcional
+                    recargarTablaDespachoDesdeBD();
+                    cargarHistoricoEnTabla();
                 } catch (IllegalArgumentException ex) {
                     JOptionPane.showMessageDialog(MenuVista.this, "Error al marcar lista: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (SecurityException ex) {
@@ -785,8 +785,8 @@ public class MenuVista extends JFrame {
 
                 try {
                     controlador.entregar(codigo);
-                    recargarTablaDespachoDesdeBD();   // <-- NUEVO
-                    cargarHistoricoEnTabla();         // <-- opcional
+                    recargarTablaDespachoDesdeBD();
+                    cargarHistoricoEnTabla();
                 } catch (IllegalArgumentException ex) {
                     JOptionPane.showMessageDialog(MenuVista.this, "Error al entregar: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (SecurityException ex) {
@@ -1068,7 +1068,7 @@ public class MenuVista extends JFrame {
         }
     }
 
-    // ---- NUEVO: Helper para recargar la tabla de Despacho desde BD (punto 3.1) ----
+    // --- REFRESH TABLA DESPACHO DESDE BD ---
     private void recargarTablaDespachoDesdeBD() {
         if (tablaDespacho == null || controlador == null) return;
 
@@ -1088,10 +1088,10 @@ public class MenuVista extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "No se pudieron recargar recetas para despacho:\n" + ex.getMessage(),
-                    "Base de datos",
-                    JOptionPane.ERROR_MESSAGE);
+                    "Base de datos", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     // --------------------------------- CONFIGURACIÓN DE TABLAS --------------------------------
     private void configurarTablaMedicos() {
@@ -1790,15 +1790,11 @@ public class MenuVista extends JFrame {
             codigoOld = String.valueOf(modeloTablaRecetas.getValueAt(filaAActualizar, 0));
         }
 
-        // -------- NUEVO BLOQUE (punto 4.1) para usar actualizarIndicacion si no cambia el medicamento --------
         try {
             if (filaAActualizar != null && filaAActualizar >= 0) {
-                // Estamos editando una fila existente
                 if (codigoOld != null && codigoOld.equals(codigo)) {
-                    // Mismo medicamento -> usar "actualizar"
                     controlador.actualizarIndicacion(med, cantidad, indicaciones, duracion);
                 } else {
-                    // Cambió de medicamento: eliminar vieja (si existía) y agregar nueva
                     if (codigoOld != null) {
                         try { controlador.eliminarIndicacionReceta(codigoOld); } catch (Exception ignored) {}
                     }
@@ -1806,7 +1802,6 @@ public class MenuVista extends JFrame {
                     controlador.agregarIndicacion(codigo, cantidad, indicaciones, duracion);
                 }
             } else {
-                // Nueva fila
                 try { controlador.eliminarIndicacionReceta(codigo); } catch (Exception ignored) {}
                 controlador.agregarIndicacion(codigo, cantidad, indicaciones, duracion);
             }
@@ -1814,7 +1809,8 @@ public class MenuVista extends JFrame {
             recargarTablaIndicacionesDesdeControlador();
 
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo registrar/modificar la indicación: " + ex.getMessage(),
+            JOptionPane.showMessageDialog(this,
+                    "No se pudo registrar/modificar la indicación: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

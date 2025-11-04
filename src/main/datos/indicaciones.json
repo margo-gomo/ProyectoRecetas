@@ -6,13 +6,6 @@
   "indicaciones" : "beber",
   "duracion_dias" : 1
 }, {
-  "id" : "Ind-1-Rec-2",
-  "receta_codigo" : "Rec-2",
-  "medicamento_codigo" : "Ac45",
-  "cantidad" : 8,
-  "indicaciones" : "tomar cada 8 horas",
-  "duracion_dias" : 7
-}, {
   "id" : "Ind-2-Rec-2",
   "receta_codigo" : "Rec-2",
   "medicamento_codigo" : "Med1",

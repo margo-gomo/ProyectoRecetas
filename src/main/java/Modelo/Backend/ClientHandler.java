@@ -1,7 +1,6 @@
 package Modelo.Backend;
 
 import Modelo.DAO.MensajeDAO;
-import Modelo.Proxy.dto.MensajeDTO;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -99,7 +98,7 @@ public class ClientHandler implements Runnable {
             return;
         }
 
-        String nombre = mensajes.validarUsuario(id, clave); // null si no existe
+        String nombre = mensajes.validarUsuario(id, clave); // null si no existe o clave inválida
         if (nombre == null) {
             sendFail("Credenciales inválidas");
             return;
@@ -108,7 +107,6 @@ public class ClientHandler implements Runnable {
         ObjectNode user = MAPPER.createObjectNode();
         user.put("id", id);
         user.put("nombre", nombre);
-        // Si querés devolver el tipo, podés ampliar MensajeDAO.validarUsuario para retornarlo.
 
         ObjectNode resp = ok();
         resp.set("user", user);
@@ -123,7 +121,8 @@ public class ClientHandler implements Runnable {
             sendError("Campos requeridos: remitente, destinatario, texto");
             return;
         }
-        MensajeDTO dto = mensajes.enviar(remitente, destinatario, texto);
+
+        MensajeDAO.MensajeDTO dto = mensajes.enviar(remitente, destinatario, texto);
 
         ObjectNode resp = ok();
         resp.set("mensaje", MAPPER.valueToTree(dto));
@@ -134,7 +133,7 @@ public class ClientHandler implements Runnable {
         String userId = text(req, "userId");
         if (userId == null) { sendError("Campo requerido: userId"); return; }
 
-        List<MensajeDTO> lista = mensajes.listarConversacionesDe(userId);
+        List<MensajeDAO.MensajeDTO> lista = mensajes.listarConversacionesDe(userId);
         ArrayNode arr = MAPPER.valueToTree(lista);
 
         ObjectNode resp = ok();

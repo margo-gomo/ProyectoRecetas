@@ -3,20 +3,20 @@ package Modelo.DAO;
 import Modelo.Utils.JsonUtil;
 import Modelo.entidades.Mensaje;
 import Modelo.entidades.Usuario;
-import Modelo.Proxy.dto.MensajeDTO;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Data;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MensajeDAO {
 
@@ -28,32 +28,99 @@ public class MensajeDAO {
         this.usuarioDao = DaoManager.createDao(ConexionBD.getConexion(), Usuario.class);
     }
 
+    /* ---------------- CRUD básicos ---------------- */
+
     public void add(Mensaje e) throws SQLException {
         mensajeDao.create(e);
     }
+
     public void update(Mensaje e) throws SQLException{
         mensajeDao.update(e);
     }
+
     public List<Mensaje> findAll() throws SQLException {
         return mensajeDao.queryForAll();
     }
 
+    /**
+     * Mensajes NO leídos enviados por 'usuarioId' (y se marcan como leídos al devolverlos)
+     */
     public List<Mensaje> findByRemitente(String usuarioId) throws SQLException{
         QueryBuilder<Mensaje, String> qb = mensajeDao.queryBuilder();
-        qb.where().eq("remitente", usuarioId).and().eq("leido", 0).query();
-        marcarLeido(qb.query());
-        return qb.query();
+        Where<Mensaje, String> w = qb.where();
+        w.eq("remitente_id", usuarioId).and().eq("leido", 0); // ORMLite genera sufijo _id para FKs
+        List<Mensaje> res = qb.query();
+        marcarLeido(res);
+        return res;
     }
+
     public void marcarLeido(List<Mensaje> mensajes)throws SQLException{
         for(Mensaje e:mensajes){
             e.setLeido(1);
             mensajeDao.update(e);
         }
     }
+
     public MensajeDTO mensajedto(String id) throws SQLException{
         Mensaje e = mensajeDao.queryForId(id);
-        return new MensajeDTO(e.getId(),e.getRemitente().getId(),e.getDestinatario().getId(),e.getTexto(),e.getLeido());
+        return new MensajeDTO(
+                e.getId(),
+                e.getRemitente().getId(),
+                e.getDestinatario().getId(),
+                e.getTexto(),
+                e.getLeido()
+        );
     }
+
+    /* ---------------- Soporte para backend (ClientHandler) ---------------- */
+
+    /** Devuelve el nombre si (id,clave) es válido; de lo contrario null. */
+    public String validarUsuario(String id, String clave) throws SQLException {
+        Usuario u = usuarioDao.queryForId(id);
+        if (u == null) return null;
+        // Se asume que Usuario tiene getClave() y getNombre()
+        if (u.getClave() == null || !Objects.equals(u.getClave(), clave)) return null;
+        return (u.getNombre() == null || u.getNombre().isBlank()) ? id : u.getNombre();
+    }
+
+    /** Inserta y devuelve DTO del mensaje recién creado. */
+    public MensajeDTO enviar(String remitenteId, String destinatarioId, String texto) throws SQLException {
+        Usuario rem = usuarioDao.queryForId(remitenteId);
+        Usuario dst = usuarioDao.queryForId(destinatarioId);
+        if (rem == null) throw new SQLException("Remitente no existe: " + remitenteId);
+        if (dst == null) throw new SQLException("Destinatario no existe: " + destinatarioId);
+
+        // ID VARCHAR(20) -> tomamos 20 primeros de un UUID sin guiones
+        String id = UUID.randomUUID().toString().replace("-", "");
+        if (id.length() > 20) id = id.substring(0, 20);
+
+        Mensaje m = new Mensaje(id, rem, dst, texto, 0);
+        mensajeDao.create(m);
+
+        return new MensajeDTO(id, rem.getId(), dst.getId(), texto, 0);
+    }
+
+    /** Lista todos los mensajes donde participa userId (remitente o destinatario). */
+    public List<MensajeDTO> listarConversacionesDe(String userId) throws SQLException {
+        QueryBuilder<Mensaje, String> qb = mensajeDao.queryBuilder();
+        Where<Mensaje, String> w = qb.where();
+        w.eq("remitente_id", userId).or().eq("destinatario_id", userId);
+        // Si quiere ordenar por ID (sin timestamp en tabla):
+        // qb.orderBy("id", true);
+
+        List<Mensaje> list = qb.query();
+        return list.stream()
+                .map(e -> new MensajeDTO(
+                        e.getId(),
+                        e.getRemitente().getId(),
+                        e.getDestinatario().getId(),
+                        e.getTexto(),
+                        e.getLeido()))
+                .collect(Collectors.toList());
+    }
+
+    /* ---------------- Export/Import JSON para persistencia offline ---------------- */
+
     public void exportAllToJson(File file) throws SQLException, IOException {
         List<Mensaje> mensajes = findAll();
         List<MensajeDTO> exports= new ArrayList<>();
@@ -68,9 +135,10 @@ public class MensajeDAO {
     public void importAllFromJson(File file) throws SQLException, IOException {
         List<MensajeDTO> list= JsonUtil.readListFromFile(file, new TypeReference<List<MensajeDTO>>() {});
         for(MensajeDTO m:list){
-            Usuario remitente=usuarioDao.queryForId(m.remitente);
-            Usuario destinatario=usuarioDao.queryForId(m.destinatario);
-            Mensaje mensaje=new Mensaje(m.id, remitente,destinatario,m.texto,m.leido);
+            Usuario remitente=usuarioDao.queryForId(m.getRemitente());
+            Usuario destinatario=usuarioDao.queryForId(m.getDestinatario());
+            if (remitente == null || destinatario == null) continue;
+            Mensaje mensaje=new Mensaje(m.getId(), remitente, destinatario, m.getTexto(), m.getLeido());
             try{
                 add(mensaje);
             }catch(SQLException e){
@@ -78,8 +146,10 @@ public class MensajeDAO {
             }
         }
     }
+
     @AllArgsConstructor
     @NoArgsConstructor
+    @Data
     public static class MensajeDTO {
         private String id;
         private String remitente;
