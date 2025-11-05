@@ -138,10 +138,21 @@ public class Controlador {
 
             this.usuario_login = u;
 
+            // === NUEVO: registrar sesión activa ===
+            sesionesActivas.add(this.usuario_login.getId());
+
         } catch (SecurityException se) {
             throw se;
         } catch (Exception ex) {
             throw new SQLException("Fallo de conexión con backend de login: " + ex.getMessage(), ex);
+        }
+    }
+
+    // === NUEVO: logout de la sesión actual ===
+    public void logoutActual() {
+        if (usuario_login != null) {
+            sesionesActivas.remove(usuario_login.getId());
+            usuario_login = null;
         }
     }
 
@@ -257,6 +268,20 @@ public class Controlador {
 
     public List<Usuario> obtenerListaUsuarios() throws SQLException {
         return modeloUsuarios.obtenerListaUsuarios();
+    }
+
+    // === NUEVO: listar SOLO usuarios logueados ===
+    public List<Usuario> obtenerUsuariosLogueados() throws SQLException {
+        List<Usuario> todos = obtenerListaUsuarios();
+        List<Usuario> online = new ArrayList<>();
+        synchronized (sesionesActivas) {
+            for (Usuario u : todos) {
+                if (u != null && u.getId() != null && sesionesActivas.contains(u.getId())) {
+                    online.add(u);
+                }
+            }
+        }
+        return online;
     }
 
     public List<Usuario> obtenerListaAdministradores() throws SQLException {
@@ -511,4 +536,7 @@ public class Controlador {
     private Usuario usuario_login;
 
     private GraficosUtil graficosUtil;
+
+    private final java.util.Set<String> sesionesActivas =
+            java.util.Collections.synchronizedSet(new java.util.HashSet<>());
 }

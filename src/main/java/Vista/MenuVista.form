@@ -1633,7 +1633,7 @@
           <font name="Segoe UI Black"/>
           <foreground color="-12543018"/>
         </properties>
-        <border type="none" title="Usuarios"/>
+        <border type="none" title="Usuarios online"/>
         <children>
           <scrollpane id="bbeee" binding="scrollUsuarios">
             <constraints>

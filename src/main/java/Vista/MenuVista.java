@@ -236,6 +236,14 @@ public class MenuVista extends JFrame {
         if (btnEnviarMensajes != null)  btnEnviarMensajes.addActionListener(e -> abrirDialogEnviarConSeleccion());
         if (btnRecibirMensajes != null) btnRecibirMensajes.addActionListener(e -> abrirDialogRecibirConSeleccion());
 
+        if (tabbedPanePrincipal != null && panelUsuarios != null) {
+            tabbedPanePrincipal.addChangeListener(e -> {
+                if (tabbedPanePrincipal.getSelectedComponent() == panelUsuarios) {
+                    cargarUsuariosEnTabla();
+                }
+            });
+        }
+
         if (labelNomPaciente != null) {
             labelNomPaciente.setText("(sin paciente seleccionado)");
         }
@@ -864,6 +872,7 @@ public class MenuVista extends JFrame {
     }
 
     public void cerrarAplicacion() {
+        try { controlador.logoutActual(); } catch (Exception ignored) {}
         controlador.cerrarAplicacion();
     }
 
@@ -2370,6 +2379,7 @@ public class MenuVista extends JFrame {
                 };
 
                 aplicarPermisos(token);
+                cargarUsuariosEnTabla();
                 loginDialog.dispose();
                 JOptionPane.showMessageDialog(this, "Bienvenido ", "Login correcto", JOptionPane.INFORMATION_MESSAGE);
 
@@ -2477,7 +2487,7 @@ public class MenuVista extends JFrame {
         m.setRowCount(0);
 
         try {
-            java.util.List<Usuario> users = controlador.obtenerListaUsuarios();
+            java.util.List<Usuario> users = controlador.obtenerUsuariosLogueados();
             String miId = (controlador.getUsuario_login() != null) ? controlador.getUsuario_login().getId() : null;
 
             for (Usuario u : users) {
@@ -2487,7 +2497,7 @@ public class MenuVista extends JFrame {
                 m.addRow(new Object[]{ u.getId(), u.getNombre(), tipo });
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "No se pudieron cargar usuarios:\n" + ex.getMessage(),
+            JOptionPane.showMessageDialog(this, "No se pudieron cargar usuarios (online):\n" + ex.getMessage(),
                     "Base de datos", JOptionPane.ERROR_MESSAGE);
         }
     }
