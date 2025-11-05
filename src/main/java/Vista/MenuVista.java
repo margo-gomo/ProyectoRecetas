@@ -6,6 +6,8 @@ import Controlador.Controlador;
 import Modelo.entidades.Receta.Indicacion;
 import Modelo.entidades.Receta.Receta;
 import com.formdev.flatlaf.FlatLightLaf;
+import Vista.Mensajes.DialogEnviar;
+import Vista.Mensajes.DialogRecibir;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -26,11 +28,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.chart.plot.PlotOrientation;
 
 import org.kordamp.ikonli.swing.FontIcon;
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
@@ -175,6 +173,10 @@ public class MenuVista extends JFrame {
     private JLabel lblDescripcion;
 
     private JPanel panelUsuarios;
+    private JScrollPane scrollUsuarios;
+    private JTable tablaUsuarios;
+    private JButton btnEnviarMensajes;
+    private JButton btnRecibirMensajes;
 
     private DefaultTableModel modeloTablaRecetas;
 
@@ -210,6 +212,8 @@ public class MenuVista extends JFrame {
         configurarTablaHistorico();
         configurarTablaDashboard();
         configurarTablaEstados();
+        configurarTablaUsuarios();
+        cargarUsuariosEnTabla();
 
         cargarDatosIniciales();
         cargarMedicamentosEnComboDashboard();
@@ -228,6 +232,9 @@ public class MenuVista extends JFrame {
             tabbedPanePrincipal.setIconAt(7, FontIcon.of(FontAwesomeSolid.HISTORY, 16, PRIMARY)); // Histórico
             tabbedPanePrincipal.setIconAt(8, FontIcon.of(FontAwesomeSolid.CHART_LINE, 16, PRIMARY)); // Dashboard
         }
+        // Mensajes
+        if (btnEnviarMensajes != null)  btnEnviarMensajes.addActionListener(e -> abrirDialogEnviarConSeleccion());
+        if (btnRecibirMensajes != null) btnRecibirMensajes.addActionListener(e -> abrirDialogRecibirConSeleccion());
 
         if (labelNomPaciente != null) {
             labelNomPaciente.setText("(sin paciente seleccionado)");
@@ -894,6 +901,8 @@ public class MenuVista extends JFrame {
         aplicarIconoYEstilo(guardarFarm, FontAwesomeSolid.SAVE, true);
         aplicarIconoYEstilo(guardarPaciente, FontAwesomeSolid.SAVE, true);
         aplicarIconoYEstilo(guardarMedicamento, FontAwesomeSolid.SAVE, true);
+        aplicarIconoYEstilo(btnEnviarMensajes,  FontAwesomeSolid.PAPER_PLANE, true);
+        aplicarIconoYEstilo(btnRecibirMensajes, FontAwesomeSolid.INBOX,       false);
 
         aplicarIconoYEstilo(iniciarProcesoButton, FontAwesomeSolid.CHECK, true);
         aplicarIconoYEstilo(entregarButton, FontAwesomeSolid.CHECK, true);
@@ -2434,6 +2443,92 @@ public class MenuVista extends JFrame {
                 }
         }
     }
+
+    // ----------------------------------------------------
+// USUARIOS (tabla + carga + helpers)
+// ----------------------------------------------------
+    private TableRowSorter<DefaultTableModel> sorterUsuarios;
+
+    private void configurarTablaUsuarios() {
+        if (tablaUsuarios == null) return;
+
+        String[] columnas = {"ID", "Nombre", "Tipo"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+        tablaUsuarios.setModel(modelo);
+        tablaUsuarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        sorterUsuarios = new TableRowSorter<>(modelo);
+        tablaUsuarios.setRowSorter(sorterUsuarios);
+
+        tablaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    abrirDialogRecibirConSeleccion();
+                }
+            }
+        });
+    }
+
+    private void cargarUsuariosEnTabla() {
+        if (tablaUsuarios == null || controlador == null) return;
+        DefaultTableModel m = (DefaultTableModel) tablaUsuarios.getModel();
+        m.setRowCount(0);
+
+        try {
+            java.util.List<Usuario> users = controlador.obtenerListaUsuarios();
+            String miId = (controlador.getUsuario_login() != null) ? controlador.getUsuario_login().getId() : null;
+
+            for (Usuario u : users) {
+                if (u == null) continue;
+                if (miId != null && miId.equals(u.getId())) continue;
+                String tipo = (u.getTipo() == null ? "" : u.getTipo());
+                m.addRow(new Object[]{ u.getId(), u.getNombre(), tipo });
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "No se pudieron cargar usuarios:\n" + ex.getMessage(),
+                    "Base de datos", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String getUsuarioSeleccionadoId() {
+        if (tablaUsuarios == null) return null;
+        int vrow = tablaUsuarios.getSelectedRow();
+        if (vrow < 0) return null;
+        int mrow = tablaUsuarios.convertRowIndexToModel(vrow);
+        Object v = tablaUsuarios.getModel().getValueAt(mrow, 0);
+        return (v == null) ? null : v.toString();
+    }
+
+    private String getUsuarioSeleccionadoNombre() {
+        if (tablaUsuarios == null) return null;
+        int vrow = tablaUsuarios.getSelectedRow();
+        if (vrow < 0) return null;
+        int mrow = tablaUsuarios.convertRowIndexToModel(vrow);
+        Object v = tablaUsuarios.getModel().getValueAt(mrow, 1);
+        return (v == null) ? null : v.toString();
+    }
+
+    private void abrirDialogEnviarConSeleccion() {
+        String destId = getUsuarioSeleccionadoId();
+        DialogEnviar dlg = new DialogEnviar(this, controlador, destId);
+        dlg.setLocationRelativeTo(this);
+        dlg.setVisible(true);
+    }
+
+    private void abrirDialogRecibirConSeleccion() {
+        String otroId = getUsuarioSeleccionadoId();
+        String otroNombre = getUsuarioSeleccionadoNombre();
+        if (otroId == null || otroId.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Seleccione un usuario para ver la conversación.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        DialogRecibir dr = new DialogRecibir(this, controlador, otroId, otroNombre);
+        dr.setLocationRelativeTo(this);
+        dr.setVisible(true);
+    }
+
 
     public void init() {
         try { FlatLightLaf.setup(); } catch (Exception ex) { System.err.println("Error iniciando FlatLaf: " + ex.getMessage()); }
