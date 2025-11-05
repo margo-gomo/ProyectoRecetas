@@ -107,9 +107,7 @@ public class MensajeDAO {
         if (rem == null) throw new SQLException("Remitente no existe: " + remitenteId);
         if (dst == null) throw new SQLException("Destinatario no existe: " + destinatarioId);
 
-        String id = UUID.randomUUID().toString().replace("-", "");
-        if (id.length() > 20) id = id.substring(0, 20);
-
+        String id = "Mensaje-"+String.valueOf(findAll().size()+1);
         Mensaje m = new Mensaje(id, rem, dst, texto, 0);
         mensajeDao.create(m);
 
