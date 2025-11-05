@@ -1,0 +1,7 @@
+[ {
+  "id" : "Mensaje-1",
+  "remitente" : "654",
+  "destinatario" : "123",
+  "texto" : "Hola",
+  "leido" : 0
+} ]
