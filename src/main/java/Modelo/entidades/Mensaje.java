@@ -13,10 +13,10 @@ public class Mensaje {
     @DatabaseField(id = true)
     private String id;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true,canBeNull = false)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true,canBeNull = false,columnName = "remitente")
     private Usuario remitente;
 
-    @DatabaseField(foreign = true, foreignAutoRefresh = true,canBeNull = false)
+    @DatabaseField(foreign = true, foreignAutoRefresh = true,canBeNull = false,columnName = "destinatario")
     private Usuario destinatario;
 
     @DatabaseField(canBeNull = false)
