@@ -1,0 +1,17 @@
+[ {
+  "codigo" : "AMOX-500",
+  "nombre" : "Amoxicilina",
+  "presentacion" : "500 mg (cápsulas)"
+}, {
+  "codigo" : "IBU-200",
+  "nombre" : "Ibuprofeno",
+  "presentacion" : "200 mg"
+}, {
+  "codigo" : "Med1",
+  "nombre" : "Paracetamol",
+  "presentacion" : "500 mg"
+}, {
+  "codigo" : "SAL-0.9",
+  "nombre" : "Solución salina",
+  "presentacion" : "0.9% 500 ml"
+} ]
