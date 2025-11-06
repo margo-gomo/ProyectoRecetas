@@ -39,7 +39,7 @@ public class UsuarioDAO implements DAOAbstracto<String,Usuario> {
     }
     public List<Usuario> findAllAdministradores() throws SQLException {
         QueryBuilder<Usuario, String> qb = dao.queryBuilder();
-        qb.where().eq("tipo","ADMINISTRADOR");
+        qb.where().eq("tipo","ADMIN");
         return qb.query();
     }
     public List<Usuario> findAllFarmaceutas() throws SQLException {
