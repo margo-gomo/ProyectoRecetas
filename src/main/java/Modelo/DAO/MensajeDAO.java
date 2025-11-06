@@ -45,13 +45,13 @@ public class MensajeDAO {
 
     public List<Mensaje> recibirMensaje(String remitenteId, String destinatarioId) throws SQLException {
         QueryBuilder<Mensaje, String> qAB = mensajeDao.queryBuilder();
-        qAB.where().eq("remitente_id", remitenteId).and().eq("destinatario_id", destinatarioId);
+        qAB.where().eq("remitente", remitenteId).and().eq("destinatario", destinatarioId);
         qAB.orderBy("id", true);
         List<Mensaje> ab = qAB.query();
 
         // B -> A
         QueryBuilder<Mensaje, String> qBA = mensajeDao.queryBuilder();
-        qBA.where().eq("remitente_id", destinatarioId).and().eq("destinatario_id", remitenteId);
+        qBA.where().eq("remitente", destinatarioId).and().eq("destinatario", remitenteId);
         qBA.orderBy("id", true); // idem nota de fecha_envio
         List<Mensaje> ba = qBA.query();
 
@@ -118,7 +118,7 @@ public class MensajeDAO {
     public List<MensajeDTO> listarConversacionesDe(String userId) throws SQLException {
         QueryBuilder<Mensaje, String> qb = mensajeDao.queryBuilder();
         Where<Mensaje, String> w = qb.where();
-        w.eq("remitente_id", userId).or().eq("destinatario_id", userId);
+        w.eq("remitente", userId).or().eq("destinatario", userId);
 
         List<Mensaje> list = qb.query();
         return list.stream()

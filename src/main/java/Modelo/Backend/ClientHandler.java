@@ -152,14 +152,27 @@ public class ClientHandler implements Runnable {
         resp.set("user", user);
         send(resp);
     }
+    // Reemplaza la versión actual de handleSubscribe por esta
     private void handleSubscribe(JsonNode req) {
         String id = text(req, "id");
         if (id == null) { sendError("subscribe necesita id"); return; }
+
+        // Creamos un Usuario mínimo para mantener referencia (nombre puede ser id si no lo conocemos)
+        Usuario u = new Usuario(id, id, "MEDICO");
+        // Esta conexión ahora representa al usuario (persistente)
+        this.currentUser = u;
+
+        // Marcar online en el registry (ahora la conexión persistente es la "autoritativa")
+        try { registry.markOnline(u); } catch (Exception ignored) {}
+
+        // Registrar la conexión para notificaciones y avisar a todos
         ServidorBackend.CONNECTIONS.register(id, out);
-        // avisar a todos que este usuario se "registró" (si quieres)
-        ServidorBackend.CONNECTIONS.broadcastUserLogin(id, id);
+        System.out.println("[Backend] subscribe: registered persistent connection for " + id);
+        ServidorBackend.CONNECTIONS.broadcastUserLogin(id, u.getNombre());
+
         send(ok());
     }
+
 
 
     private void handleEnviarMensaje(JsonNode req) throws SQLException {
@@ -234,7 +247,12 @@ public class ClientHandler implements Runnable {
 
     private void handleLogout() {
         if (currentUser != null && currentUser.getId() != null) {
-            try { registry.logout(currentUser.getId()); } catch (Exception ignored) {}
+            String id = currentUser.getId();
+            try { registry.logout(id); } catch (Exception ignored) {}
+            // quitar de la lista de conexiones persistentes y avisar
+            try { ServidorBackend.CONNECTIONS.unregister(id); } catch (Exception ignored) {}
+            ServidorBackend.CONNECTIONS.broadcastUserLogout(id);
+            System.out.println("[Backend] handleLogout: user logged out -> " + id);
             currentUser = null;
         }
         send(ok());

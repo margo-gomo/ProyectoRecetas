@@ -9,5 +9,11 @@
   "remitente" : "123",
   "destinatario" : "654",
   "texto" : "hola :3",
-  "leido" : 0
+  "leido" : 1
+}, {
+  "id" : "Mensaje-3",
+  "remitente" : "123",
+  "destinatario" : "654",
+  "texto" : "Hola",
+  "leido" : 1
 } ]
