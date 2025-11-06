@@ -91,7 +91,7 @@ public class ClientHandler implements Runnable {
                         // --- NUEVOS HANDLERS ---
                         case "listarUsuariosOnline" -> handleListarUsuariosOnline();
                         case "heartbeat" -> handleHeartbeat(req);
-                        case "logout" -> handleLogout();
+                        case "logout" -> handleLogout(req);
                         case "subscribe" -> handleSubscribe(req);
                         default -> sendError("Operación no soportada: " + op);
                     }
@@ -127,52 +127,51 @@ public class ClientHandler implements Runnable {
     private void handleLogin(JsonNode req) throws SQLException {
         String id = text(req, "id");
         String clave = text(req, "clave");
-        if (id == null || clave == null) { sendError("Campos requeridos: id, clave"); return; }
-
-        String nombre = mensajes.validarUsuario(id, clave);
-        if (nombre == null) { sendFail("Credenciales inválidas"); return; }
-
-        Usuario u = usuarioDAO.findById(id);
-        if (u == null) {
-            u = new Usuario(id, nombre, "MEDICO");
+        if (id == null || clave == null) {
+            sendError("Campos requeridos: id, clave");
+            return;
         }
 
-        this.currentUser = u;
-        try { registry.markOnline(u); } catch (Exception ignored) {}
+        String nombre = mensajes.validarUsuario(id, clave); // null si no existe o clave inválida
+        if (nombre == null) {
+            sendFail("Credenciales inválidas");
+            return;
+        }
 
+        // Sólo validamos y respondemos; NO seteamos currentUser ni marcamos online aquí.
         ObjectNode user = MAPPER.createObjectNode();
-        user.put("id", u.getId());
-        user.put("nombre", u.getNombre());
-        user.put("tipo", u.getTipo());
+        user.put("id", id);
+        user.put("nombre", nombre);
+        user.put("tipo", "MEDICO");
 
         ObjectNode resp = ok();
         resp.set("user", user);
         send(resp);
     }
 
+
     private void handleSubscribe(JsonNode req) {
         String id = text(req, "id");
+        // opcional: nombre enviado por el cliente
+        String nombre = text(req, "nombre");
+
         if (id == null) { sendError("subscribe necesita id"); return; }
 
-        Usuario u;
-        try {
-            u = usuarioDAO.findById(id);
-        } catch (SQLException e) {
-            u = null;
-        }
-        if (u == null) {
-            u = new Usuario(id, (currentUser != null && id.equals(currentUser.getId()))
-                    ? currentUser.getNombre() : id,
-                    (currentUser != null && id.equals(currentUser.getId()))
-                            ? currentUser.getTipo()   : "MEDICO");
+        // registrar la conexión para notificaciones
+        ServidorBackend.CONNECTIONS.register(id, out);
+
+        // asociar currentUser a ESTE handler (la conexión persistente)
+        if (this.currentUser == null) {
+            // si no tenemos nombre preferimos el nombre real o el id
+            String nm = (nombre != null && !nombre.isBlank()) ? nombre : id;
+            this.currentUser = new Usuario(id, nm, "MEDICO");
         }
 
-        this.currentUser = u;
-        try { registry.markOnline(u); } catch (Exception ignored) {}
+        // marcar online en el registry (ahora la entrada persistirá mientras esta conexión exista)
+        try { registry.markOnline(this.currentUser); } catch (Exception ignored) {}
 
-        ServidorBackend.CONNECTIONS.register(u.getId(), out);
-        System.out.println("[Backend] subscribe: registered persistent connection for " + u.getId());
-        ServidorBackend.CONNECTIONS.broadcastUserLogin(u.getId(), u.getNombre());
+        // avisar a todos (incluye al mismo cliente)
+        ServidorBackend.CONNECTIONS.broadcastUserLogin(id, this.currentUser.getNombre());
 
         send(ok());
     }
@@ -247,15 +246,31 @@ public class ClientHandler implements Runnable {
         send(ok());
     }
 
-    private void handleLogout() {
-        if (currentUser != null && currentUser.getId() != null) {
-            String id = currentUser.getId();
-            try { registry.logout(id); } catch (Exception ignored) {}
-            try { ServidorBackend.CONNECTIONS.unregister(id); } catch (Exception ignored) {}
-            ServidorBackend.CONNECTIONS.broadcastUserLogout(id);
-            System.out.println("[Backend] handleLogout: user logged out -> " + id);
-            currentUser = null;
+    private void handleLogout(JsonNode req) {
+        // permitimos que venga {op: "logout", id: "..."} o que se use currentUser
+        String idFromReq = text(req, "id");
+        String target = (idFromReq != null) ? idFromReq : (currentUser != null ? currentUser.getId() : null);
+
+        if (target == null) {
+            // nada que hacer, responder ok
+            send(ok());
+            return;
         }
+
+        try {
+            registry.logout(target);
+        } catch (Exception ignored) {}
+
+        try {
+            ServidorBackend.CONNECTIONS.unregister(target);
+        } catch (Exception ignored) {}
+
+        // emitir notificación a los demás
+        try { ServidorBackend.CONNECTIONS.broadcastUserLogout(target); } catch (Exception ignored) {}
+
+        // si esta conexión tenía el currentUser, lo limpiamos
+        if (currentUser != null && target.equals(currentUser.getId())) currentUser = null;
+
         send(ok());
     }
 

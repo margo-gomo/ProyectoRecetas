@@ -133,13 +133,16 @@ public class Controlador {
 
             // === NUEVO: registrar sesión activa ===
             sesionesActivas.add(this.usuario_login.getId());
-            // suscribir la conexión persistente para recibir notificaciones (si proxy está conectado)
             try {
                 if (proxy != null && usuario_login != null && usuario_login.getId() != null) {
-                    ObjectNode sub = JSON.createObjectNode().put("op", "subscribe").put("id", usuario_login.getId());
+                    ObjectNode sub = JSON.createObjectNode()
+                            .put("op", "subscribe")
+                            .put("id", usuario_login.getId())
+                            .put("nombre", usuario_login.getNombre() == null ? "" : usuario_login.getNombre());
                     proxy.enviarLinea(sub.toString());
                 }
             } catch (Exception ignored) {}
+
 
 
         } catch (SecurityException se) {
@@ -513,13 +516,22 @@ public class Controlador {
                 switch (op) {
                     case "userLogin" -> {
                         String id = n.path("id").asText(null);
+                        String nombre = n.path("nombre").asText(id == null ? "" : id);
                         if (id != null) {
                             sesionesActivas.add(id);
                             System.out.println("[UI] notificación userLogin: " + id);
-                            // si tienes vistas abiertas, actualízalas en EDT:
                             javax.swing.SwingUtilities.invokeLater(() -> {
-                                // ejemplo: refrescar lista en la vista si la implementas
-                                // (dejar en blanco aquí; la vista debería preguntar al controlador)
+                                // actualizar cualquier vista / tabla
+                                // si querés además mostrar un popup:
+                                if (usuario_login == null || !id.equals(usuario_login.getId())) {
+                                    javax.swing.JOptionPane.showMessageDialog(null,
+                                            nombre + " (" + id + ") ha iniciado sesión.",
+                                            "Usuario conectado",
+                                            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    // opcional: mensaje local (solo si querés)
+                                    System.out.println("[UI] Te has conectado como: " + id);
+                                }
                             });
                         }
                     }
@@ -529,21 +541,25 @@ public class Controlador {
                             sesionesActivas.remove(id);
                             System.out.println("[UI] notificación userLogout: " + id);
                             javax.swing.SwingUtilities.invokeLater(() -> {
-                                // ejemplo: refrescar lista en la vista si la implementas
+                                if (usuario_login == null || !id.equals(usuario_login.getId())) {
+                                    javax.swing.JOptionPane.showMessageDialog(null,
+                                            id + " se ha desconectado.",
+                                            "Usuario desconectado",
+                                            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    // si es el propio id, podés mostrar notificación local si querés
+                                    System.out.println("[UI] Tu sesión fue cerrada: " + id);
+                                }
                             });
                         }
                     }
-                    // opcional: newMessage, etc.
-                    default -> {
-                        // mensajes de respuesta a operaciones normales (ping, subscribe OK, etc.)
-                        // si quieres procesarlos, házselo aquí.
-                        // System.out.println("[UI] Mensaje proxy (no-notif): " + line);
-                    }
+                    default -> { /* ... */ }
                 }
             } catch (Exception ex) {
                 System.err.println("[UI] Error procesando notificación: " + ex.getMessage());
             }
         });
+
 
         // ---- conectar proxy persistente ----
         try {
@@ -560,7 +576,6 @@ public class Controlador {
         heartbeatExecutor.scheduleAtFixedRate(() -> {
             try {
                 if (usuario_login != null && usuario_login.getId() != null) {
-                    // enviamos heartbeat por la conexión persistente (si está conectada)
                     ObjectNode hb = JSON.createObjectNode().put("op", "heartbeat").put("id", usuario_login.getId());
                     proxy.enviarLinea(hb.toString());
                 }
@@ -570,12 +585,18 @@ public class Controlador {
 
 
     public void cerrarAplicacion() {
-        // enviar logout por proxy (para que el backend lo registre) y cerrar heartbeatExecutor
         try {
             if (proxy != null && usuario_login != null && usuario_login.getId() != null) {
-                proxy.enviarLinea("{\"op\":\"logout\"}");
+                ObjectNode lo = JSON.createObjectNode()
+                        .put("op", "logout")
+                        .put("id", usuario_login.getId());
+                proxy.enviarLinea(lo.toString());
+                // opcional: esperar una fracción de segundo para que la notificación se propague
+                // (no bloquear el EDT si estás en la UI thread; aquí llamalo desde un hilo de cierre)
+                try { Thread.sleep(150); } catch (InterruptedException ignored) {}
             }
         } catch (Exception ignored) {}
+
 
         if (heartbeatExecutor != null) {
             heartbeatExecutor.shutdownNow();
