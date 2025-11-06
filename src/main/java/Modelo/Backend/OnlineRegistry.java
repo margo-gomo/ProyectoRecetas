@@ -12,9 +12,7 @@ public class OnlineRegistry {
         Entry(Usuario u) { this.usuario = u; this.lastSeen = System.currentTimeMillis(); }
     }
 
-    // userId -> info
     private final ConcurrentHashMap<String, Entry> map = new ConcurrentHashMap<>();
-    // cuánto tiempo consideramos “online” sin latidos
     private static final long TTL_MS = 60_000; // 60 s
 
     public void markOnline(Usuario u) {

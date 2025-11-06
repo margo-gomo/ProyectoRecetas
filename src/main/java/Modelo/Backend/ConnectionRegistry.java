@@ -1,4 +1,4 @@
-// Modelo.Backend.ConnectionRegistry.java
+
 package Modelo.Backend;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -32,7 +32,6 @@ public class ConnectionRegistry {
             try {
                 pw.println(json);
             } catch (Exception ex) {
-                // si falla la conexión, removemos al cliente
                 it.remove();
             }
         }

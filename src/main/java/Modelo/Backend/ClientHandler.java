@@ -25,7 +25,6 @@ import java.util.List;
  *   {"op":"enviarMensaje","remitente":"<id>","destinatario":"<id>","texto":"..."}
  *   {"op":"recibirMensajes","remitente":"<yo>","destinatario":"<otro>"}
  *   {"op":"listarConversaciones","userId":"<id>"}
- *   --- NUEVO ---
  *   {"op":"listarUsuariosOnline"}
  *   {"op":"heartbeat","id":"<id>"}
  *   {"op":"logout"}

@@ -17,27 +17,22 @@ import java.util.List;
 
 public class MedicoDAO implements DAOAbstracto<String, Medico> {
 
-    private final Dao<Medico, String> medicoDao; // lo usamos para queries raw
+    private final Dao<Medico, String> medicoDao;
     private final Dao<Usuario, String> usuarioDao;
 
     public MedicoDAO() throws SQLException {
-        // creamos DAOs para poder ejecutar consultas/SQL raw
         this.medicoDao = DaoManager.createDao(ConexionBD.getConexion(), Medico.class);
         this.usuarioDao = DaoManager.createDao(ConexionBD.getConexion(), Usuario.class);
     }
     @Override
     public void add(Medico e) throws SQLException {
         usuarioDao.createOrUpdate(e.getUsuario());
-        // 3) sincronizar la PK usuarioId en la entidad Medico
         e.setUsuarioId(e.getUsuario().getId());
-        // 4) crear o actualizar el registro medico
         medicoDao.createOrUpdate(e);
     }
     @Override
     public Medico findById(String id) throws SQLException {
-        // ORMLite devuelve un Medico con usuarioId y especialidad (usuario = null)
         Medico m = medicoDao.queryForId(id);
-        // cargar el Usuario y ponerlo en el objeto (conveniencia)
         Usuario u = usuarioDao.queryForId(m.getUsuarioId());
         m.setUsuario(u);
         return m;
@@ -59,7 +54,6 @@ public class MedicoDAO implements DAOAbstracto<String, Medico> {
     public void update(Medico e) throws SQLException {
         usuarioDao.createOrUpdate(e.getUsuario());
         e.setUsuarioId(e.getUsuario().getId());
-        // Actualizar fila medico (puede lanzar SQLException si no existe)
         medicoDao.update(e);
     }
 
@@ -86,8 +80,8 @@ public class MedicoDAO implements DAOAbstracto<String, Medico> {
         for (MedicoExport me : list){
             Usuario u=usuarioDao.queryForId(me.usuario_id);
             Medico med = new Medico(u, me.especialidad);
-            try { add(med); }          // intenta crear
-            catch (SQLException ex) {   // si ya existe, actualiza
+            try { add(med); }
+            catch (SQLException ex) {
                 update(med);
             }
         }

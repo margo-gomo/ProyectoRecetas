@@ -4,6 +4,3 @@ Integrantes:
 - Josué Acuña Bolaños
 - María González Montenegro
 - Kenny Jiménez Wang
-
-Nota: - Para poder probar las diferentes jerarquías de usuario, utilizar los IDs y claves de los XML.
-      - Despacho se actualiza al cerrar el programa.

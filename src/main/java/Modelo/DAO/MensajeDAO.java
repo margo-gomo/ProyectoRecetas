@@ -49,19 +49,16 @@ public class MensajeDAO {
         qAB.orderBy("id", true);
         List<Mensaje> ab = qAB.query();
 
-        // B -> A
         QueryBuilder<Mensaje, String> qBA = mensajeDao.queryBuilder();
         qBA.where().eq("remitente", destinatarioId).and().eq("destinatario", remitenteId);
         qBA.orderBy("id", true); // idem nota de fecha_envio
         List<Mensaje> ba = qBA.query();
 
-        // Unir y ordenar
         List<Mensaje> todos = new ArrayList<>(ab.size() + ba.size());
         todos.addAll(ab);
         todos.addAll(ba);
         todos.sort(Comparator.comparing(Mensaje::getId));
 
-        // Marcar como leídos los que eran para "remitenteId"
         for (Mensaje m : todos) {
             Usuario dst = m.getDestinatario();
             if (dst != null && remitenteId.equals(dst.getId()) && m.getLeido() == 0) {
@@ -92,7 +89,6 @@ public class MensajeDAO {
 
     /* ---------------- Soporte para backend (ClientHandler) ---------------- */
 
-    /** Devuelve el nombre si (id,clave) es válido; de lo contrario null. */
     public String validarUsuario(String id, String clave) throws SQLException {
         Usuario u = usuarioDao.queryForId(id);
         if (u == null) return null;
@@ -100,7 +96,6 @@ public class MensajeDAO {
         return (u.getNombre() == null || u.getNombre().isBlank()) ? id : u.getNombre();
     }
 
-    /** Inserta y devuelve DTO del mensaje recién creado. */
     public MensajeDTO enviar(String remitenteId, String destinatarioId, String texto) throws SQLException {
         Usuario rem = usuarioDao.queryForId(remitenteId);
         Usuario dst = usuarioDao.queryForId(destinatarioId);
@@ -114,7 +109,6 @@ public class MensajeDAO {
         return new MensajeDTO(id, rem.getId(), dst.getId(), texto, 0);
     }
 
-    /** Lista todos los mensajes donde participa userId (remitente o destinatario). */
     public List<MensajeDTO> listarConversacionesDe(String userId) throws SQLException {
         QueryBuilder<Mensaje, String> qb = mensajeDao.queryBuilder();
         Where<Mensaje, String> w = qb.where();
