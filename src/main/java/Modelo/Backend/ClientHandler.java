@@ -103,15 +103,23 @@ public class ClientHandler implements Runnable {
         } finally {
             try {
                 if (currentUser != null && currentUser.getId() != null) {
-                    registry.logout(currentUser.getId());
-                    ServidorBackend.CONNECTIONS.unregister(currentUser.getId());
-                    // emitir logout para los demás
-                    ServidorBackend.CONNECTIONS.broadcastUserLogout(currentUser.getId());
+                    boolean wasRegistered = ServidorBackend.CONNECTIONS.isRegistered(currentUser.getId());
+                    if (wasRegistered) {
+                        registry.logout(currentUser.getId());
+                        ServidorBackend.CONNECTIONS.unregister(currentUser.getId());
+                        ServidorBackend.CONNECTIONS.broadcastUserLogout(currentUser.getId());
+                        System.out.println("[Backend] Broadcast logout para " + currentUser.getId());
+                    } else {
+                        // no era persistente: sólo quitar del registry (si quedó por alguna razón)
+                        registry.logout(currentUser.getId());
+                        System.out.println("[Backend] Conexión efímera finalizada para " + currentUser.getId());
+                    }
                 }
             } catch (Exception ignored) {}
             try { socket.close(); } catch (IOException ignored) {}
             System.out.println("[Backend] Handler finalizado");
         }
+
 
     }
 
@@ -152,11 +160,7 @@ public class ClientHandler implements Runnable {
         if (id == null) { sendError("subscribe necesita id"); return; }
 
         Usuario u;
-        try {
-            u = usuarioDAO.findById(id);
-        } catch (SQLException e) {
-            u = null;
-        }
+        try { u = usuarioDAO.findById(id); } catch (SQLException e) { u = null; }
         if (u == null) {
             u = new Usuario(id, (currentUser != null && id.equals(currentUser.getId()))
                     ? currentUser.getNombre() : id,
@@ -167,12 +171,16 @@ public class ClientHandler implements Runnable {
         this.currentUser = u;
         try { registry.markOnline(u); } catch (Exception ignored) {}
 
+        boolean already = ServidorBackend.CONNECTIONS.isRegistered(u.getId());
         ServidorBackend.CONNECTIONS.register(u.getId(), out);
         System.out.println("[Backend] subscribe: registered persistent connection for " + u.getId());
-        ServidorBackend.CONNECTIONS.broadcastUserLogin(u.getId(), u.getNombre());
+        if (!already) {
+            ServidorBackend.CONNECTIONS.broadcastUserLogin(u.getId(), u.getNombre());
+        }
 
         send(ok());
     }
+
 
 
     private void handleEnviarMensaje(JsonNode req) throws SQLException {

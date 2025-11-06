@@ -18,6 +18,11 @@ public class ConnectionRegistry {
         clients.put(userId, out);
     }
 
+    public boolean isRegistered(String userId) {
+        return userId != null && clients.containsKey(userId);
+    }
+
+
     public void unregister(String userId) {
         if (userId == null) return;
         clients.remove(userId);
