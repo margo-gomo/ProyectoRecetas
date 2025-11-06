@@ -3,6 +3,7 @@ package Modelo.Backend;
 import Modelo.DAO.MensajeDAO;
 import Modelo.entidades.Mensaje;
 import Modelo.entidades.Usuario;
+import Modelo.DAO.UsuarioDAO;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +40,7 @@ public class ClientHandler implements Runnable {
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
     private final MensajeDAO mensajes;
+    private final UsuarioDAO usuarioDAO;
 
     private final OnlineRegistry registry;
     private Usuario currentUser = null;
@@ -47,6 +49,7 @@ public class ClientHandler implements Runnable {
         this.socket = socket;
         this.registry = registry;
         this.mensajes = new MensajeDAO();
+        this.usuarioDAO = new UsuarioDAO();
     }
 
     @Override
@@ -124,24 +127,18 @@ public class ClientHandler implements Runnable {
     private void handleLogin(JsonNode req) throws SQLException {
         String id = text(req, "id");
         String clave = text(req, "clave");
-        if (id == null || clave == null) {
-            sendError("Campos requeridos: id, clave");
-            return;
+        if (id == null || clave == null) { sendError("Campos requeridos: id, clave"); return; }
+
+        String nombre = mensajes.validarUsuario(id, clave);
+        if (nombre == null) { sendFail("Credenciales inválidas"); return; }
+
+        Usuario u = usuarioDAO.findById(id);
+        if (u == null) {
+            u = new Usuario(id, nombre, "MEDICO");
         }
 
-        String nombre = mensajes.validarUsuario(id, clave); // null si no existe o clave inválida
-        if (nombre == null) {
-            sendFail("Credenciales inválidas");
-            return;
-        }
-
-        Usuario u = new Usuario(id, nombre, "MEDICO");
-        // dentro de handleLogin (después de registry.markOnline(u); )
         this.currentUser = u;
-        try {
-            registry.markOnline(u);
-        } catch (Exception ignored) {}
-
+        try { registry.markOnline(u); } catch (Exception ignored) {}
 
         ObjectNode user = MAPPER.createObjectNode();
         user.put("id", u.getId());
@@ -152,28 +149,33 @@ public class ClientHandler implements Runnable {
         resp.set("user", user);
         send(resp);
     }
-    // Reemplaza la versión actual de handleSubscribe por esta
+
     private void handleSubscribe(JsonNode req) {
         String id = text(req, "id");
         if (id == null) { sendError("subscribe necesita id"); return; }
 
-        // Creamos un Usuario mínimo para mantener referencia (nombre puede ser id si no lo conocemos)
-        Usuario u = new Usuario(id, id, "MEDICO");
-        // Esta conexión ahora representa al usuario (persistente)
-        this.currentUser = u;
+        Usuario u;
+        try {
+            u = usuarioDAO.findById(id);
+        } catch (SQLException e) {
+            u = null;
+        }
+        if (u == null) {
+            u = new Usuario(id, (currentUser != null && id.equals(currentUser.getId()))
+                    ? currentUser.getNombre() : id,
+                    (currentUser != null && id.equals(currentUser.getId()))
+                            ? currentUser.getTipo()   : "MEDICO");
+        }
 
-        // Marcar online en el registry (ahora la conexión persistente es la "autoritativa")
+        this.currentUser = u;
         try { registry.markOnline(u); } catch (Exception ignored) {}
 
-        // Registrar la conexión para notificaciones y avisar a todos
-        ServidorBackend.CONNECTIONS.register(id, out);
-        System.out.println("[Backend] subscribe: registered persistent connection for " + id);
-        ServidorBackend.CONNECTIONS.broadcastUserLogin(id, u.getNombre());
+        ServidorBackend.CONNECTIONS.register(u.getId(), out);
+        System.out.println("[Backend] subscribe: registered persistent connection for " + u.getId());
+        ServidorBackend.CONNECTIONS.broadcastUserLogin(u.getId(), u.getNombre());
 
         send(ok());
     }
-
-
 
     private void handleEnviarMensaje(JsonNode req) throws SQLException {
         String remitente = text(req, "remitente");
@@ -249,7 +251,6 @@ public class ClientHandler implements Runnable {
         if (currentUser != null && currentUser.getId() != null) {
             String id = currentUser.getId();
             try { registry.logout(id); } catch (Exception ignored) {}
-            // quitar de la lista de conexiones persistentes y avisar
             try { ServidorBackend.CONNECTIONS.unregister(id); } catch (Exception ignored) {}
             ServidorBackend.CONNECTIONS.broadcastUserLogout(id);
             System.out.println("[Backend] handleLogout: user logged out -> " + id);

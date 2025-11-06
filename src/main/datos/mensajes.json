@@ -16,4 +16,10 @@
   "destinatario" : "654",
   "texto" : "Hola",
   "leido" : 1
+}, {
+  "id" : "Mensaje-4",
+  "remitente" : "3",
+  "destinatario" : "123",
+  "texto" : "Prueba",
+  "leido" : 1
 } ]
