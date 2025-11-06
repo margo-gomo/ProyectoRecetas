@@ -48,6 +48,7 @@ public class Main {
 
             Controlador controlador = new Controlador();
             controlador.init();
+            controlador.setBackendEndpoint("192.168.1.50", 5050);
             MenuVista vistaPrincipal = new MenuVista(controlador);
             vistaPrincipal.init();
 

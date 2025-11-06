@@ -4,4 +4,10 @@
   "destinatario" : "123",
   "texto" : "Hola",
   "leido" : 0
+}, {
+  "id" : "Mensaje-2",
+  "remitente" : "123",
+  "destinatario" : "654",
+  "texto" : "hola :3",
+  "leido" : 0
 } ]
