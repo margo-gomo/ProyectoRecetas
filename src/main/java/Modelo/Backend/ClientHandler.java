@@ -126,54 +126,56 @@ public class ClientHandler implements Runnable {
     private void handleLogin(JsonNode req) throws SQLException {
         String id = text(req, "id");
         String clave = text(req, "clave");
-        if (id == null || clave == null) {
-            sendError("Campos requeridos: id, clave");
-            return;
+        if (id == null || clave == null) { sendError("Campos requeridos: id, clave"); return; }
+
+        String nombre = mensajes.validarUsuario(id, clave);
+        if (nombre == null) { sendFail("Credenciales inválidas"); return; }
+
+        Usuario u = usuarioDAO.findById(id);
+        if (u == null) {
+            u = new Usuario(id, nombre, "MEDICO");
         }
 
-        String nombre = mensajes.validarUsuario(id, clave); // null si no existe o clave inválida
-        if (nombre == null) {
-            sendFail("Credenciales inválidas");
-            return;
-        }
+        this.currentUser = u;
+        try { registry.markOnline(u); } catch (Exception ignored) {}
 
-        // Sólo validamos y respondemos; NO seteamos currentUser ni marcamos online aquí.
         ObjectNode user = MAPPER.createObjectNode();
-        user.put("id", id);
-        user.put("nombre", nombre);
-        user.put("tipo", "MEDICO");
+        user.put("id", u.getId());
+        user.put("nombre", u.getNombre());
+        user.put("tipo", u.getTipo());
 
         ObjectNode resp = ok();
         resp.set("user", user);
         send(resp);
     }
 
-
     private void handleSubscribe(JsonNode req) {
         String id = text(req, "id");
-        // opcional: nombre enviado por el cliente
-        String nombre = text(req, "nombre");
-
         if (id == null) { sendError("subscribe necesita id"); return; }
 
-        // registrar la conexión para notificaciones
-        ServidorBackend.CONNECTIONS.register(id, out);
-
-        // asociar currentUser a ESTE handler (la conexión persistente)
-        if (this.currentUser == null) {
-            // si no tenemos nombre preferimos el nombre real o el id
-            String nm = (nombre != null && !nombre.isBlank()) ? nombre : id;
-            this.currentUser = new Usuario(id, nm, "MEDICO");
+        Usuario u;
+        try {
+            u = usuarioDAO.findById(id);
+        } catch (SQLException e) {
+            u = null;
+        }
+        if (u == null) {
+            u = new Usuario(id, (currentUser != null && id.equals(currentUser.getId()))
+                    ? currentUser.getNombre() : id,
+                    (currentUser != null && id.equals(currentUser.getId()))
+                            ? currentUser.getTipo()   : "MEDICO");
         }
 
-        // marcar online en el registry (ahora la entrada persistirá mientras esta conexión exista)
-        try { registry.markOnline(this.currentUser); } catch (Exception ignored) {}
+        this.currentUser = u;
+        try { registry.markOnline(u); } catch (Exception ignored) {}
 
-        // avisar a todos (incluye al mismo cliente)
-        ServidorBackend.CONNECTIONS.broadcastUserLogin(id, this.currentUser.getNombre());
+        ServidorBackend.CONNECTIONS.register(u.getId(), out);
+        System.out.println("[Backend] subscribe: registered persistent connection for " + u.getId());
+        ServidorBackend.CONNECTIONS.broadcastUserLogin(u.getId(), u.getNombre());
 
         send(ok());
     }
+
 
     private void handleEnviarMensaje(JsonNode req) throws SQLException {
         String remitente = text(req, "remitente");
