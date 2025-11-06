@@ -503,7 +503,6 @@ public class Controlador {
             proxy.conectar(backendHost, backendPort);
             proxy.enviarLinea("{\"op\":\"ping\"}");
         } catch (Exception ex) {
-            // Si el backend no está arriba, la UI igual puede funcionar; solo logueamos.
             System.err.println("[UI] No se pudo pingear backend: " + ex.getMessage());
         }
     }

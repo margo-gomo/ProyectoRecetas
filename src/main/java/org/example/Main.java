@@ -47,8 +47,8 @@ public class Main {
             FlatLightLaf.setup();
 
             Controlador controlador = new Controlador();
+            controlador.setBackendEndpoint("192.168.1.11", 5050);
             controlador.init();
-            controlador.setBackendEndpoint("192.168.1.50", 5050);
             MenuVista vistaPrincipal = new MenuVista(controlador);
             vistaPrincipal.init();
 
