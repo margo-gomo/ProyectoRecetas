@@ -524,6 +524,38 @@ public class Controlador {
         System.exit(0);
     }
 
+    public List<Usuario> obtenerUsuariosOnlineBackend() throws SQLException {
+        try {
+            ObjectNode req = JSON.createObjectNode().put("op", "listarUsuariosOnline");
+            JsonNode resp = callBackend(req);
+            if (!resp.path("ok").asBoolean(false)) {
+                String msg = resp.has("msg") ? resp.get("msg").asText()
+                        : resp.has("error") ? resp.get("error").asText()
+                        : "Fallo al listar usuarios online";
+                throw new SQLException(msg);
+            }
+            List<Usuario> lista = JSON.convertValue(
+                    resp.path("usuarios"),
+                    new com.fasterxml.jackson.core.type.TypeReference<List<Usuario>>() {}
+            );
+            return (lista != null) ? lista : java.util.Collections.emptyList();
+        } catch (Exception ex) {
+            throw new SQLException("Fallo de conexión con backend (online): " + ex.getMessage(), ex);
+        }
+    }
+
+    public void heartbeat() {
+        try {
+            if (usuario_login != null && usuario_login.getId() != null) {
+                ObjectNode req = JSON.createObjectNode()
+                        .put("op", "heartbeat")
+                        .put("id", usuario_login.getId());
+                callBackend(req);
+            }
+        } catch (Exception ignored) {}
+    }
+
+
     // ========================= Campos =========================
     private GestorMedico modeloMedico;
     private GestorPaciente modeloPaciente;

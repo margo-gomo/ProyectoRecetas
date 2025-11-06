@@ -2,6 +2,7 @@ package Modelo.Backend;
 
 import Modelo.DAO.MensajeDAO;
 import Modelo.entidades.Mensaje;
+import Modelo.entidades.Usuario;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +24,10 @@ import java.util.List;
  *   {"op":"enviarMensaje","remitente":"<id>","destinatario":"<id>","texto":"..."}
  *   {"op":"recibirMensajes","remitente":"<yo>","destinatario":"<otro>"}
  *   {"op":"listarConversaciones","userId":"<id>"}
+ *   --- NUEVO ---
+ *   {"op":"listarUsuariosOnline"}
+ *   {"op":"heartbeat","id":"<id>"}
+ *   {"op":"logout"}
  */
 public class ClientHandler implements Runnable {
     private final Socket socket;
@@ -35,8 +40,12 @@ public class ClientHandler implements Runnable {
 
     private final MensajeDAO mensajes;
 
-    public ClientHandler(Socket socket) throws SQLException {
+    private final OnlineRegistry registry;
+    private Usuario currentUser = null;
+
+    public ClientHandler(Socket socket, OnlineRegistry registry) throws SQLException {
         this.socket = socket;
+        this.registry = registry;
         this.mensajes = new MensajeDAO();
     }
 
@@ -64,6 +73,10 @@ public class ClientHandler implements Runnable {
                 final String op = req.path("op").asText(null);
                 if (op == null) { sendError("Falta campo 'op'"); continue; }
 
+                if (currentUser != null && currentUser.getId() != null) {
+                    try { registry.heartbeat(currentUser.getId()); } catch (Exception ignored) {}
+                }
+
                 try {
                     switch (op) {
                         case "ping" -> handlePing(req);
@@ -71,6 +84,12 @@ public class ClientHandler implements Runnable {
                         case "enviarMensaje" -> handleEnviarMensaje(req);
                         case "recibirMensajes" -> handleRecibirMensajes(req);
                         case "listarConversaciones" -> handleListarConversaciones(req);
+
+                        // --- NUEVOS HANDLERS ---
+                        case "listarUsuariosOnline" -> handleListarUsuariosOnline();
+                        case "heartbeat" -> handleHeartbeat(req);
+                        case "logout" -> handleLogout();
+
                         default -> sendError("Operación no soportada: " + op);
                     }
                 } catch (Exception ex) {
@@ -80,6 +99,11 @@ public class ClientHandler implements Runnable {
         } catch (Exception ex) {
             System.out.println("[Backend] Handler error: " + ex.getMessage());
         } finally {
+            try {
+                if (currentUser != null && currentUser.getId() != null) {
+                    registry.logout(currentUser.getId());
+                }
+            } catch (Exception ignored) {}
             try { socket.close(); } catch (IOException ignored) {}
             System.out.println("[Backend] Handler finalizado");
         }
@@ -107,9 +131,14 @@ public class ClientHandler implements Runnable {
             return;
         }
 
+        Usuario u = new Usuario(id, nombre, "MEDICO");
+        this.currentUser = u;
+        try { registry.markOnline(u); } catch (Exception ignored) {}
+
         ObjectNode user = MAPPER.createObjectNode();
-        user.put("id", id);
-        user.put("nombre", nombre);
+        user.put("id", u.getId());
+        user.put("nombre", u.getNombre());
+        user.put("tipo", u.getTipo());
 
         ObjectNode resp = ok();
         resp.set("user", user);
@@ -133,8 +162,8 @@ public class ClientHandler implements Runnable {
     }
 
     private void handleRecibirMensajes(JsonNode req) throws SQLException {
-        String remitente = text(req, "remitente");     // "yo" (el que está leyendo)
-        String destinatario = text(req, "destinatario"); // el otro participante
+        String remitente = text(req, "remitente");
+        String destinatario = text(req, "destinatario");
         if (remitente == null || destinatario == null) {
             sendError("Campos requeridos: remitente, destinatario");
             return;
@@ -159,6 +188,39 @@ public class ClientHandler implements Runnable {
         ObjectNode resp = ok();
         resp.set("mensajes", arr);
         send(resp);
+    }
+
+    // --- NUEVOS ---
+
+    private void handleListarUsuariosOnline() {
+        ArrayNode arr = MAPPER.createArrayNode();
+        for (Usuario u : registry.list()) {
+            ObjectNode dto = MAPPER.createObjectNode();
+            dto.put("id", u.getId());
+            dto.put("nombre", u.getNombre() == null ? "" : u.getNombre());
+            dto.put("tipo", u.getTipo() == null ? "" : u.getTipo());
+            arr.add(dto);
+        }
+        ObjectNode resp = ok();
+        resp.set("usuarios", arr);
+        send(resp);
+    }
+
+    private void handleHeartbeat(JsonNode req) {
+        String id = text(req, "id");
+        String target = (id != null) ? id : (currentUser != null ? currentUser.getId() : null);
+        if (target != null) {
+            try { registry.heartbeat(target); } catch (Exception ignored) {}
+        }
+        send(ok());
+    }
+
+    private void handleLogout() {
+        if (currentUser != null && currentUser.getId() != null) {
+            try { registry.logout(currentUser.getId()); } catch (Exception ignored) {}
+            currentUser = null;
+        }
+        send(ok());
     }
 
     /* -------------------- Utilidades -------------------- */

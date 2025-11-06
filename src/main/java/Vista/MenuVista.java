@@ -213,7 +213,7 @@ public class MenuVista extends JFrame {
         configurarTablaDashboard();
         configurarTablaEstados();
         configurarTablaUsuarios();
-        cargarUsuariosEnTabla();
+        cargarUsuariosOnlineEnTabla();
 
         cargarDatosIniciales();
         cargarMedicamentosEnComboDashboard();
@@ -239,10 +239,14 @@ public class MenuVista extends JFrame {
         if (tabbedPanePrincipal != null && panelUsuarios != null) {
             tabbedPanePrincipal.addChangeListener(e -> {
                 if (tabbedPanePrincipal.getSelectedComponent() == panelUsuarios) {
-                    cargarUsuariosEnTabla();
+                    cargarUsuariosOnlineEnTabla();
                 }
             });
         }
+        new javax.swing.Timer(5000, e -> {
+            cargarUsuariosOnlineEnTabla();
+            controlador.heartbeat();
+        }).start();
 
         if (labelNomPaciente != null) {
             labelNomPaciente.setText("(sin paciente seleccionado)");
@@ -2379,7 +2383,7 @@ public class MenuVista extends JFrame {
                 };
 
                 aplicarPermisos(token);
-                cargarUsuariosEnTabla();
+                cargarUsuariosOnlineEnTabla();
                 loginDialog.dispose();
                 JOptionPane.showMessageDialog(this, "Bienvenido ", "Login correcto", JOptionPane.INFORMATION_MESSAGE);
 
@@ -2481,24 +2485,17 @@ public class MenuVista extends JFrame {
         });
     }
 
-    private void cargarUsuariosEnTabla() {
+    private void cargarUsuariosOnlineEnTabla() {
         if (tablaUsuarios == null || controlador == null) return;
         DefaultTableModel m = (DefaultTableModel) tablaUsuarios.getModel();
         m.setRowCount(0);
-
         try {
-            java.util.List<Usuario> users = controlador.obtenerUsuariosLogueados();
-            String miId = (controlador.getUsuario_login() != null) ? controlador.getUsuario_login().getId() : null;
-
-            for (Usuario u : users) {
+            for (Usuario u : controlador.obtenerUsuariosOnlineBackend()) {
                 if (u == null) continue;
-                if (miId != null && miId.equals(u.getId())) continue;
-                String tipo = (u.getTipo() == null ? "" : u.getTipo());
-                m.addRow(new Object[]{ u.getId(), u.getNombre(), tipo });
+                m.addRow(new Object[]{ u.getId(), u.getNombre(), u.getTipo() });
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "No se pudieron cargar usuarios (online):\n" + ex.getMessage(),
-                    "Base de datos", JOptionPane.ERROR_MESSAGE);
+            System.err.println("No se pudo cargar usuarios online: " + ex.getMessage());
         }
     }
 
