@@ -1,7 +1,15 @@
 [ {
+  "codigo" : "Ac45",
+  "nombre" : "Acetaminofen",
+  "presentacion" : "10mg"
+}, {
   "codigo" : "AMOX-500",
   "nombre" : "Amoxicilina",
   "presentacion" : "500 mg (cápsulas)"
+}, {
+  "codigo" : "BCL5",
+  "nombre" : "Beclometasona",
+  "presentacion" : "Spray nasal"
 }, {
   "codigo" : "IBU-200",
   "nombre" : "Ibuprofeno",

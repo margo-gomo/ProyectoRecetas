@@ -136,9 +136,6 @@ public class ClientHandler implements Runnable {
             u = new Usuario(id, nombre, "MEDICO");
         }
 
-        this.currentUser = u;
-        try { registry.markOnline(u); } catch (Exception ignored) {}
-
         ObjectNode user = MAPPER.createObjectNode();
         user.put("id", u.getId());
         user.put("nombre", u.getNombre());
@@ -148,6 +145,7 @@ public class ClientHandler implements Runnable {
         resp.set("user", user);
         send(resp);
     }
+
 
     private void handleSubscribe(JsonNode req) {
         String id = text(req, "id");
