@@ -1,36 +1,36 @@
 [ {
   "id" : "123",
-  "clave" : "ado",
-  "nombre" : "Josue",
+  "clave" : "123",
+  "nombre" : "María González",
   "tipo" : "ADMIN"
 }, {
   "id" : "23",
-  "clave" : "Lucas",
-  "nombre" : "Lucas",
+  "clave" : "23",
+  "nombre" : "Lucas Vargas",
   "tipo" : "FARMACEUTA"
 }, {
   "id" : "252",
   "clave" : "252",
-  "nombre" : "Gregorio",
+  "nombre" : "Gregorio Álvarez",
   "tipo" : "FARMACEUTA"
 }, {
   "id" : "3",
   "clave" : "3",
-  "nombre" : "Johnny",
+  "nombre" : "Dra. Andrea Salazar",
   "tipo" : "MEDICO"
 }, {
   "id" : "654",
   "clave" : "654",
-  "nombre" : "House",
+  "nombre" : "Dr. Daniel Araya",
   "tipo" : "MEDICO"
 }, {
   "id" : "852",
   "clave" : "852",
-  "nombre" : "Troy",
+  "nombre" : "Dr. Troy Jiménez",
   "tipo" : "MEDICO"
 }, {
   "id" : "951",
   "clave" : "951",
-  "nombre" : "Rachel",
+  "nombre" : "Rachel Solís",
   "tipo" : "FARMACEUTA"
 } ]

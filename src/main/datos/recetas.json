@@ -2,17 +2,17 @@
   "codigo" : "787",
   "paciente" : {
     "id" : 1445,
-    "nombre" : "Pacos",
+    "nombre" : "Carlos Ramírez",
     "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
+    "telefono" : 88886666
   },
   "fecha_confeccion" : 1761631200000,
   "fecha_retiro" : 1761717600000,
   "estado" : "PROCESO",
   "farmaceuta_Proceso" : {
     "id" : "23",
-    "clave" : "Lucas",
-    "nombre" : "Lucas",
+    "clave" : "23",
+    "nombre" : "Lucas Vargas",
     "tipo" : "FARMACEUTA"
   },
   "farmaceuta_Lista" : null,
@@ -21,9 +21,9 @@
   "codigo" : "Rec-2",
   "paciente" : {
     "id" : 1445,
-    "nombre" : "Pacos",
+    "nombre" : "Carlos Ramírez",
     "fecha_nacimiento" : 1256623200000,
-    "telefono" : 777
+    "telefono" : 88886666
   },
   "fecha_confeccion" : 1761976800000,
   "fecha_retiro" : 1763013600000,

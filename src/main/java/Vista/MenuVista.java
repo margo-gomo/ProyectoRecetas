@@ -2102,6 +2102,89 @@ public class MenuVista extends JFrame {
     }
 
     // --------------------------------- HELPERS DASHBOARD --------------------------------------
+
+    private java.util.Set<String> getCodsMedicamentosSeleccionados() throws Exception {
+        java.util.Set<String> res = new java.util.LinkedHashSet<>();
+        String seleccionado = (comboBox1 != null && comboBox1.getSelectedItem() != null)
+                ? comboBox1.getSelectedItem().toString() : "Todos";
+
+        List<Medicamento> meds = controlador.obtenerListaMedicamentos();
+        if (meds == null) meds = java.util.Collections.emptyList();
+
+        if ("Todos".equalsIgnoreCase(seleccionado)) {
+            for (Medicamento m : meds) if (m != null && m.getCodigo() != null) res.add(m.getCodigo());
+        } else {
+            for (Medicamento m : meds) {
+                if (m != null && seleccionado.equals(m.getNombre()) && m.getCodigo() != null) {
+                    res.add(m.getCodigo());
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+
+    private void poblarTablasDashboard(LocalDate desde, LocalDate hasta) throws Exception {
+        if (tablaMesAnioDashboard == null || tablaEstadosDashboard == null) return;
+
+        DefaultTableModel mMes = (DefaultTableModel) tablaMesAnioDashboard.getModel();
+        DefaultTableModel mEst = (DefaultTableModel) tablaEstadosDashboard.getModel();
+        mMes.setRowCount(0);
+        mEst.setRowCount(0);
+
+        // Acumuladores
+        java.util.Map<YearMonth, Integer> porMes = new java.util.TreeMap<>();
+        java.util.Map<String, Integer> porEstado = new java.util.LinkedHashMap<>();
+
+        java.util.Set<String> codsFiltrados = getCodsMedicamentosSeleccionados();
+
+        List<Receta> recetas = controlador.obtenerListaRecetas();
+        if (recetas == null) recetas = java.util.Collections.emptyList();
+
+        for (Receta r : recetas) {
+            if (r == null) continue;
+            java.util.Date dConf = r.getFecha_confeccion();
+            if (dConf == null) continue;
+
+            LocalDate f = toLocalDate(dConf);
+            if (f == null) continue;
+            if ( (f.isBefore(desde)) || (f.isAfter(hasta)) ) continue;
+
+            int totalReceta = 0;
+            try {
+                List<Indicacion> inds = controlador.mostrarIndicaciones(r.getCodigo());
+                if (inds != null) {
+                    for (Indicacion in : inds) {
+                        if (in == null || in.getMedicamento() == null) continue;
+                        String cod = in.getMedicamento().getCodigo();
+                        if (codsFiltrados.contains(cod)) {
+                            totalReceta += Math.max(0, in.getCantidad());
+                        }
+                    }
+                }
+            } catch (SQLException ignored) {}
+
+            if (totalReceta <= 0) continue;
+
+            // Por Mes/Año
+            YearMonth ym = YearMonth.from(f);
+            porMes.merge(ym, totalReceta, Integer::sum);
+
+            // Por Estado
+            String est = (r.getEstado() != null) ? r.getEstado() : "(SIN ESTADO)";
+            porEstado.merge(est, totalReceta, Integer::sum);
+        }
+
+        // Volcar a tablas
+        DateTimeFormatter fmtMY = DateTimeFormatter.ofPattern("MM/yyyy");
+        for (java.util.Map.Entry<YearMonth, Integer> e : porMes.entrySet()) {
+            mMes.addRow(new Object[]{ e.getKey().format(fmtMY), e.getValue() });
+        }
+        for (java.util.Map.Entry<String, Integer> e : porEstado.entrySet()) {
+            mEst.addRow(new Object[]{ e.getKey(), e.getValue() });
+        }
+    }
+
     private void refrescarDashboard() {
         if (controlador == null) return;
 
@@ -2176,6 +2259,12 @@ public class MenuVista extends JFrame {
         }
         if (tablaEstadosDashboard != null) {
             ((DefaultTableModel) tablaEstadosDashboard.getModel()).setRowCount(0);
+        }
+
+        try {
+            poblarTablasDashboard(desde, hasta);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error al poblar tablas del Dashboard: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         // GRÁFICO DE LÍNEAS
