@@ -10,24 +10,22 @@ public class SocketProxy {
     private BufferedReader in;
     private PrintWriter out;
     private Consumer<String> onError = msg -> System.err.println("[UI] Error: " + msg);
+    private Consumer<String> onMessage = msg -> System.out.println("[UI] MSG: " + msg);
 
-    public void setOnError(Consumer<String> onError) {
-        this.onError = (onError != null) ? onError : this.onError;
-    }
+    public void setOnError(Consumer<String> onError) { this.onError = (onError != null) ? onError : this.onError; }
+    public void setOnMessage(Consumer<String> onMessage) { this.onMessage = (onMessage != null) ? onMessage : this.onMessage; }
 
     public void conectar(String host, int port) throws IOException {
-        System.out.println("[UI] Conectando a " + host + ":" + port + " …");
         socket = new Socket(host, port);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-        out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true); // autoFlush
-        System.out.println("[UI] Conectado");
+        out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
 
-        // Hilo lector para ver respuestas del backend
         Thread t = new Thread(() -> {
             try {
                 String line;
                 while ((line = in.readLine()) != null) {
                     System.out.println("[UI] RX: " + line);
+                    try { onMessage.accept(line); } catch (Exception ex) { onError.accept(ex.getMessage()); }
                 }
                 System.out.println("[UI] Servidor cerró la conexión");
             } catch (Exception ex) {
@@ -39,15 +37,11 @@ public class SocketProxy {
     }
 
     public void enviarLinea(String json) {
-        if (out == null) {
-            onError.accept("Proxy no conectado");
-            return;
-        }
-        System.out.println("[UI] TX: " + json);
-        out.println(json); // imprime + newline + flush
+        if (out == null) { onError.accept("Proxy no conectado"); return; }
+        out.println(json);
     }
-
     public void cerrar() throws IOException {
         if (socket != null && !socket.isClosed()) socket.close();
     }
 }
+

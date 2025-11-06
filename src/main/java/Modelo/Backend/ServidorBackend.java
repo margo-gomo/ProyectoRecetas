@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.*;
 
 public class ServidorBackend {
-    public static final OnlineRegistry REGISTRY = new OnlineRegistry(); // <<< NUEVO
+    public static final OnlineRegistry REGISTRY = new OnlineRegistry(); // ya lo tienes
+    public static final ConnectionRegistry CONNECTIONS = new ConnectionRegistry(); // nuevo
+
 
     public static void main(String[] args) {
         int port = 5050;

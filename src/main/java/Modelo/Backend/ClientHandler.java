@@ -89,7 +89,7 @@ public class ClientHandler implements Runnable {
                         case "listarUsuariosOnline" -> handleListarUsuariosOnline();
                         case "heartbeat" -> handleHeartbeat(req);
                         case "logout" -> handleLogout();
-
+                        case "subscribe" -> handleSubscribe(req);
                         default -> sendError("Operación no soportada: " + op);
                     }
                 } catch (Exception ex) {
@@ -102,11 +102,15 @@ public class ClientHandler implements Runnable {
             try {
                 if (currentUser != null && currentUser.getId() != null) {
                     registry.logout(currentUser.getId());
+                    ServidorBackend.CONNECTIONS.unregister(currentUser.getId());
+                    // emitir logout para los demás
+                    ServidorBackend.CONNECTIONS.broadcastUserLogout(currentUser.getId());
                 }
             } catch (Exception ignored) {}
             try { socket.close(); } catch (IOException ignored) {}
             System.out.println("[Backend] Handler finalizado");
         }
+
     }
 
     /* -------------------- Handlers -------------------- */
@@ -132,8 +136,12 @@ public class ClientHandler implements Runnable {
         }
 
         Usuario u = new Usuario(id, nombre, "MEDICO");
+        // dentro de handleLogin (después de registry.markOnline(u); )
         this.currentUser = u;
-        try { registry.markOnline(u); } catch (Exception ignored) {}
+        try {
+            registry.markOnline(u);
+        } catch (Exception ignored) {}
+
 
         ObjectNode user = MAPPER.createObjectNode();
         user.put("id", u.getId());
@@ -144,6 +152,15 @@ public class ClientHandler implements Runnable {
         resp.set("user", user);
         send(resp);
     }
+    private void handleSubscribe(JsonNode req) {
+        String id = text(req, "id");
+        if (id == null) { sendError("subscribe necesita id"); return; }
+        ServidorBackend.CONNECTIONS.register(id, out);
+        // avisar a todos que este usuario se "registró" (si quieres)
+        ServidorBackend.CONNECTIONS.broadcastUserLogin(id, id);
+        send(ok());
+    }
+
 
     private void handleEnviarMensaje(JsonNode req) throws SQLException {
         String remitente = text(req, "remitente");

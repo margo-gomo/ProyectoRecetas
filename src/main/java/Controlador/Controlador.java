@@ -29,13 +29,6 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Controlador principal del sistema.
- * - Gestión de Usuarios / Médicos / Pacientes / Medicamentos
- * - Prescripciones e Indicaciones
- * - Dashboard (gráficos)
- * - Mensajería y Login contra backend socket (ClientHandler)
- */
 public class Controlador {
 
     // ========================= Constructores =========================
@@ -140,6 +133,14 @@ public class Controlador {
 
             // === NUEVO: registrar sesión activa ===
             sesionesActivas.add(this.usuario_login.getId());
+            // suscribir la conexión persistente para recibir notificaciones (si proxy está conectado)
+            try {
+                if (proxy != null && usuario_login != null && usuario_login.getId() != null) {
+                    ObjectNode sub = JSON.createObjectNode().put("op", "subscribe").put("id", usuario_login.getId());
+                    proxy.enviarLinea(sub.toString());
+                }
+            } catch (Exception ignored) {}
+
 
         } catch (SecurityException se) {
             throw se;
@@ -488,7 +489,11 @@ public class Controlador {
     // ========================= Ciclo de vida (init/close) =========================
     private final SocketProxy proxy = new SocketProxy();
 
+    // campo para scheduled heartbeat (añadir como campo de la clase)
+    private java.util.concurrent.ScheduledExecutorService heartbeatExecutor;
+
     public void init() {
+        // ---- cargar datos locales (igual que antes) ----
         try { modeloUsuarios.cargar(); } catch (SQLException | IOException ex) { System.err.println("Error cargando usuarios"); }
         try { modeloPaciente.cargar(); } catch (SQLException | IOException ex) { System.err.println("Error cargando pacientes"); }
         try { modeloMedicamento.cargar(); } catch (SQLException | IOException ex) { System.err.println("Error cargando medicamentos"); }
@@ -497,17 +502,85 @@ public class Controlador {
         try { modeloRecetasIndicacion.cargarIndicaciones(); } catch (SQLException | IOException ex) { System.err.println("Error cargando indicaciones"); }
         try { modeloMensaje.cargar(); } catch (SQLException | IOException ex) { System.err.println("Error cargando mensajes"); }
 
-        proxy.setOnError(msg -> System.out.println("[UI] Error: " + msg));
+        // ---- config proxy handlers ----
+        proxy.setOnError(msg -> System.out.println("[UI] Error proxy: " + msg));
+
+        // onMessage: parsea JSON de notificaciones y actualiza sesionesActivas
+        proxy.setOnMessage(line -> {
+            try {
+                JsonNode n = JSON.readTree(line);
+                String op = n.path("op").asText("");
+                switch (op) {
+                    case "userLogin" -> {
+                        String id = n.path("id").asText(null);
+                        if (id != null) {
+                            sesionesActivas.add(id);
+                            System.out.println("[UI] notificación userLogin: " + id);
+                            // si tienes vistas abiertas, actualízalas en EDT:
+                            javax.swing.SwingUtilities.invokeLater(() -> {
+                                // ejemplo: refrescar lista en la vista si la implementas
+                                // (dejar en blanco aquí; la vista debería preguntar al controlador)
+                            });
+                        }
+                    }
+                    case "userLogout" -> {
+                        String id = n.path("id").asText(null);
+                        if (id != null) {
+                            sesionesActivas.remove(id);
+                            System.out.println("[UI] notificación userLogout: " + id);
+                            javax.swing.SwingUtilities.invokeLater(() -> {
+                                // ejemplo: refrescar lista en la vista si la implementas
+                            });
+                        }
+                    }
+                    // opcional: newMessage, etc.
+                    default -> {
+                        // mensajes de respuesta a operaciones normales (ping, subscribe OK, etc.)
+                        // si quieres procesarlos, házselo aquí.
+                        // System.out.println("[UI] Mensaje proxy (no-notif): " + line);
+                    }
+                }
+            } catch (Exception ex) {
+                System.err.println("[UI] Error procesando notificación: " + ex.getMessage());
+            }
+        });
+
+        // ---- conectar proxy persistente ----
         try {
-            System.out.println("[UI] Intentando conectar al backend...");
+            System.out.println("[UI] Intentando conectar al backend (persistente)...");
             proxy.conectar(backendHost, backendPort);
+            // ping rápido por la conexión persistente (opcional)
             proxy.enviarLinea("{\"op\":\"ping\"}");
         } catch (Exception ex) {
-            System.err.println("[UI] No se pudo pingear backend: " + ex.getMessage());
+            System.err.println("[UI] No se pudo establecer conexión persistente al backend: " + ex.getMessage());
         }
+
+        // ---- heartbeat periódico vía conexión persistente (si está) ----
+        heartbeatExecutor = java.util.concurrent.Executors.newSingleThreadScheduledExecutor();
+        heartbeatExecutor.scheduleAtFixedRate(() -> {
+            try {
+                if (usuario_login != null && usuario_login.getId() != null) {
+                    // enviamos heartbeat por la conexión persistente (si está conectada)
+                    ObjectNode hb = JSON.createObjectNode().put("op", "heartbeat").put("id", usuario_login.getId());
+                    proxy.enviarLinea(hb.toString());
+                }
+            } catch (Exception ignored) {}
+        }, 30, 30, java.util.concurrent.TimeUnit.SECONDS);
     }
 
+
     public void cerrarAplicacion() {
+        // enviar logout por proxy (para que el backend lo registre) y cerrar heartbeatExecutor
+        try {
+            if (proxy != null && usuario_login != null && usuario_login.getId() != null) {
+                proxy.enviarLinea("{\"op\":\"logout\"}");
+            }
+        } catch (Exception ignored) {}
+
+        if (heartbeatExecutor != null) {
+            heartbeatExecutor.shutdownNow();
+        }
+
         try { proxy.cerrar(); } catch (Exception ignored) {}
 
         try { modeloUsuarios.guardar(); } catch (SQLException | IOException ex) { System.err.println("Error guardando usuarios"); }
@@ -570,4 +643,5 @@ public class Controlador {
 
     private final java.util.Set<String> sesionesActivas =
             java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+
 }
